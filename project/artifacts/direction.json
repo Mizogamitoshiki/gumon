@@ -1,0 +1,23 @@
+{
+  "territory": {
+    "selected": "T5 Luxury Restraint",
+    "distance_calc": "5軸(25/55/15/65/75)と各圏レンジ中心の距離総和: T5=42.5 / T8 Organic=80 / T2 Editorial=87.5 / T1 Swiss=100。T5が明確な最短",
+    "rejected": [
+      {"name": "T8 Organic Natural", "reason": "『自然・明るい素材感』が核の圏だが、本件の核は『問いと抑制・陰影』。写真は陰影の劇場でありオーガニックな柔光でない"},
+      {"name": "T2 Editorial", "reason": "読み物主導の圏。本件は体験(スクロールの間)主導で、長文읽物は補助"}
+    ]
+  },
+  "mood_vocabulary": ["静謐", "陰影", "端正", "問い", "余白"],
+  "color_scheme_policy": "single(ダーク固定=確定DS。両対応はしない)",
+  "imagery": {
+    "subject_ratio": {"料理の実物(寄り・湯気・照り・陰影)": "主役6割", "器・手元・所作": "3割", "空間の陰影・素材(壁・木)": "1割。人物の顔は使わない"},
+    "light": "硬めの一点光。暗背景から料理が浮かぶ陰影(レンブラント的)。フラットな明るい照明は禁止",
+    "tone": "低彩度・暗部基調の中で料理の暖色だけが生きる(パレットとの整合: 朱・金系の装飾は写真内でも避ける)",
+    "composition": "余白広め・黒の額縁構図。日の丸構図可(一点集中型)。目線は皿へ(VIS-R9)"
+  },
+  "motion_class": "Expressive",
+  "adjustments": [
+    {"token": "パレット・タイポ全般", "delta": "Territory既定→既存確定DS(MASTER.md)を優先", "rationale_id": "C-3.2-4(既存ガイドラインの翻訳モード)+P0判断"},
+    {"token": "MOT-R7 scroll演出", "delta": "pin×1(820vhマスタータイムライン)+scrub。合計1箇所で規範内。Expressiveクラス+ブランドサイト拡張(I-12)を適用宣言", "rationale_id": "MOT-R7/ANM-1(≤3箇所)・reduced-motion静的分岐実装済み(C-5.1-5)"}
+  ]
+}

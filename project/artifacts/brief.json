@@ -1,0 +1,15 @@
+{
+  "goal": "中国料理 愚問(GUMON)の1ページLP+メニュー詳細を、WDOS基準の世界水準へ引き上げ完成させる(既存案件への導入モード)",
+  "kpi": ["電話予約CTAの到達・操作", "コース/ディナー詳細ページへの回遊", "3秒での業態・格の伝達"],
+  "target": "記念日・接待・特別な食事の場を探す30-60代。静かな環境と料理の質を価格より優先する層",
+  "competitors": ["高級中華(モダンチャイニーズ)レストラン各店"],
+  "constraints": ["確定ブランドパレット変更禁止(design-system/gumon/MASTER.md)", "金色不使用", "朱=電話CTA限定", "Next.js14+GSAP+Lenis既存実装の継承", "prefers-reduced-motion対応済み分岐の維持"],
+  "assets": ["design-system/gumon/MASTER.md(確定DS)", "public/料理写真・映像(一部)", "既存6ビートscroll実装"],
+  "deadline": "パイロット(期限なし・品質優先)",
+  "industry_pack": "restaurant(Pack実体未整備→汎用既定深度+CL-13適用)",
+  "unresolved": [
+    {"item": "住所・駅・営業時間が仮値(〇〇区)", "placeholder": "現状の仮値のまま進行", "risk": "納品前に実在情報必須(AIP-7/CL-12)。FTR-2法定表記も未確認"},
+    {"item": "料理写真の一部がImageSlotプレースホルダ", "placeholder": "既存素材で進行", "risk": "imagery方針(BRD-R11)適合の実写真が必要"},
+    {"item": "実店舗の実在性・予約手段の確認", "placeholder": "電話予約のみと仮定", "risk": "QG1で確認"}
+  ]
+}

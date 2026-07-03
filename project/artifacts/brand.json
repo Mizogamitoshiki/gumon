@@ -1,0 +1,22 @@
+{
+  "axes": {"formal_casual": 25, "classic_innovative": 55, "quiet_bold": 15, "rational_emotional": 65, "mass_exclusive": 75},
+  "axis_evidence": {
+    "formal_casual": "左寄り25:「静謐・余白」(MASTER.md Mood)、serif見出し・敬体コピー、儀礼的な間の設計",
+    "classic_innovative": "中庸55(意図的両立):「中国料理の伝統を、現代の感性で」(layout.tsx metadata)——伝統と現代の併記が根拠",
+    "quiet_bold": "明確な左極15:「静かに問いを重ね」、モノクロ基調・金色不使用・朱はCTA限定(MASTER.md確定パレット)",
+    "rational_emotional": "右寄り65: 問いと答えの物語構成、映像・写真主導の6ビート、情緒的コピー(「素材と火と時間」)",
+    "mass_exclusive": "右寄り75: Fine Dining宣言(MASTER.md Category)、情報の絞り込み、装飾の抑制=希少性の設計"
+  },
+  "archetype": {"main": "Sage(探求・問い)", "sub": "Creator(一皿=作品)"},
+  "vocabulary": ["問い", "静謐", "余白", "火", "時間", "素材", "一皿", "陰影", "端正", "凛"],
+  "anti_vocabulary": ["映える", "お得", "豪華絢爛", "賑わい", "ボリューム", "食べ放題", "限定セール", "わいわい", "急かす", "金ピカ"],
+  "taboos": [
+    "価格訴求を見出しにしない(価格は判断材料として端正に提示)",
+    "金色・装飾過多を使わない(MASTER.md確定)",
+    "朱(#b23a2e)を電話予約CTA以外に使わない",
+    "賑わい・行列・煽りの演出をしない(希少性の捏造=CTA-4も同時遵守)"
+  ],
+  "trust_requirements": ["実在情報(住所・電話・営業時間の実データ)", "料理写真の実物主義(IMG-1)", "価格の総額明示(I-09)"],
+  "personas": [{"motive": "記念日・接待・特別な一食の店選び", "knowledge": "高級中華の相場感はあるが当店は未知", "reading_mode": "精読(雰囲気を味わいながら)", "anxieties": ["価格帯が不明", "場の格式・服装", "予約の取りやすさ", "席の静かさ・個室有無"]}],
+  "competitive_position": {"nearest": "モダンチャイニーズ各店(黒基調・金アクセントが定型)", "differentiation_axis": "金色を捨て『問い』の哲学で語る静謐路線(業種記号GEN-2からの明確な離脱)"}
+}
