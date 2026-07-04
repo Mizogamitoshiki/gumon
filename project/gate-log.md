@@ -5,3 +5,4 @@
 - {QG2, pass, artifacts/direction.json(T5選定+却下理由記録+imagery方針+ユーザー承認), 人間承認+cowork-session, 2026-07-03, v1.0.0-rc.1}
 - {QG5, fail(差し戻し), reports/wdos-diagnosis-001.md(AIP-7ブロッカー+PRF-2ほか計5系統), cowork-session(値照合系のみ・視覚系未実施), 2026-07-03, v1.0.0-rc.1}
 - {QG5, fail(継続・前進), reports/wdos-diagnosis-002.md(ブロッカー2系統解消・残=実メニュー素材+視覚/実測系), cowork-session, 2026-07-03, v1.0.0-rc.1}
+- {QG5, fail(継続・前進), reports/wdos-diagnosis-003.md(残課題#6部分解消=実価格3品反映・#7解消=価格帯/宴会明示・#8部分実施=視覚実閲覧テスト実施/CWV実測未), cowork-session+claude-code, 2026-07-04, v1.0.0-rc.1}

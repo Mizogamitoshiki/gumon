@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import type { FoodCategory } from "@/lib/menu";
+import type { MenuSection } from "@/lib/menu";
 import { gsap, useGSAP } from "@/lib/gsap-setup";
 import { GUMON_MOTION } from "@/lib/motion-tokens";
 
@@ -9,7 +9,7 @@ const SERIF = "var(--font-noto-serif-jp), serif";
 
 // ギャラリー下のメニュー一覧 + 予約 CTA。
 // 行マスクの見出し・罫線・行の順に、小さな移動量(≦24px)で連鎖的に現す。
-export default function MenuList({ category }: { category: FoodCategory }) {
+export default function MenuList({ category }: { category: MenuSection }) {
   const sectionRef = useRef<HTMLElement>(null);
 
   useGSAP(
@@ -43,9 +43,12 @@ export default function MenuList({ category }: { category: FoodCategory }) {
           scrollTrigger: { trigger: "[data-rule]", start: "top 90%", once: true },
         });
 
-        // 各行 + CTA: 下から順にひとつずつ
+        // 各行 + 注記 + CTA: 下から順にひとつずつ
         gsap.utils
-          .toArray<HTMLElement>(".gm-menu-row, .gm-detail-cta", section)
+          .toArray<HTMLElement>(
+            ".gm-menu-row, .gm-menu-notes, .gm-detail-cta",
+            section,
+          )
           .forEach((row) => {
             gsap.from(row, {
               autoAlpha: 0,
@@ -92,10 +95,25 @@ export default function MenuList({ category }: { category: FoodCategory }) {
                 <span className="gm-menu-dots" aria-hidden="true" />
                 <span className="gm-menu-price">{d.price}</span>
               </div>
-              {d.desc && <p className="gm-menu-desc">{d.desc}</p>}
+              {d.desc && (
+                <p className="gm-menu-desc" style={{ whiteSpace: "pre-line" }}>
+                  {d.desc}
+                </p>
+              )}
             </article>
           ))}
         </div>
+
+        {category.notes && category.notes.length > 0 && (
+          <div className="gm-menu-notes">
+            <p className="gm-detail-eyebrow gm-menu-notes-head">ご案内</p>
+            {category.notes.map((n) => (
+              <p key={n} className="gm-menu-note">
+                {n}
+              </p>
+            ))}
+          </div>
+        )}
 
         <div className="gm-detail-cta">
           <p className="gm-detail-cta-lead">ご予約を承っております。</p>

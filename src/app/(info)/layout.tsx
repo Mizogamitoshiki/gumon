@@ -1,6 +1,6 @@
 import SiteChrome from "@/components/SiteChrome";
 
-export default function MenuLayout({
+export default function InfoLayout({
   children,
 }: {
   children: React.ReactNode;

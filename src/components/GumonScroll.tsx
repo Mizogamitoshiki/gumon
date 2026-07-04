@@ -5,7 +5,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
 import Link from "next/link";
-import ImageSlot from "./ImageSlot";
+import FoodNavDropdown from "./FoodNavDropdown";
 import { CATS, DRINK_ITEMS, FOOD_CATEGORIES } from "@/lib/menu";
 
 /* ---------------------------------- data ---------------------------------- */
@@ -34,6 +34,7 @@ const NAV_LINK_STYLE: CSSProperties = {
   padding: "10px 2px",
 };
 
+// 9 項目 + 予約が小型機(667px 高)にも収まるサイズ
 const MOBILE_LINK_STYLE: CSSProperties = {
   background: "none",
   border: "none",
@@ -41,10 +42,10 @@ const MOBILE_LINK_STYLE: CSSProperties = {
   textDecoration: "none",
   fontFamily: SERIF,
   fontWeight: 400,
-  fontSize: "clamp(28px,7.5vw,38px)",
+  fontSize: "clamp(22px,5.8vw,30px)",
   letterSpacing: ".14em",
   color: "#f2f0eb",
-  padding: "6px 0",
+  padding: "5px 0",
 };
 
 /* -------------------------------- component ------------------------------- */
@@ -144,7 +145,16 @@ export default function GumonScroll() {
     }
 
     gsap.registerPlugin(ScrollTrigger);
+    // モバイルのアドレスバー伸縮による refresh 連発(=スクロール中のジャンプ)を防ぐ
+    ScrollTrigger.config({ ignoreMobileResize: true });
     const E = "expo.out";
+
+    // モバイルは blur フィルタのアニメーションを省略する(重い割に小画面では
+    // 効果が薄い)。y+opacity の骨格は共通なので演出の質感は保たれる。
+    // 861px = .gm-nav / .gm-scroll-root と同じブレークポイント
+    const lite = window.matchMedia("(max-width: 860px)").matches;
+    const blurIn = (px: number) => (lite ? {} : { filter: `blur(${px}px)` });
+    const blurOut = () => (lite ? {} : { filter: "blur(0px)" });
 
     /* ---- Lenis: smooth but not heavy. autoRaf:false so gsap.ticker is the
        single rAF loop driving both Lenis and ScrollTrigger (no scrub desync) ---- */
@@ -217,15 +227,15 @@ export default function GumonScroll() {
       gsap.set(s, { yPercent: heroLines.indexOf(s) >= 0 ? 0 : 110 })
     );
     qa("[data-fade]").forEach((s) =>
-      gsap.set(s, { opacity: 0, y: 18, filter: "blur(7px)" })
+      gsap.set(s, { opacity: 0, y: 18, ...blurIn(7) })
     );
     qa("[data-cat-row]").forEach((s) =>
-      gsap.set(s, { opacity: 0, y: 16, filter: "blur(6px)" })
+      gsap.set(s, { opacity: 0, y: 16, ...blurIn(6) })
     );
     gsap.set(mapEl, {
       clipPath: "inset(100% 0 0 0)",
       scale: 1.08,
-      filter: "blur(8px)",
+      ...blurIn(8),
     });
 
     const lines = (scene: Element | null) => qaIn(scene, ".mask > span");
@@ -284,12 +294,12 @@ export default function GumonScroll() {
     tl.to(lines(about), { yPercent: 0, duration: 1.0, stagger: 0.1 }, 1.2);
     tl.to(
       fades(about),
-      { opacity: 1, y: 0, filter: "blur(0px)", duration: 1.0, stagger: 0.1 },
+      { opacity: 1, y: 0, ...blurOut(), duration: 1.0, stagger: 0.1 },
       1.35
     );
     tl.to(about, { autoAlpha: 0, duration: 0.6, ease: "power2.in" }, 2.3);
     // darken the wall (not hide it) so foreground text stays legible
-    tl.to(darken, { opacity: 0.62, duration: 0.7, ease: "power2.in" }, 2.4);
+    tl.to(darken, { opacity: 0.72, duration: 0.7, ease: "power2.in" }, 2.4);
 
     // BEAT 3 — editorial menu. Sections reveal in sequence (header rule draws,
     // rows rise) then PERSIST so the whole menu can be read; the panel fades out
@@ -313,7 +323,7 @@ export default function GumonScroll() {
       );
       tl.to(
         rows,
-        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.8, stagger: 0.08 },
+        { opacity: 1, y: 0, ...blurOut(), duration: 0.8, stagger: 0.08 },
         t + 0.15
       );
     });
@@ -326,7 +336,7 @@ export default function GumonScroll() {
     tl.to(lines(drink), { yPercent: 0, duration: 1.0, stagger: 0.08 }, 5.95);
     tl.to(
       fades(drink),
-      { opacity: 1, y: 0, filter: "blur(0px)", duration: 1.0, stagger: 0.09 },
+      { opacity: 1, y: 0, ...blurOut(), duration: 1.0, stagger: 0.09 },
       6.1
     );
     tl.to(drink, { autoAlpha: 0, duration: 0.6, ease: "power2.in" }, 6.95);
@@ -336,12 +346,12 @@ export default function GumonScroll() {
     tl.to(lines(access), { yPercent: 0, duration: 1.0, stagger: 0.1 }, 7.15);
     tl.to(
       fades(access),
-      { opacity: 1, y: 0, filter: "blur(0px)", duration: 1.0, stagger: 0.12 },
+      { opacity: 1, y: 0, ...blurOut(), duration: 1.0, stagger: 0.12 },
       7.3
     );
     tl.to(
       mapEl,
-      { clipPath: "inset(0% 0% 0% 0%)", scale: 1, filter: "blur(0px)", duration: 1.2 },
+      { clipPath: "inset(0% 0% 0% 0%)", scale: 1, ...blurOut(), duration: 1.2 },
       7.25
     );
     tl.to(access, { autoAlpha: 0, duration: 0.6, ease: "power2.in" }, 8.25);
@@ -350,13 +360,13 @@ export default function GumonScroll() {
     tl.to(reserve, { autoAlpha: 1, duration: 0.5 }, 8.55);
     tl.fromTo(
       reserveLogo,
-      { letterSpacing: "0.42em", opacity: 0.35, filter: "blur(9px)", y: 14 },
-      { letterSpacing: "0.1em", opacity: 1, filter: "blur(0px)", y: 0, duration: 1.2 },
+      { letterSpacing: "0.42em", opacity: 0.35, y: 14, ...blurIn(9) },
+      { letterSpacing: "0.1em", opacity: 1, y: 0, ...blurOut(), duration: 1.2 },
       8.6
     );
     tl.to(
       fades(reserve),
-      { opacity: 1, y: 0, filter: "blur(0px)", duration: 1.0, stagger: 0.12 },
+      { opacity: 1, y: 0, ...blurOut(), duration: 1.0, stagger: 0.12 },
       8.95
     );
 
@@ -488,13 +498,11 @@ export default function GumonScroll() {
     };
     root.addEventListener("click", navHandler);
 
-    const onResize = () => ScrollTrigger.refresh();
-    window.addEventListener("resize", onResize);
-
     /* ---- cleanup ---- */
+    // NOTE: リサイズ時の refresh は ScrollTrigger 本体が面倒を見る
+    // (ignoreMobileResize でアドレスバー分は無視)。手動リスナーは張らない
     return () => {
       root.removeEventListener("click", navHandler);
-      window.removeEventListener("resize", onResize);
       removeFilmUnlock();
       if (video) video.removeEventListener("loadedmetadata", onFilmMeta);
       gsap.ticker.remove(filmTick);
@@ -563,40 +571,31 @@ export default function GumonScroll() {
         <nav
           className="gm-nav gm-nav-left"
           style={{
+            gridColumn: 1,
             justifySelf: "start",
             alignItems: "center",
             gap: "clamp(22px,1.8vw,32px)",
           }}
         >
-          <button data-go="0.13" className="gm-nav-link" style={NAV_LINK_STYLE}>
-            愚問について
-          </button>
-          <details className="gm-nav-drop">
-            <summary
-              className="gm-nav-link gm-nav-summary"
-              style={NAV_LINK_STYLE}
-            >
-              料理
-              <span className="gm-nav-caret" aria-hidden="true">
-                ▾
-              </span>
-            </summary>
-            <div className="gm-nav-panel">
-              {FOOD_CATEGORIES.map((c) => (
-                <Link key={c.slug} href={`/menu/${c.slug}`}>
-                  {c.titleJp}
-                  <span className="gm-nav-panel-en">{c.titleEn}</span>
-                </Link>
-              ))}
-            </div>
-          </details>
+          <Link href="/about" className="gm-nav-link" style={NAV_LINK_STYLE}>
+            愚問とは
+          </Link>
+          <FoodNavDropdown
+            summaryClassName="gm-nav-link gm-nav-summary"
+            summaryStyle={NAV_LINK_STYLE}
+          />
+          <Link href="/recruit" className="gm-nav-link" style={NAV_LINK_STYLE}>
+            採用
+          </Link>
         </nav>
 
-        {/* CENTER wordmark lockup */}
+        {/* CENTER wordmark lockup — gridColumn 明示必須: モバイルで左 nav が
+            display:none になると自動配置で 1 列目に流れ、中央からズレる */}
         <button
           data-go="0"
           className="gm-logo"
           style={{
+            gridColumn: 2,
             justifySelf: "center",
             display: "flex",
             flexDirection: "column",
@@ -643,6 +642,7 @@ export default function GumonScroll() {
         <nav
           className="gm-nav gm-nav-right"
           style={{
+            gridColumn: 3,
             justifySelf: "end",
             alignItems: "center",
             gap: "clamp(22px,1.8vw,32px)",
@@ -651,9 +651,12 @@ export default function GumonScroll() {
           <Link href="/menu/drink" className="gm-nav-link" style={NAV_LINK_STYLE}>
             飲み物
           </Link>
-          <button data-go="0.8" className="gm-nav-link" style={NAV_LINK_STYLE}>
+          <Link href="/access" className="gm-nav-link" style={NAV_LINK_STYLE}>
             アクセス
-          </button>
+          </Link>
+          <Link href="/contact" className="gm-nav-link" style={NAV_LINK_STYLE}>
+            お問い合わせ
+          </Link>
           <span className="gm-nav-div" aria-hidden="true" />
           <button
             data-go="0.95"
@@ -746,58 +749,45 @@ export default function GumonScroll() {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          gap: 26,
-          paddingTop: "max(96px, calc(env(safe-area-inset-top) + 80px))",
-          paddingBottom: "max(32px, env(safe-area-inset-bottom))",
+          gap: 18,
+          paddingTop: "max(88px, calc(env(safe-area-inset-top) + 72px))",
+          paddingBottom: "max(28px, env(safe-area-inset-bottom))",
+          overflowY: "auto",
           opacity: menuOpen ? 1 : 0,
           visibility: menuOpen ? "visible" : "hidden",
           transition: "opacity .6s cubic-bezier(0.16,1,0.3,1),visibility .6s",
         }}
       >
-        <button
-          data-go="0.13"
-          className="gm-mobile-link"
-          style={{ "--i": 0, ...MOBILE_LINK_STYLE } as CSSProperties}
-        >
-          愚問について
-        </button>
-        {FOOD_CATEGORIES.map((c, i) => (
+        {(
+          [
+            { href: "/about", label: "愚問とは" },
+            ...FOOD_CATEGORIES.map((c) => ({
+              href: `/menu/${c.slug}`,
+              label: c.titleJp,
+            })),
+            { href: "/menu/drink", label: "飲み物" },
+            { href: "/access", label: "アクセス" },
+            { href: "/contact", label: "お問い合わせ" },
+            { href: "/recruit", label: "採用" },
+          ] as { href: string; label: string }[]
+        ).map((l, i) => (
           <Link
-            key={c.slug}
-            href={`/menu/${c.slug}`}
+            key={l.href}
+            href={l.href}
             className="gm-mobile-link"
             onClick={() => setMenuOpen(false)}
-            style={{ "--i": i + 1, ...MOBILE_LINK_STYLE } as CSSProperties}
+            style={{ "--i": i, ...MOBILE_LINK_STYLE } as CSSProperties}
           >
-            {c.titleJp}
+            {l.label}
           </Link>
         ))}
-        <Link
-          href="/menu/drink"
-          className="gm-mobile-link"
-          onClick={() => setMenuOpen(false)}
-          style={
-            { "--i": FOOD_CATEGORIES.length + 1, ...MOBILE_LINK_STYLE } as CSSProperties
-          }
-        >
-          飲み物
-        </Link>
-        <button
-          data-go="0.8"
-          className="gm-mobile-link"
-          style={
-            { "--i": FOOD_CATEGORIES.length + 2, ...MOBILE_LINK_STYLE } as CSSProperties
-          }
-        >
-          アクセス
-        </button>
         <button
           data-go="0.95"
           className="gm-reserve-outline gm-mobile-link"
           style={
             {
-              "--i": FOOD_CATEGORIES.length + 3,
-              marginTop: 18,
+              "--i": FOOD_CATEGORIES.length + 5,
+              marginTop: 14,
               cursor: "pointer",
               background: "transparent",
               border: "1px solid rgba(185,178,166,.5)",
@@ -815,8 +805,9 @@ export default function GumonScroll() {
         </button>
       </div>
 
-      {/* one pinned, scrubbed timeline */}
-      <div ref={scrollRootRef} style={{ position: "relative", height: "820vh" }}>
+      {/* one pinned, scrubbed timeline — 高さは .gm-scroll-root(globals.css)。
+          デスクトップ 820vh / モバイル 620vh */}
+      <div ref={scrollRootRef} className="gm-scroll-root">
         <div
           ref={stageRef}
           style={{
@@ -876,13 +867,25 @@ export default function GumonScroll() {
                 background: "#161412",
               }}
             >
-              <ImageSlot
-                src="/gumon-wall.webp"
-                alt=""
-                shape="rect"
-                placeholder="TOP背景画像をドロップ"
-                style={{ position: "absolute", inset: 0 }}
-              />
+              {/* モバイルは縦構図の専用アート(縦積み愚問)に切替 */}
+              <picture>
+                <source
+                  media="(max-width: 860px)"
+                  srcSet="/gumon-wall-mobile.webp"
+                />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/gumon-wall.webp"
+                  alt=""
+                  style={{
+                    position: "absolute",
+                    inset: 0,
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                  }}
+                />
+              </picture>
             </div>
 
             {/* dishes spread — REDUCED-MOTION-ONLY static stand-in for the
@@ -1140,6 +1143,17 @@ export default function GumonScroll() {
                 <br />
                 ひと皿の答えとしてお出しします。
               </p>
+              <Link
+                href="/about"
+                className="gm-detail-link"
+                data-fade
+                style={{ marginTop: "clamp(26px,4.5vh,40px)" }}
+              >
+                愚問とは — 続きを読む
+                <span className="gm-arrow" aria-hidden="true">
+                  →
+                </span>
+              </Link>
             </div>
 
             {/* BEAT 3 — editorial menu (whole dishes spread sits behind) */}
@@ -1293,7 +1307,7 @@ export default function GumonScroll() {
                           whiteSpace: "pre-line",
                         }}
                       >
-                        {dr.note}
+                        {dr.desc}
                       </div>
                     </div>
                   ))}
@@ -1404,6 +1418,17 @@ export default function GumonScroll() {
                       </div>
                     ))}
                   </dl>
+                  <Link
+                    href="/access"
+                    className="gm-detail-link"
+                    data-fade
+                    style={{ marginTop: "clamp(20px,3.5vh,32px)" }}
+                  >
+                    アクセスの詳細はこちら
+                    <span className="gm-arrow" aria-hidden="true">
+                      →
+                    </span>
+                  </Link>
                 </div>
                 <div
                   data-map
@@ -1539,6 +1564,17 @@ export default function GumonScroll() {
                   最初に戻る
                 </button>
               </div>
+              <Link
+                href="/contact"
+                className="gm-detail-link"
+                data-fade
+                style={{ marginTop: "clamp(22px,4vh,36px)" }}
+              >
+                そのほかのお問い合わせ
+                <span className="gm-arrow" aria-hidden="true">
+                  →
+                </span>
+              </Link>
               <p
                 style={{
                   margin: "clamp(40px,7vh,72px) 0 0",

@@ -1,14 +1,14 @@
 "use client";
 
 import { useRef } from "react";
-import type { FoodCategory } from "@/lib/menu";
+import type { MenuSection } from "@/lib/menu";
 import { gsap, useGSAP, ScrollTrigger } from "@/lib/gsap-setup";
 import { splitText, type SplitTextResult } from "@/lib/split-text";
 import { GUMON_MOTION } from "@/lib/motion-tokens";
 
-// 料理詳細ページのヒーロー。titleJp を文字マスクでせり上げ、
+// 料理・飲み物 詳細ページのヒーロー。titleJp を文字マスクでせり上げ、
 // 通過中は背景(壁テクスチャ)と前景で速度差を付けて奥行きを出す。
-export default function MenuHero({ category }: { category: FoodCategory }) {
+export default function MenuHero({ category }: { category: MenuSection }) {
   const sectionRef = useRef<HTMLElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const splitRef = useRef<SplitTextResult | null>(null);

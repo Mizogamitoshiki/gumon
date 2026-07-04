@@ -180,7 +180,11 @@ export default function DishGallery({
                 {item.signature && <span className="gm-menu-sig">看板</span>}
               </h3>
               <p className="gm-gal-price">{item.price}</p>
-              {item.desc && <p className="gm-gal-desc">{item.desc}</p>}
+              {item.desc && (
+                <p className="gm-gal-desc" style={{ whiteSpace: "pre-line" }}>
+                  {item.desc}
+                </p>
+              )}
             </div>
           </article>
         ))}
