@@ -3,6 +3,7 @@ import Link from "next/link";
 import MenuHero from "@/components/menu/MenuHero";
 import InfoSection from "@/components/info/InfoSection";
 import FaqList, { type FaqItem } from "@/components/info/FaqList";
+import PullQuote from "@/components/info/PullQuote";
 import TelCta from "@/components/info/TelCta";
 
 export const metadata: Metadata = {
@@ -19,20 +20,59 @@ const HERO = {
   items: [],
 };
 
+/* 細線アイコン(ストーン)。装飾なのですべて aria-hidden */
+const ICONS = {
+  seat: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" aria-hidden="true">
+      <rect x="4.5" y="5" width="15" height="7" rx="1.6" />
+      <path d="M6.5 12v6.5m11-6.5v6.5M4.5 15.5h15" />
+    </svg>
+  ),
+  cups: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" aria-hidden="true">
+      <path d="M7 4.5h10l-1.2 8a3.9 3.9 0 0 1-7.6 0z" />
+      <path d="M12 12.8v5.2m-3.4 1.5h6.8" />
+    </svg>
+  ),
+  leaf: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" aria-hidden="true">
+      <path d="M18.8 5.2C11 5.6 6.7 9 6.3 15.7c0 1.2.4 2.4 1 3.1 6.9-.2 11-4.2 11.5-13.6Z" />
+      <path d="M6.8 18.5C9.5 13.5 13 10.5 17 8.5" />
+    </svg>
+  ),
+  camera: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" aria-hidden="true">
+      <rect x="3.5" y="7" width="17" height="12" rx="2" />
+      <path d="M8.5 7 10 4.5h4L15.5 7" />
+      <circle cx="12" cy="12.8" r="3.4" />
+    </svg>
+  ),
+  compass: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" aria-hidden="true">
+      <circle cx="12" cy="12" r="8.4" />
+      <path d="m14.9 9.1-1.9 4.4-4.4 1.9 1.9-4.4z" />
+    </svg>
+  ),
+} as const;
+
 const TOPICS = [
   {
+    icon: ICONS.seat,
     title: "お席のご予約",
     text: "日時と人数をお知らせください。コースのご相談もあわせて承ります。",
   },
   {
+    icon: ICONS.cups,
     title: "宴会・貸切のご相談",
     text: "飲み放題付きの宴会コースをご用意しています。人数・ご予算に合わせてご提案します。",
   },
   {
+    icon: ICONS.leaf,
     title: "食材のご不安・お子さま連れ",
     text: "ご事情に合わせてできることを一緒に考えます。まずはお気軽にご相談ください。",
   },
   {
+    icon: ICONS.camera,
     title: "取材・お取引について",
     text: "営業時間内にお電話のうえ、ご用件をお知らせください。",
   },
@@ -73,29 +113,48 @@ export default function Page() {
       <MenuHero category={HERO} />
 
       <div className="gm-info-body">
+        <PullQuote text="愚問こそ、歓迎です。" />
+
         <InfoSection eyebrow="BY PHONE" title="お電話でのお問い合わせ">
-          <div className="gm-tel-card" data-info-row>
+          <div className="gm-tel-card gm-tel-card-hero" data-info-row>
             <p className="gm-tel-card-label">TEL</p>
             <a href="tel:0724306038" className="gm-tel-card-number">
               072-430-6038
             </a>
+            <div className="gm-tel-hours">
+              <div className="gm-tel-hours-block">
+                <span className="gm-tel-hours-k">昼</span>
+                <span className="gm-tel-hours-v">11:30–15:00(L.O.14:30)</span>
+              </div>
+              <span className="gm-tel-hours-div" aria-hidden="true" />
+              <div className="gm-tel-hours-block">
+                <span className="gm-tel-hours-k">夜</span>
+                <span className="gm-tel-hours-v">18:00–23:30(L.O.23:00)</span>
+              </div>
+            </div>
             <p className="gm-tel-card-note">
-              受付は営業時間内 ── 昼 11:30–15:00 ／ 夜 18:00–23:30(定休なし)
+              受付は営業時間内 ── 定休日なし。どんな愚問にも、お答えします。
             </p>
           </div>
         </InfoSection>
 
         <InfoSection eyebrow="TOPICS" title="承れるご相談">
-          <div className="gm-info-rows">
+          <div className="gm-contact-grid">
             {TOPICS.map((t) => (
-              <article key={t.title} className="gm-info-row" data-info-row>
-                <h3 className="gm-info-row-title">{t.title}</h3>
-                <p className="gm-info-row-text">{t.text}</p>
+              <article key={t.title} className="gm-access-card" data-info-row>
+                <h3 className="gm-access-card-title">
+                  <span className="gm-access-ic">{t.icon}</span>
+                  {t.title}
+                </h3>
+                <p className="gm-access-card-text">{t.text}</p>
               </article>
             ))}
-            <article className="gm-info-row" data-info-row>
-              <h3 className="gm-info-row-title">採用について</h3>
-              <p className="gm-info-row-text">
+            <article className="gm-access-card" data-info-row>
+              <h3 className="gm-access-card-title">
+                <span className="gm-access-ic">{ICONS.compass}</span>
+                採用について
+              </h3>
+              <p className="gm-access-card-text">
                 一緒に働く仲間を探しています。詳しくは採用ページをご覧ください。
               </p>
               <Link href="/recruit" className="gm-detail-link">

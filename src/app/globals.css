@@ -728,6 +728,52 @@ body {
   color: #f2f0eb;
 }
 
+/* ---- SNS(Instagram)リンク + Web予約セカンダリ ---- */
+.gm-ig {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  text-decoration: none;
+  color: #b9b2a6;
+  transition: color 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.gm-ig svg {
+  width: 19px;
+  height: 19px;
+  flex: 0 0 auto;
+}
+.gm-ig-label {
+  font-family: var(--font-noto-sans-jp), sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+}
+.gm-ig:hover {
+  color: #f2f0eb;
+}
+.gm-ig:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px #1c1b19, 0 0 0 3px rgba(242, 240, 235, 0.7);
+  border-radius: 2px;
+}
+.gm-detail-footer-sns {
+  margin-top: 16px;
+}
+/* Web予約(ホットペッパー)は常にセカンダリ:
+   小さめリンク + 「お電話がありがたい」の一文(オーナー手数料への配慮) */
+.gm-cta-web {
+  margin-top: clamp(18px, 3vh, 26px);
+}
+.gm-cta-web-note {
+  margin: 4px 0 0;
+  font-family: var(--font-noto-sans-jp), sans-serif;
+  font-size: 11.5px;
+  font-weight: 300;
+  letter-spacing: 0.04em;
+  line-height: 1.9;
+  color: rgba(242, 240, 235, 0.5);
+}
+
 /* ---- detail footer ---- */
 .gm-detail-footer {
   background: #161412;
@@ -1029,6 +1075,111 @@ body {
 .gm-info-row .gm-detail-link {
   margin-top: 10px;
 }
+/* アクセスページ: 本文を広げ、店舗情報はアイコン付きテーブルに */
+.gm-info-body-wide {
+  width: min(1040px, 100%);
+}
+.gm-access-table {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+.gm-access-tr {
+  display: grid;
+  grid-template-columns: 26px clamp(76px, 10vw, 120px) 1fr;
+  align-items: baseline;
+  gap: 0 clamp(14px, 2.4vw, 28px);
+  padding: clamp(16px, 2.6vh, 22px) 2px;
+  border-bottom: 1px solid rgba(242, 240, 235, 0.08);
+}
+.gm-access-tr:first-child {
+  border-top: 1px solid rgba(242, 240, 235, 0.08);
+}
+.gm-access-ic {
+  display: inline-flex;
+  width: 19px;
+  height: 19px;
+  color: #b9b2a6;
+  align-self: center;
+}
+.gm-access-ic svg {
+  width: 100%;
+  height: 100%;
+}
+.gm-access-tr dt {
+  font-family: var(--font-noto-serif-jp), serif;
+  font-size: clamp(13px, 1.5vw, 15px);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  color: rgba(242, 240, 235, 0.88);
+}
+.gm-access-tr dd {
+  margin: 0;
+  font-family: var(--font-noto-sans-jp), sans-serif;
+  font-size: clamp(13.5px, 1.5vw, 15px);
+  font-weight: 300;
+  line-height: 1.95;
+  color: rgba(242, 240, 235, 0.86);
+}
+@media (max-width: 560px) {
+  .gm-access-tr {
+    grid-template-columns: 22px 1fr;
+    row-gap: 6px;
+  }
+  .gm-access-tr dd {
+    grid-column: 2;
+  }
+}
+/* 地図 + 交通手段カードの 2 カラム */
+.gm-access-mapgrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(20px, 3vw, 32px);
+  align-items: stretch;
+}
+@media (min-width: 861px) {
+  .gm-access-mapgrid {
+    grid-template-columns: 1.6fr 1fr;
+  }
+}
+.gm-access-map {
+  aspect-ratio: 16 / 11;
+  height: 100%;
+}
+.gm-access-cards {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(14px, 2.2vh, 20px);
+}
+.gm-access-card {
+  border: 1px solid rgba(242, 240, 235, 0.1);
+  background: linear-gradient(180deg, rgba(22, 20, 18, 0.55), rgba(22, 20, 18, 0.3));
+  padding: clamp(18px, 3vw, 26px) clamp(18px, 3vw, 26px);
+}
+.gm-access-card-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 10px;
+  font-family: var(--font-noto-serif-jp), serif;
+  font-size: clamp(15px, 1.7vw, 17.5px);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  color: #f2f0eb;
+}
+.gm-access-card-text {
+  margin: 0;
+  font-family: var(--font-noto-sans-jp), sans-serif;
+  font-size: clamp(12.5px, 1.4vw, 13.5px);
+  font-weight: 300;
+  line-height: 2.05;
+  letter-spacing: 0.02em;
+  color: rgba(242, 240, 235, 0.74);
+}
+.gm-access-maplink {
+  margin-top: 2px;
+}
+
 /* 情報 dl(アクセス) */
 .gm-info-dl {
   margin: 0;
@@ -1072,8 +1223,13 @@ body {
   display: block;
   width: 100%;
   height: 100%;
-  opacity: 0.88;
-  filter: grayscale(0.25) contrast(1.05) brightness(0.92);
+}
+/* Google マップ埋め込みのダーク化(サイトの陰影に合わせる)。
+   invert+hue-rotate で明暗だけ反転し、色相は元へ戻す定石。
+   sepia でわずかに暖色(ストーン)へ寄せ、彩度を落として端正に */
+.gm-map-dark {
+  filter: invert(0.92) hue-rotate(180deg) grayscale(0.4) brightness(0.88)
+    contrast(0.92) sepia(0.18);
 }
 @media (max-width: 640px) {
   .gm-info-map {
@@ -1264,6 +1420,83 @@ body {
   letter-spacing: 0.04em;
   line-height: 1.9;
   color: rgba(242, 240, 235, 0.62);
+}
+/* 問い合わせページの主役カード: コーナーマーク + 昼夜の営業時間 */
+.gm-tel-card-hero {
+  position: relative;
+}
+.gm-tel-card-hero::before,
+.gm-tel-card-hero::after {
+  content: "";
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  pointer-events: none;
+}
+.gm-tel-card-hero::before {
+  top: -1px;
+  left: -1px;
+  border-top: 1px solid rgba(185, 178, 166, 0.75);
+  border-left: 1px solid rgba(185, 178, 166, 0.75);
+}
+.gm-tel-card-hero::after {
+  bottom: -1px;
+  right: -1px;
+  border-bottom: 1px solid rgba(185, 178, 166, 0.75);
+  border-right: 1px solid rgba(185, 178, 166, 0.75);
+}
+.gm-tel-hours {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: clamp(12px, 3vw, 26px);
+  margin-top: clamp(18px, 3vh, 26px);
+}
+.gm-tel-hours-block {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.gm-tel-hours-k {
+  font-family: var(--font-noto-serif-jp), serif;
+  font-size: clamp(13px, 1.5vw, 15px);
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  color: #b9b2a6;
+}
+.gm-tel-hours-v {
+  font-family: var(--font-noto-sans-jp), sans-serif;
+  font-size: clamp(12.5px, 1.4vw, 14px);
+  font-weight: 300;
+  letter-spacing: 0.03em;
+  color: rgba(242, 240, 235, 0.86);
+  font-variant-numeric: tabular-nums;
+}
+.gm-tel-hours-div {
+  width: 1px;
+  height: 14px;
+  background: rgba(242, 240, 235, 0.16);
+}
+@media (max-width: 520px) {
+  .gm-tel-hours {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .gm-tel-hours-div {
+    display: none;
+  }
+}
+/* 承れるご相談: アイコンカードの 2 列グリッド(モバイル 1 列) */
+.gm-contact-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(14px, 2.2vh, 20px);
+}
+@media (min-width: 721px) {
+  .gm-contact-grid {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 /* ============================================================
@@ -1547,6 +1780,222 @@ body {
     background: #b9b2a6;
     transform: scaleX(0);
     transform-origin: left center;
+  }
+}
+
+/* ============================================================
+   お品書きボード(全カテゴリ一望・参考メニュー表の翻訳)
+   リボン=Deep面+ヘアライン / 点線価格 / コース=紙カード
+   ============================================================ */
+.gm-board {
+  padding: clamp(88px, 14vh, 160px) clamp(16px, 4vw, 32px)
+    clamp(64px, 10vh, 110px);
+}
+/* 額縁: 1px ヘアライン + 四隅のコーナーマーク(ストーン) */
+.gm-board-frame {
+  position: relative;
+  width: min(1080px, 100%);
+  margin: 0 auto;
+  padding: clamp(30px, 5vw, 72px) clamp(20px, 4.5vw, 64px)
+    clamp(36px, 5.5vw, 72px);
+  border: 1px solid rgba(242, 240, 235, 0.1);
+  background: linear-gradient(180deg, rgba(22, 20, 18, 0.5), rgba(22, 20, 18, 0.2));
+}
+.gm-board-frame::before,
+.gm-board-frame::after {
+  content: "";
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  pointer-events: none;
+}
+.gm-board-frame::before {
+  top: -1px;
+  left: -1px;
+  border-top: 1px solid rgba(185, 178, 166, 0.75);
+  border-left: 1px solid rgba(185, 178, 166, 0.75);
+}
+.gm-board-frame::after {
+  bottom: -1px;
+  right: -1px;
+  border-bottom: 1px solid rgba(185, 178, 166, 0.75);
+  border-right: 1px solid rgba(185, 178, 166, 0.75);
+}
+.gm-board-head {
+  text-align: center;
+  margin-bottom: clamp(36px, 6vh, 64px);
+}
+.gm-board-eyebrow {
+  margin-bottom: 10px;
+}
+.gm-board-title {
+  margin: 0;
+  font-family: var(--font-noto-serif-jp), serif;
+  font-size: clamp(30px, 5vw, 46px);
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  text-indent: 0.24em;
+  color: #f2f0eb;
+  overflow: clip;
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+}
+.gm-board-head-rule {
+  display: block;
+  width: min(320px, 60%);
+  height: 1px;
+  margin: 22px auto 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(185, 178, 166, 0.6),
+    transparent
+  );
+}
+/* 1 カテゴリ=1 ページ構成: 額縁は読みやすい一段組の幅に絞る */
+.gm-board-frame-single {
+  width: min(780px, 100%);
+}
+.gm-board-sec {
+  margin-bottom: clamp(40px, 6vh, 64px);
+}
+/* リボン見出し(Deep面 + ヘアライン。現在カテゴリはストーンで強調) */
+.gm-board-ribbon {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin: 0 0 clamp(16px, 2.6vh, 24px);
+  padding: 11px 18px;
+  background: #161412;
+  border: 1px solid rgba(242, 240, 235, 0.13);
+  border-left: 2px solid rgba(185, 178, 166, 0.55);
+}
+.gm-board-ribbon.is-current {
+  border-color: rgba(185, 178, 166, 0.6);
+  border-left-color: #b9b2a6;
+}
+.gm-board-ribbon-jp {
+  font-family: var(--font-noto-serif-jp), serif;
+  font-size: clamp(17px, 2vw, 21px);
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  color: #f2f0eb;
+}
+.gm-board-ribbon-en {
+  font-family: var(--font-noto-sans-jp), sans-serif;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: #b9b2a6;
+}
+.gm-board-rows {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(12px, 2vh, 18px);
+}
+.gm-board-row {
+  padding: 0 2px;
+}
+.gm-board-name {
+  font-size: clamp(15.5px, 1.7vw, 19px);
+}
+.gm-board-price {
+  font-size: clamp(13.5px, 1.5vw, 16px);
+}
+.gm-board-desc {
+  font-size: clamp(11px, 1.2vw, 12.5px);
+  display: block !important; /* 小画面での desc 非表示規則より優先して常時表示 */
+}
+/* コース: 紙(アイボリー)カード — 参考デザインの紙面の翻訳 */
+.gm-board-cards {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(14px, 2.2vh, 20px);
+}
+.gm-board-card {
+  background: #f2f0eb;
+  color: #1c1b19;
+  padding: clamp(18px, 3vw, 26px) clamp(18px, 3vw, 28px);
+  border-radius: 2px;
+  box-shadow: 0 24px 60px -32px rgba(0, 0, 0, 0.8);
+}
+.gm-board-card-line {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.gm-board-card-name {
+  margin: 0;
+  font-family: var(--font-noto-serif-jp), serif;
+  font-size: clamp(16px, 1.9vw, 20px);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: #1c1b19;
+}
+.gm-board-card-price {
+  margin: 0;
+  font-family: var(--font-noto-serif-jp), serif;
+  font-size: clamp(13px, 1.5vw, 15px);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: rgba(28, 27, 25, 0.78);
+  white-space: nowrap;
+}
+.gm-board-card-desc {
+  margin: 10px 0 0;
+  font-family: var(--font-noto-sans-jp), sans-serif;
+  font-size: clamp(12px, 1.3vw, 13px);
+  font-weight: 400;
+  line-height: 1.95;
+  letter-spacing: 0.02em;
+  color: rgba(28, 27, 25, 0.72);
+}
+.gm-board-notes {
+  margin-top: clamp(14px, 2.2vh, 20px);
+  padding-top: clamp(12px, 2vh, 16px);
+  border-top: 1px dotted rgba(185, 178, 166, 0.3);
+}
+/* 締めの一枚 + 共通注記 + CTA */
+.gm-board-photo {
+  margin: clamp(16px, 3vh, 32px) 0 0;
+  overflow: clip;
+  border: 1px solid rgba(242, 240, 235, 0.08);
+  aspect-ratio: 21 / 9;
+  clip-path: inset(0 0 0 0);
+}
+.gm-board-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 46%;
+  filter: saturate(1.1) contrast(1.04) brightness(0.96);
+}
+.gm-board-foot {
+  margin-top: clamp(20px, 3.2vh, 28px);
+}
+/* 他カテゴリへの導線 */
+.gm-board-others {
+  margin-top: clamp(36px, 5.5vh, 56px);
+  padding-top: clamp(22px, 3.6vh, 32px);
+  border-top: 1px solid rgba(242, 240, 235, 0.08);
+}
+.gm-board-others-head {
+  margin-bottom: 8px;
+}
+.gm-board-others-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 34px;
+}
+.gm-board-cta {
+  margin-top: clamp(40px, 6.5vh, 72px);
+}
+@media (max-width: 480px) {
+  .gm-board-photo {
+    aspect-ratio: 4 / 3;
   }
 }
 

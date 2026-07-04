@@ -128,7 +128,11 @@ export default function Page() {
               </p>
             </article>
           </div>
-          <TelCta lead="ご応募・ご相談はお電話で。" label="電話をかける" />
+          <TelCta
+            lead="ご応募・ご相談はお電話で。"
+            label="電話をかける"
+            showWebReserve={false}
+          />
         </InfoSection>
       </div>
     </main>

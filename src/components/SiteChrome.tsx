@@ -3,6 +3,7 @@ import { FOOD_CATEGORIES } from "@/lib/menu";
 import { SmoothScroll } from "@/components/smooth-scroll";
 import DetailNav from "@/components/DetailNav";
 import ScrollProgress from "@/components/ScrollProgress";
+import InstagramLink from "@/components/InstagramLink";
 
 // 店舗案内系のページ(/about /access /contact /recruit)へのリンク。
 // ヘッダー(デスクトップ)とフッターの両方で使う
@@ -49,6 +50,9 @@ export default function SiteChrome({
           <div>
             <h3>愚問</h3>
             <span className="gm-detail-footer-sub">中国料理 GUMON</span>
+            <div className="gm-detail-footer-sns">
+              <InstagramLink />
+            </div>
           </div>
           <nav className="gm-detail-footer-nav" aria-label="お品書き">
             {FOOD_CATEGORIES.map((c) => (

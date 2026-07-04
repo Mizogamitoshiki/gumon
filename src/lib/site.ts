@@ -10,6 +10,12 @@ export const SITE_NAME = "中国料理 愚問（GUMON）";
 export const TEL_DISPLAY = "072-430-6038";
 export const TEL_LINK = "tel:0724306038";
 
+// SNS・外部予約。実 URL が届き次第ここだけ差し替える(TODO)。
+// ※ホットペッパーは成約手数料が発生するため、UI 上は電話予約を常に主役にし、
+//   Web 予約はセカンダリ+「お電話がいちばんありがたい」の一文を添える方針
+export const INSTAGRAM_URL = "https://www.instagram.com/"; // TODO: 公式アカウント URL へ差し替え
+export const HOTPEPPER_URL = "https://www.hotpepper.jp/"; // TODO: 店舗ページ URL へ差し替え
+
 export const ADDRESS = {
   full: "大阪府貝塚市加神1-4-26 貝塚セルシー",
   region: "大阪府",

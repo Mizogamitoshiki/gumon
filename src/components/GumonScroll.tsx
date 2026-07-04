@@ -6,7 +6,9 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
 import Link from "next/link";
 import FoodNavDropdown from "./FoodNavDropdown";
+import InstagramLink from "./InstagramLink";
 import { CATS, DRINK_ITEMS, FOOD_CATEGORIES } from "@/lib/menu";
+import { HOTPEPPER_URL } from "@/lib/site";
 
 /* ---------------------------------- data ---------------------------------- */
 
@@ -1443,6 +1445,7 @@ export default function GumonScroll() {
                   }}
                 >
                   <iframe
+                    className="gm-map-dark"
                     src="https://maps.google.com/maps?q=%E5%A4%A7%E9%98%AA%E5%BA%9C%E8%B2%9D%E5%A1%9A%E5%B8%82%E5%8A%A0%E7%A5%9E1-4-26&output=embed&hl=ja&z=17"
                     title="中国料理 愚問 へのアクセス地図"
                     width="100%"
@@ -1452,8 +1455,6 @@ export default function GumonScroll() {
                       inset: 0,
                       border: 0,
                       display: "block",
-                      opacity: 0.88,
-                      filter: "grayscale(0.25) contrast(1.05) brightness(0.92)",
                     }}
                     loading="lazy"
                     allowFullScreen
@@ -1564,17 +1565,48 @@ export default function GumonScroll() {
                   最初に戻る
                 </button>
               </div>
-              <Link
-                href="/contact"
-                className="gm-detail-link"
+              <div
                 data-fade
-                style={{ marginTop: "clamp(22px,4vh,36px)" }}
+                style={{
+                  marginTop: "clamp(20px,3.5vh,32px)",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: 6,
+                }}
               >
-                そのほかのお問い合わせ
-                <span className="gm-arrow" aria-hidden="true">
-                  →
-                </span>
-              </Link>
+                <a
+                  href={HOTPEPPER_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="gm-detail-link"
+                >
+                  Webで予約する(ホットペッパーグルメ)
+                  <span className="gm-arrow" aria-hidden="true">
+                    →
+                  </span>
+                </a>
+                <p className="gm-cta-web-note" style={{ margin: 0 }}>
+                  お電話でのご予約が、店にはいちばんありがたい方法です。
+                </p>
+              </div>
+              <div
+                data-fade
+                style={{
+                  marginTop: "clamp(16px,3vh,26px)",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 28,
+                }}
+              >
+                <Link href="/contact" className="gm-detail-link">
+                  そのほかのお問い合わせ
+                  <span className="gm-arrow" aria-hidden="true">
+                    →
+                  </span>
+                </Link>
+                <InstagramLink />
+              </div>
               <p
                 style={{
                   margin: "clamp(40px,7vh,72px) 0 0",
