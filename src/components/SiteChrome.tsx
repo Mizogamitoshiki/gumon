@@ -2,6 +2,7 @@ import Link from "next/link";
 import { FOOD_CATEGORIES } from "@/lib/menu";
 import { SmoothScroll } from "@/components/smooth-scroll";
 import DetailNav from "@/components/DetailNav";
+import DetailMobileNav from "@/components/DetailMobileNav";
 import ScrollProgress from "@/components/ScrollProgress";
 import InstagramLink from "@/components/InstagramLink";
 
@@ -38,9 +39,12 @@ export default function SiteChrome({
         </Link>
         <DetailNav />
 
-        <a href="tel:0724306038" className="gm-detail-reserve">
-          予約
-        </a>
+        <div className="gm-detail-header-right">
+          <a href="tel:0724306038" className="gm-detail-reserve">
+            予約
+          </a>
+          <DetailMobileNav />
+        </div>
       </header>
 
       <SmoothScroll>{children}</SmoothScroll>

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, type CSSProperties } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { FOOD_CATEGORIES } from "@/lib/menu";
 
 /**
@@ -18,6 +19,10 @@ export default function FoodNavDropdown({
   summaryStyle?: CSSProperties;
 }) {
   const ref = useRef<HTMLDetailsElement>(null);
+  const pathname = usePathname();
+  const isCurrentSection = FOOD_CATEGORIES.some(
+    (c) => pathname === `/menu/${c.slug}`,
+  );
 
   useEffect(() => {
     const el = ref.current;
@@ -51,7 +56,11 @@ export default function FoodNavDropdown({
 
   return (
     <details ref={ref} className="gm-nav-drop">
-      <summary className={summaryClassName} style={summaryStyle}>
+      <summary
+        className={summaryClassName}
+        style={summaryStyle}
+        aria-current={isCurrentSection ? "true" : undefined}
+      >
         料理
         <span className="gm-nav-caret" aria-hidden="true">
           ▾
@@ -59,7 +68,11 @@ export default function FoodNavDropdown({
       </summary>
       <div className="gm-nav-panel">
         {FOOD_CATEGORIES.map((c) => (
-          <Link key={c.slug} href={`/menu/${c.slug}`}>
+          <Link
+            key={c.slug}
+            href={`/menu/${c.slug}`}
+            aria-current={pathname === `/menu/${c.slug}` ? "page" : undefined}
+          >
             {c.titleJp}
             <span className="gm-nav-panel-en">{c.titleEn}</span>
           </Link>

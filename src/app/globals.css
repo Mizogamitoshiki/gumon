@@ -480,7 +480,7 @@ body {
   letter-spacing: 0.14em;
   color: rgba(242, 240, 235, 0.88);
   text-decoration: none;
-  padding: 8px 2px;
+  padding: 11px 2px;
 }
 .gm-detail-link .gm-arrow {
   display: inline-block;
@@ -518,7 +518,7 @@ body {
 }
 @media (max-width: 480px) {
   .gm-detail-link {
-    padding: 11px 2px;
+    padding: 13px 2px;
   }
 }
 /* per-category link sits right-aligned under the dish rows */
@@ -621,6 +621,12 @@ body {
   .gm-detail-home-sub {
     display: none;
   }
+}
+/* 予約ピル + ハンバーガー(モバイル)をひとまとまりで右寄せ */
+.gm-detail-header-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
 }
 .gm-detail-reserve {
   text-decoration: none;
@@ -729,10 +735,13 @@ body {
 }
 
 /* ---- SNS(Instagram)リンク + Web予約セカンダリ ---- */
+/* padding+負の margin で見た目のサイズは変えずタップ領域だけ44pxへ拡張 */
 .gm-ig {
   display: inline-flex;
   align-items: center;
   gap: 9px;
+  padding: 13px 8px;
+  margin: -13px -8px;
   text-decoration: none;
   color: #b9b2a6;
   transition: color 0.35s cubic-bezier(0.16, 1, 0.3, 1);
@@ -771,7 +780,7 @@ body {
   font-weight: 300;
   letter-spacing: 0.04em;
   line-height: 1.9;
-  color: rgba(242, 240, 235, 0.5);
+  color: rgba(242, 240, 235, 0.6);
 }
 
 /* ---- detail footer ---- */
@@ -832,7 +841,7 @@ body {
   text-align: center;
   font-size: 11px;
   letter-spacing: 0.24em;
-  color: rgba(242, 240, 235, 0.32);
+  color: rgba(242, 240, 235, 0.58);
 }
 
 /* ---- detail on-load reveal (reduced-motion: shown immediately) ---- */
@@ -913,6 +922,15 @@ body {
 .gm-nav-panel a:hover {
   color: #f2f0eb;
   background: rgba(242, 240, 235, 0.05);
+}
+.gm-nav-panel a[aria-current="page"] {
+  color: #f2f0eb;
+  background: rgba(242, 240, 235, 0.06);
+  box-shadow: inset 2px 0 0 #b9b2a6;
+}
+/* トリガー(「料理」)自体も、配下ページ閲覧中はストーンで示す */
+.gm-nav-summary[aria-current="true"] {
+  color: #f2f0eb;
 }
 .gm-nav-panel-en {
   font-family: var(--font-noto-sans-jp), sans-serif;
@@ -1027,7 +1045,7 @@ body {
 .gm-info-prose p {
   margin: 0 0 1.9em;
   font-family: var(--font-noto-sans-jp), sans-serif;
-  font-size: clamp(14px, 1.6vw, 16px);
+  font-size: clamp(15px, 1.6vw, 16px);
   font-weight: 300;
   line-height: 2.3;
   letter-spacing: 0.03em;

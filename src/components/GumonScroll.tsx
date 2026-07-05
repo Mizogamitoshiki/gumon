@@ -9,6 +9,7 @@ import FoodNavDropdown from "./FoodNavDropdown";
 import InstagramLink from "./InstagramLink";
 import { CATS, DRINK_ITEMS, FOOD_CATEGORIES } from "@/lib/menu";
 import { HOTPEPPER_URL } from "@/lib/site";
+import { useMobileNavA11y } from "@/lib/use-mobile-nav";
 
 /* ---------------------------------- data ---------------------------------- */
 
@@ -60,10 +61,19 @@ export default function GumonScroll() {
   const stageRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const lastYRef = useRef(0);
+  const burgerRef = useRef<HTMLButtonElement>(null);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
 
   const [menuOpen, setMenuOpen] = useState(false);
   const menuOpenRef = useRef(false);
   menuOpenRef.current = menuOpen;
+  // Escape で閉じる・フォーカストラップ・閉じている間の body スクロールロック
+  useMobileNavA11y(
+    menuOpen,
+    () => setMenuOpen(false),
+    mobileMenuRef,
+    burgerRef,
+  );
 
   useEffect(() => {
     const root = rootRef.current;
@@ -683,6 +693,7 @@ export default function GumonScroll() {
 
         {/* hamburger (mobile) */}
         <button
+          ref={burgerRef}
           onClick={() => setMenuOpen((o) => !o)}
           aria-label="メニュー"
           aria-expanded={menuOpen}
@@ -738,8 +749,12 @@ export default function GumonScroll() {
 
       {/* mobile menu overlay */}
       <div
+        ref={mobileMenuRef}
         id="gm-mobile-menu"
         data-open={menuOpen}
+        role="dialog"
+        aria-modal="true"
+        aria-label="メニュー"
         style={{
           position: "fixed",
           inset: 0,
@@ -1612,7 +1627,7 @@ export default function GumonScroll() {
                   margin: "clamp(40px,7vh,72px) 0 0",
                   fontSize: 11,
                   letterSpacing: ".24em",
-                  color: "rgba(242,240,235,.32)",
+                  color: "rgba(242,240,235,.58)",
                 }}
               >
                 © GUMON
