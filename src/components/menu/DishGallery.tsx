@@ -157,27 +157,43 @@ export default function DishGallery({
         {items.map((item, i) => (
           <article key={item.name} className="gm-gal-panel">
             <div className="gm-gal-frame">
-              {item.img ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={item.img}
-                  alt={item.name}
-                  className="gm-gal-media"
-                  loading="lazy"
-                  decoding="async"
-                  draggable={false}
-                />
-              ) : (
-                <div className="gm-gal-media gm-gal-ph" aria-hidden="true">
-                  <span className="gm-gal-ph-char">{item.name.charAt(0)}</span>
-                </div>
-              )}
+              {/* zoom ラッパー: hover のスケールはここに掛ける(視差と分離) */}
+              <div className="gm-gal-zoom">
+                {item.img ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={item.img}
+                    alt={item.name}
+                    className="gm-gal-media"
+                    loading="lazy"
+                    decoding="async"
+                    draggable={false}
+                  />
+                ) : (
+                  <div className="gm-gal-media gm-gal-ph" aria-hidden="true">
+                    <span className="gm-gal-ph-char">
+                      {item.name.charAt(0)}
+                    </span>
+                  </div>
+                )}
+              </div>
             </div>
             <div className="gm-gal-caption">
               <p className="gm-gal-no">{String(i + 1).padStart(2, "0")}</p>
               <h3 className="gm-gal-name">
                 {item.name}
                 {item.signature && <span className="gm-menu-sig">看板</span>}
+                {item.recommended && (
+                  <span className="gm-menu-sig gm-badge-reco">おすすめ</span>
+                )}
+                {item.spicy && (
+                  <span
+                    className="gm-spicy"
+                    aria-label={`辛さレベル${item.spicy}`}
+                  >
+                    {"辛".repeat(item.spicy)}
+                  </span>
+                )}
               </h3>
               <p className="gm-gal-price">{item.price}</p>
               {item.desc && (

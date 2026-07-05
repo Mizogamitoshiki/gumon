@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { HOTPEPPER_URL } from "@/lib/site";
 
 // 電話予約 CTA(情報ページ共通)。InfoSection 内に置くと
@@ -10,10 +11,12 @@ export default function TelCta({
   lead = "ご予約を承っております。",
   label = "電話で予約する",
   showWebReserve = true,
+  showAccessLink = true,
 }: {
   lead?: string;
   label?: string;
   showWebReserve?: boolean;
+  showAccessLink?: boolean;
 }) {
   return (
     <div className="gm-detail-cta" data-info-row>
@@ -53,6 +56,16 @@ export default function TelCta({
           <p className="gm-cta-web-note">
             お電話でのご予約が、店にはいちばんありがたい方法です。
           </p>
+        </div>
+      )}
+      {showAccessLink && (
+        <div className="gm-cta-access">
+          <Link href="/access" className="gm-detail-link">
+            アクセスを見る — 貝塚駅 徒歩10分
+            <span className="gm-arrow" aria-hidden="true">
+              →
+            </span>
+          </Link>
         </div>
       )}
     </div>

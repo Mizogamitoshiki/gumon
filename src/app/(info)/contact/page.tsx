@@ -5,6 +5,7 @@ import InfoSection from "@/components/info/InfoSection";
 import FaqList, { type FaqItem } from "@/components/info/FaqList";
 import PullQuote from "@/components/info/PullQuote";
 import TelCta from "@/components/info/TelCta";
+import BreadcrumbJsonLd from "@/components/BreadcrumbJsonLd";
 
 export const metadata: Metadata = {
   title: "お問い合わせ・ご予約 — よくあるご質問",
@@ -107,9 +108,25 @@ const FAQ: FaqItem[] = [
   },
 ];
 
+// FAQ リッチリザルト(Google 検索でのアコーディオン表示)向け構造化データ
+const FAQ_JSONLD = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: FAQ.map((f) => ({
+    "@type": "Question",
+    name: f.q,
+    acceptedAnswer: { "@type": "Answer", text: f.a },
+  })),
+};
+
 export default function Page() {
   return (
     <main className="gm-cine-main">
+      <BreadcrumbJsonLd trail={[{ name: "お問い合わせ", path: "/contact" }]} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_JSONLD) }}
+      />
       <MenuHero category={HERO} />
 
       <div className="gm-info-body">
@@ -168,7 +185,7 @@ export default function Page() {
         </InfoSection>
 
         <InfoSection eyebrow="FAQ" title="よくあるご質問">
-          <FaqList items={FAQ} />
+          <FaqList items={FAQ} searchable />
         </InfoSection>
 
         <InfoSection eyebrow="VISIT" title="ご来店の前に">

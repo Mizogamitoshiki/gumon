@@ -143,6 +143,9 @@ export default function GumonScroll() {
       // (the <video> never gets a src in this branch, so nothing downloads)
       const filmEl = q("[data-film]");
       if (filmEl) filmEl.style.display = "none";
+      // hero のアンビエント映像も同様に出さない(src 未付与のまま)
+      const ambientEl = q("[data-hero-ambient]");
+      if (ambientEl) ambientEl.style.display = "none";
       // match the animated scrim level so static text contrast holds; fixed
       // for the same reason as the backdrop above
       const darkenEl = q("[data-darken]");
@@ -189,6 +192,10 @@ export default function GumonScroll() {
     const glow = q("[data-glow]");
     const glow2 = q("[data-glow2]");
     const foodhero = q("[data-foodhero]");
+    const heroAmbient = q("[data-hero-ambient]");
+    const heroAmbientVideo = root.querySelector<HTMLVideoElement>(
+      "[data-hero-ambient-video]"
+    );
     const film = q("[data-film]");
     const barTop = q("[data-bar-top]");
     const barBot = q("[data-bar-bot]");
@@ -268,13 +275,17 @@ export default function GumonScroll() {
 
     // BEAT 1 — hero -> food reveal
     tl.to(cue, { opacity: 0, duration: 0.3 }, 0);
-    tl.to(hero, { opacity: 0, scale: 1.04, duration: 0.7, ease: "power2.in" }, 0.3);
+    // autoAlpha: 退場後は hit-test からも外す(hero に CTA ボタンがあるため、
+    // 不可視のまま tel: リンクが誤タップされる事故を防ぐ)
+    tl.to(hero, { autoAlpha: 0, scale: 1.04, duration: 0.7, ease: "power2.in" }, 0.3);
     tl.fromTo(
       lines(hero),
       { yPercent: 0 },
       { yPercent: -110, duration: 0.7, ease: "power2.in", stagger: 0.05 },
       0.3
     );
+    // hero のアンビエント映像は hero と一緒に静かに退場(復帰はしない)
+    tl.to(heroAmbient, { opacity: 0, duration: 0.55, ease: "power2.in" }, 0.35);
     // wall background: ONE calm, monotonic, vertical-only Ken Burns across the
     // whole scroll — a single living photograph slowly breathing. No reversals,
     // no rotation, no horizontal pan, no animated blur (GPU transform only).
@@ -413,6 +424,18 @@ export default function GumonScroll() {
       video.load();
       if (video.readyState >= 1) onFilmMeta();
     }
+    // hero アンビエント: 同一ファイルの通常ループ再生(キャッシュ共有)。
+    // 自動再生が拒否されても致命ではない(静かな壁のまま)
+    if (heroAmbientVideo) {
+      heroAmbientVideo.src = "/cuisine-cinematic-opt.mp4";
+      heroAmbientVideo.play().catch(() => {});
+      gsap.to(heroAmbient, {
+        opacity: 0.16,
+        duration: 2.2,
+        ease: "power2.out",
+        delay: 0.5,
+      });
+    }
     const filmTick = () => {
       if (!video || !filmDur || video.readyState < 2 || video.seeking) return;
       const target = filmScrub.p * Math.max(0, filmDur - 0.06);
@@ -463,9 +486,21 @@ export default function GumonScroll() {
     });
 
     /* ---- progress bar + header hide/show ---- */
+    let ambientPaused = false;
     function onScroll() {
       const vh = window.innerHeight || 1;
       const y = window.scrollY || lenis.scroll || 0;
+      // hero を通過したらアンビエント映像を止める(電池・デコード節約)。戻れば再開
+      if (heroAmbientVideo) {
+        const past = y > vh * 1.2;
+        if (past && !ambientPaused) {
+          heroAmbientVideo.pause();
+          ambientPaused = true;
+        } else if (!past && ambientPaused) {
+          heroAmbientVideo.play().catch(() => {});
+          ambientPaused = false;
+        }
+      }
       const prog = progRef.current;
       if (prog) {
         const max = document.documentElement.scrollHeight - vh || 1;
@@ -905,6 +940,39 @@ export default function GumonScroll() {
               </picture>
             </div>
 
+            {/* hero ambient film — ファーストビューに湯気と炎の気配を敷く。
+                低不透明度のループ再生(scrub とは独立)。src は motion 分岐での
+                み付与(reduced-motion では一切ダウンロードさせない)。ファイルは
+                スクラブ用と同一 URL のためキャッシュ 1 回で済む */}
+            <div
+              data-hero-ambient
+              aria-hidden="true"
+              style={{
+                position: "absolute",
+                inset: "-10%",
+                zIndex: 1,
+                opacity: 0,
+                pointerEvents: "none",
+                willChange: "opacity",
+              }}
+            >
+              <video
+                data-hero-ambient-video
+                muted
+                loop
+                playsInline
+                preload="none"
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  filter: "saturate(1.05) brightness(0.9)",
+                }}
+              />
+            </div>
+
             {/* dishes spread — REDUCED-MOTION-ONLY static stand-in for the
                 cuisine film (the scrubbed video took over the 料理/飲み物
                 crossfade). No src in JSX: the reduce branch assigns it from
@@ -1093,6 +1161,66 @@ export default function GumonScroll() {
                     G U M O N
                   </span>
                 </span>
+                {/* キャッチコピー: 行マスクで hero の文字群と同じ言語で登場・退場 */}
+                <span className="mask" style={{ marginTop: "clamp(26px,4.5vh,42px)" }}>
+                  <span
+                    data-rise
+                    style={{
+                      fontFamily: SERIF,
+                      fontSize: "clamp(14px,1.8vw,19px)",
+                      fontWeight: 300,
+                      letterSpacing: ".18em",
+                      lineHeight: 1.9,
+                      color: "rgba(242,240,235,.86)",
+                    }}
+                  >
+                    問い続ける台所の、今夜の答えを。
+                  </span>
+                </span>
+                {/* hero CTA: 電話予約(朱)を主役に、お品書きへの食欲導線を添える */}
+                <div
+                  style={{
+                    marginTop: "clamp(24px,4vh,38px)",
+                    display: "flex",
+                    gap: 14,
+                    flexWrap: "wrap",
+                    justifyContent: "center",
+                  }}
+                >
+                  <a
+                    href="tel:0724306038"
+                    className="gm-tel-btn"
+                    style={{
+                      display: "inline-block",
+                      textDecoration: "none",
+                      background: "#b23a2e",
+                      color: "#f2f0eb",
+                      fontFamily: SERIF,
+                      fontSize: 14,
+                      letterSpacing: ".16em",
+                      padding: "13px 36px",
+                    }}
+                  >
+                    電話で予約する
+                  </a>
+                  <Link
+                    href="/menu/dinner"
+                    className="gm-back-btn"
+                    style={{
+                      display: "inline-block",
+                      textDecoration: "none",
+                      background: "none",
+                      border: "1px solid rgba(242,240,235,.28)",
+                      color: "#f2f0eb",
+                      fontFamily: SERIF,
+                      fontSize: 14,
+                      letterSpacing: ".16em",
+                      padding: "12px 30px",
+                    }}
+                  >
+                    お品書きを見る
+                  </Link>
+                </div>
               </div>
             </div>
 
@@ -1614,8 +1742,14 @@ export default function GumonScroll() {
                   gap: 28,
                 }}
               >
+                <Link href="/access" className="gm-detail-link">
+                  アクセスを見る
+                  <span className="gm-arrow" aria-hidden="true">
+                    →
+                  </span>
+                </Link>
                 <Link href="/contact" className="gm-detail-link">
-                  そのほかのお問い合わせ
+                  お問い合わせ
                   <span className="gm-arrow" aria-hidden="true">
                     →
                   </span>

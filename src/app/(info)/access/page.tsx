@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import MenuHero from "@/components/menu/MenuHero";
 import InfoSection from "@/components/info/InfoSection";
 import TelCta from "@/components/info/TelCta";
+import BreadcrumbJsonLd from "@/components/BreadcrumbJsonLd";
 
 export const metadata: Metadata = {
   title: "アクセス — 貝塚駅 東出口より徒歩10分",
@@ -85,6 +86,7 @@ const INFO_ROWS = [
 export default function Page() {
   return (
     <main className="gm-cine-main">
+      <BreadcrumbJsonLd trail={[{ name: "アクセス", path: "/access" }]} />
       <MenuHero category={HERO} />
 
       <div className="gm-info-body gm-info-body-wide">
@@ -171,7 +173,7 @@ export default function Page() {
               </div>
             </div>
           </div>
-          <TelCta />
+          <TelCta showAccessLink={false} />
         </InfoSection>
       </div>
     </main>

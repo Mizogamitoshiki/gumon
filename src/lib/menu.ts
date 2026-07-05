@@ -5,7 +5,9 @@ export type MenuItem = {
   name: string;
   price: string;
   desc?: string;
-  signature?: boolean;
+  signature?: boolean; // 看板の品
+  recommended?: boolean; // おすすめ(公式サイト掲載品=店が推す品。人気No.1等の実績主張はしない)
+  spicy?: 1 | 2 | 3; // 辛さ(料理の性質としての事実表示。1=控えめ 2=中辛 3=辛口)
   img?: string;
 };
 
@@ -38,7 +40,7 @@ export const FOOD_CATEGORIES: FoodCategory[] = [
     titleJp: "昼のお品書き",
     lead: "昼は軽やかに、一皿で満たされる中国料理を。",
     items: [
-      { name: "排骨担々麺", price: "¥1,800", desc: "胡麻香る担々スープ、辛さ控えめ" },
+      { name: "排骨担々麺", price: "¥1,800", desc: "胡麻香る担々スープ、辛さ控えめ", spicy: 1 },
       { name: "海老のチリソース定食", price: "¥2,200", desc: "ぷりっと海老の自家製チリ" },
       { name: "炒飯と点心のセット", price: "¥1,600", desc: "香港式焼売と海老蒸し餃子を添えて" },
       { name: "週替わりの定食", price: "¥1,500", desc: "季節の素材で仕立てる日替わりの一皿" },
@@ -60,11 +62,28 @@ export const FOOD_CATEGORIES: FoodCategory[] = [
         price: "価格は店舗へ",
         desc: "四川山椒の痺れと豆板醤のコク、看板の一皿",
         signature: true,
+        spicy: 2,
         img: "/mapo-tofu.webp",
       },
-      { name: "酢豚", price: "¥980", desc: "黒酢のコクと照り。火の入れ方が身上の定番" },
-      { name: "海老マヨ・海老チリ", price: "¥780", desc: "ぷりっと海老を、まろやかに、または自家製チリで" },
-      { name: "小籠包", price: "¥480", desc: "薄皮に閉じ込めた熱い餡と湯気" },
+      {
+        name: "酢豚",
+        price: "¥980",
+        desc: "黒酢のコクと照り。火の入れ方が身上の定番",
+        recommended: true,
+      },
+      {
+        name: "海老マヨ・海老チリ",
+        price: "¥780",
+        desc: "ぷりっと海老を、まろやかに、または自家製チリで",
+        recommended: true,
+        spicy: 1,
+      },
+      {
+        name: "小籠包",
+        price: "¥480",
+        desc: "薄皮に閉じ込めた熱い餡と湯気",
+        recommended: true,
+      },
       { name: "青菜の炒めもの", price: "価格は店舗へ", desc: "季節の青菜をにんにくと強火でさっと" },
     ],
     notes: [

@@ -88,9 +88,25 @@ export default function SiteChrome({
             >
               072-430-6038
             </a>
+            <div className="gm-detail-footer-actions">
+              <a href="tel:0724306038" className="gm-detail-reserve">
+                電話で予約
+              </a>
+              <a
+                href="https://maps.google.com/?q=%E5%A4%A7%E9%98%AA%E5%BA%9C%E8%B2%9D%E5%A1%9A%E5%B8%82%E5%8A%A0%E7%A5%9E1-4-26"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="gm-detail-link"
+              >
+                Google マップで開く
+                <span className="gm-arrow" aria-hidden="true">
+                  →
+                </span>
+              </a>
+            </div>
           </div>
         </div>
-        <p className="gm-detail-copy">© GUMON</p>
+        <p className="gm-detail-copy">© GUMON — 中国料理 愚問</p>
       </footer>
     </>
   );

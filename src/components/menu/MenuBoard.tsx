@@ -1,8 +1,13 @@
 "use client";
 
-import { useRef } from "react";
+import { useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import type { MenuSection } from "@/lib/menu";
+import {
+  FOOD_CATEGORIES,
+  DRINKS,
+  type MenuItem,
+  type MenuSection,
+} from "@/lib/menu";
 import { gsap, useGSAP } from "@/lib/gsap-setup";
 import { GUMON_MOTION } from "@/lib/motion-tokens";
 import { HOTPEPPER_URL } from "@/lib/site";
@@ -17,13 +22,54 @@ const BOARD_LINKS = [
   { titleEn: "DRINK", href: "/menu/drink", label: "飲み物" },
 ] as const;
 
+// 横断検索用の全品目(カテゴリ名付き)
+const ALL_SECTIONS: MenuSection[] = [...FOOD_CATEGORIES, DRINKS];
+const hrefOf = (titleEn: string) =>
+  BOARD_LINKS.find((l) => l.titleEn === titleEn)?.href ?? "/menu/dinner";
+
+function matches(item: MenuItem, q: string): boolean {
+  const t = q.trim().toLowerCase();
+  if (!t) return true;
+  return (
+    item.name.toLowerCase().includes(t) ||
+    (item.desc ?? "").toLowerCase().includes(t)
+  );
+}
+
 // お品書きボード(1 カテゴリ=1 ページ)。参考メニュー表の構成を GUMON の
 // パレットに翻訳したもの: 額縁+コーナーマーク、リボン見出し、点線価格、
 // コースは紙(アイボリー)カード、締めの一枚、注記、電話 CTA。
+// 検索(全カテゴリ横断)と「おすすめのみ」絞り込みに対応。
 export default function MenuBoard({ category }: { category: MenuSection }) {
   const rootRef = useRef<HTMLElement>(null);
   const isCourse = category.titleEn === "COURSE";
   const others = BOARD_LINKS.filter((l) => l.titleEn !== category.titleEn);
+
+  const [query, setQuery] = useState("");
+  const [recoOnly, setRecoOnly] = useState(false);
+  const filtering = query.trim() !== "" || recoOnly;
+
+  // 表示中カテゴリの絞り込み結果
+  const visibleItems = useMemo(
+    () =>
+      category.items.filter(
+        (d) => matches(d, query) && (!recoOnly || d.recommended || d.signature),
+      ),
+    [category.items, query, recoOnly],
+  );
+  // ほかのカテゴリでのヒット(検索時のみ提示する横断導線)
+  const crossHits = useMemo(() => {
+    if (!filtering) return [];
+    return ALL_SECTIONS.filter((s) => s.titleEn !== category.titleEn)
+      .map((s) => ({
+        section: s,
+        items: s.items.filter(
+          (d) =>
+            matches(d, query) && (!recoOnly || d.recommended || d.signature),
+        ),
+      }))
+      .filter((g) => g.items.length > 0);
+  }, [filtering, query, recoOnly, category.titleEn]);
 
   useGSAP(
     () => {
@@ -124,16 +170,53 @@ export default function MenuBoard({ category }: { category: MenuSection }) {
           <span className="gm-board-head-rule" aria-hidden="true" />
         </header>
 
+        {/* 検索・絞り込み(全カテゴリ横断) */}
+        <div className="gm-board-tools">
+          <label className="gm-board-search">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.4"
+              aria-hidden="true"
+            >
+              <circle cx="11" cy="11" r="6.5" />
+              <path d="m16 16 4.5 4.5" />
+            </svg>
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="料理名で探す(例: 海老)"
+              aria-label="お品書きを検索"
+            />
+          </label>
+          <button
+            type="button"
+            className={`gm-board-filter${recoOnly ? " is-on" : ""}`}
+            aria-pressed={recoOnly}
+            onClick={() => setRecoOnly((v) => !v)}
+          >
+            看板・おすすめのみ
+          </button>
+        </div>
+
         <section className="gm-board-sec">
           <h3 className="gm-board-ribbon is-current">
             <span className="gm-board-ribbon-jp">{category.titleJp}</span>
             <span className="gm-board-ribbon-en">{category.titleEn}</span>
           </h3>
 
+          {visibleItems.length === 0 && (
+            <p className="gm-board-empty">
+              「{query}」に当てはまる品は、このお品書きにはありませんでした。
+              仕入れによってはご用意できることもあります。お電話でお尋ねください。
+            </p>
+          )}
           {isCourse ? (
             // コースは紙カード(参考デザインの紙面をアイボリーで翻訳)
             <div className="gm-board-cards">
-              {category.items.map((d) => (
+              {visibleItems.map((d) => (
                 <article key={d.name} className="gm-board-card">
                   <div className="gm-board-card-line">
                     <h4 className="gm-board-card-name">{d.name}</h4>
@@ -145,7 +228,7 @@ export default function MenuBoard({ category }: { category: MenuSection }) {
             </div>
           ) : (
             <div className="gm-board-rows">
-              {category.items.map((d) => (
+              {visibleItems.map((d) => (
                 <div key={d.name} className="gm-board-row">
                   <div className="gm-menu-line">
                     {d.img && (
@@ -158,6 +241,19 @@ export default function MenuBoard({ category }: { category: MenuSection }) {
                     <span className="gm-menu-name gm-board-name">
                       {d.name}
                       {d.signature && <span className="gm-menu-sig">看板</span>}
+                      {d.recommended && (
+                        <span className="gm-menu-sig gm-badge-reco">
+                          おすすめ
+                        </span>
+                      )}
+                      {d.spicy && (
+                        <span
+                          className="gm-spicy"
+                          aria-label={`辛さレベル${d.spicy}`}
+                        >
+                          {"辛".repeat(d.spicy)}
+                        </span>
+                      )}
                     </span>
                     <span className="gm-menu-dots" aria-hidden="true" />
                     <span className="gm-menu-price gm-board-price">
@@ -187,6 +283,26 @@ export default function MenuBoard({ category }: { category: MenuSection }) {
             </div>
           )}
         </section>
+
+        {/* 検索時: ほかのカテゴリでのヒットを横断提示 */}
+        {crossHits.length > 0 && (
+          <div className="gm-board-crosshits">
+            <p className="gm-detail-eyebrow">ほかのお品書きにも見つかりました</p>
+            {crossHits.map((g) => (
+              <p key={g.section.titleEn} className="gm-board-crosshit">
+                <Link href={hrefOf(g.section.titleEn)} className="gm-detail-link">
+                  {g.section.titleJp}
+                  <span className="gm-arrow" aria-hidden="true">
+                    →
+                  </span>
+                </Link>
+                <span className="gm-board-crosshit-names">
+                  {g.items.map((d) => d.name).join(" ／ ")}
+                </span>
+              </p>
+            ))}
+          </div>
+        )}
 
         {/* 締めの一枚(全皿の広がり) */}
         <div className="gm-board-photo" aria-hidden="true">
@@ -258,6 +374,14 @@ export default function MenuBoard({ category }: { category: MenuSection }) {
             <p className="gm-cta-web-note">
               お電話でのご予約が、店にはいちばんありがたい方法です。
             </p>
+          </div>
+          <div className="gm-cta-access">
+            <Link href="/access" className="gm-detail-link">
+              アクセスを見る — 貝塚駅 徒歩10分
+              <span className="gm-arrow" aria-hidden="true">
+                →
+              </span>
+            </Link>
           </div>
         </div>
       </div>

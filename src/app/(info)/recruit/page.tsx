@@ -4,6 +4,7 @@ import InfoSection from "@/components/info/InfoSection";
 import FaqList, { type FaqItem } from "@/components/info/FaqList";
 import PullQuote from "@/components/info/PullQuote";
 import TelCta from "@/components/info/TelCta";
+import BreadcrumbJsonLd from "@/components/BreadcrumbJsonLd";
 
 export const metadata: Metadata = {
   title: "採用 — 調理・接客スタッフ募集",
@@ -63,6 +64,7 @@ const FAQ: FaqItem[] = [
 export default function Page() {
   return (
     <main className="gm-cine-main">
+      <BreadcrumbJsonLd trail={[{ name: "採用", path: "/recruit" }]} />
       <MenuHero category={HERO} />
 
       <div className="gm-info-body">
