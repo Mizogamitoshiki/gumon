@@ -114,6 +114,9 @@ export default function GumonScroll() {
       // S5(受け止めの半拍)は一行だけの休符 — 静的縦積みでは 100vh も要らない
       const restStatic = q('[data-scene="rest"]');
       if (restStatic) restStatic.style.minHeight = "42vh";
+      // S2(問いの帳)も一行のみ — 通常コンテンツとして読める高さに抑える
+      const questionStatic = q('[data-scene="question"]');
+      if (questionStatic) questionStatic.style.minHeight = "56vh";
       // S4 の章句はフィルム(動画)専用の演出 — 静的表示では /about が同じ
       // 言葉(素材に問う/火に問う/時間に問う)を担うため出さない
       const filmWordsEl = q("[data-filmwords]");
@@ -226,12 +229,17 @@ export default function GumonScroll() {
     const filmWords = qa("[data-film-line]");
     const restScene = q('[data-scene="rest"]');
     const restLine = q("[data-rest-line]");
+    // S2 問いの帳(Stage 11 Increment 1)
+    const question = q('[data-scene="question"]');
+    const questionLine = q("[data-question-line]");
 
     /* ---- initial states ---- */
     // autoAlpha (opacity + visibility) so off-beat scenes are removed from
     // hit-testing AND tab order — their detail links aren't clickable/focusable
     // until the scene is on screen. Visually identical to opacity.
-    gsap.set([about, food, restScene, drink, access, reserve], { autoAlpha: 0 });
+    gsap.set([question, about, food, restScene, drink, access, reserve], {
+      autoAlpha: 0,
+    });
     gsap.set(foodLabel, { opacity: 0 });
     // S5 の一行は fade-quiet(blur なし・8px)で現す
     gsap.set(restLine, { opacity: 0, y: GUMON_SCENE_MOTION.fadeQuiet.y });
@@ -284,25 +292,29 @@ export default function GumonScroll() {
     const filmScrub = { p: 0 };
 
     /* ---- Scene time offsets (timeline units) — single source of truth.
-       S4(フィルム単独章)と S5(受け止めの半拍)の挿入で各ビートはここから
-       位置を引く。スクロール距離は .gm-scroll-root(globals.css)の高さと
-       比例(≈85vh/unit デスクトップ)。高さを変えたらここも見直すこと ---- */
+       S4(フィルム単独章)・S5(受け止めの半拍)・S2(問いの帳)は各ビートを
+       ここから引く。スクロール距離は .gm-scroll-root(globals.css)の高さと
+       比例(デスクトップ 1330vh ≈78.8vh/unit・モバイル 1010vh ≈59.8vh/unit)。
+       高さを変えたらここも見直すこと ---- */
     const T = {
       heroExit: 0.3,
-      about: 1.15,
-      aboutOut: 2.3,
-      dim: 2.4, // 幕間の減光(フィルムを迎える暗転)
-      film: 2.5, // S4 火の返事 — スクラブ本編(単独章。品書きはもう重ねない)
-      rest: 5.7, // S5 受け止めの半拍 — 圧倒直後の「吐く」
-      food: 7.2, // S6 お品書き
-      foodExit: 9.9,
-      breath: 10.1, // フィルムの take が p=1 に達する点(S6 の終わり。以降は静止フレーム)
-      drink: 10.8,
-      drinkOut: 11.9,
-      access: 12.0,
-      accessOut: 13.2,
-      reserve: 13.5,
-      drift: 14.2, // 全域リニア視差(glow/壁)の長さ ≒ タイムライン全長
+      question: 0.85, // S2 問いの帳 — 一行の立ち上がり(記憶層2)
+      questionGhost: 2.4, // S2 残像化。T.question+0.9(立ち上がり完了)からここまでが hold-quiet(≈0.65unit)
+      ambientOut: 3.1, // アンビエント退場tweenの完了点(= questionGhost + 0.7)。onScroll の pause 判定もここを見る
+      about: 2.65, // ここから下は S2 挿入で一律 +1.5(相対間隔は G2 合格時と同一)
+      aboutOut: 3.8,
+      dim: 3.9, // 幕間の減光(フィルムを迎える暗転)
+      film: 4.0, // S4 火の返事 — スクラブ本編(単独章。品書きはもう重ねない)
+      rest: 7.2, // S5 受け止めの半拍 — 圧倒直後の「吐く」
+      food: 8.7, // S6 お品書き
+      foodExit: 11.4,
+      breath: 11.6, // フィルムの take が p=1 に達する点(S6 の終わり。以降は静止フレーム)
+      drink: 12.3,
+      drinkOut: 13.4,
+      access: 13.5,
+      accessOut: 14.7,
+      reserve: 15.0,
+      drift: 15.7, // 全域リニア視差(glow/壁)の長さ ≒ タイムライン全長
     } as const;
     const SM = GUMON_SCENE_MOTION;
 
@@ -325,13 +337,28 @@ export default function GumonScroll() {
       { yPercent: -110, duration: 0.7, ease: "power2.in", stagger: 0.05 },
       T.heroExit
     );
-    // hero のアンビエント映像は hero と一緒に静かに退場(復帰はしない)
-    tl.to(heroAmbient, { opacity: 0, duration: 0.55, ease: "power2.in" }, 0.35);
+    // hero のアンビエント映像(台所の気配)は S2 の残像化まで残す —
+    // 「台所の気配の中で問いが立つ」(experience-plan 5章 S1→S2 受け渡し)。
+    // 退場完了 = T.questionGhost + 0.7 = T.ambientOut(onScroll の pause 判定と一致)
+    tl.to(heroAmbient, { opacity: 0, duration: 0.7, ease: "power2.in" }, T.questionGhost);
+
+    // S2 — 問いの帳(記憶層2): 一行だけが立ち、hold-quiet で読む時間を置いて
+    // から残像(opacity 0.09 — 問いの気配は残しつつ S3 見出しの可読を優先)
+    // となり、その上に S3 の応答見出しが立つ。
+    // T.question+0.9(立ち上がり完了) → T.questionGhost は意図的な休符(何も動かさない)
+    tl.to(question, { autoAlpha: 1, duration: 0.4 }, T.question - 0.1);
+    tl.to(questionLine, { yPercent: 0, duration: 0.9, ease: E }, T.question);
+    tl.to(
+      question,
+      { autoAlpha: 0.09, duration: 0.6, ease: "power1.inOut" },
+      T.questionGhost
+    );
+    tl.to(question, { autoAlpha: 0, duration: 0.5, ease: "power2.in" }, T.dim);
     // wall background: ONE calm, monotonic, vertical-only Ken Burns across the
     // whole scroll — a single living photograph slowly breathing. No reversals,
     // no rotation, no horizontal pan, no animated blur (GPU transform only).
     // 8% travel sits inside the layer's -10% overscan, so edges never show.
-    tl.to(foodhero, { scale: 1.04, yPercent: 4, ease: "none", duration: 12.9 }, 0);
+    tl.to(foodhero, { scale: 1.04, yPercent: 4, ease: "none", duration: 14.4 }, 0);
 
     // S4 火の返事 — scroll-scrubbed CUISINE FILM (the signature move, now a
     // SOLO chapter: the menu no longer overlaps it). Scroll drives the
@@ -344,7 +371,11 @@ export default function GumonScroll() {
     tl.to(foodhero, { opacity: 0, duration: 1.0, ease: "power1.in" }, T.film + 0.1);
     // slow linear drift for the rest of the take (still monotonic zoom-out).
     // ends where the film starts handing back to the wall (T.drinkOut+0.05)
-    tl.to(film, { scale: 1.01, yPercent: 1.5, ease: "none", duration: 8.0 }, 3.9);
+    tl.to(
+      film,
+      { scale: 1.01, yPercent: 1.5, ease: "none", duration: 8.0 },
+      T.film + 1.4
+    );
     tl.to([barTop, barBot], { scaleY: 1, duration: 0.9, stagger: 0.06 }, T.film + 0.1);
     // scroll position IS the playhead. The take spends its main travel
     // (p 0 -> .85) inside S4, then crawls to 1 behind S5/S6 — the dish is
@@ -588,7 +619,11 @@ export default function GumonScroll() {
       const y = window.scrollY || lenis.scroll || 0;
       // hero を通過したらアンビエント映像を止める(電池・デコード節約)。戻れば再開
       if (heroAmbientVideo) {
-        const past = y > vh * 1.2;
+        // S2(問いの帳)までアンビエントが残るため、pause 判定は固定スクロール
+        // 距離ではなくマスタータイムライン時間で行う(PC/モバイルの vh/unit 差に
+        // 依存せず、常に同じ Scene 位置 = アンビエント退場完了点 T.ambientOut に
+        // 連動)。戻れば再開する挙動は従来どおり。リスナー追加なし(既存 onScroll 内)
+        const past = tl.time() > T.ambientOut;
         if (past && !ambientPaused) {
           heroAmbientVideo.pause();
           ambientPaused = true;
@@ -954,7 +989,7 @@ export default function GumonScroll() {
       </div>
 
       {/* one pinned, scrubbed timeline — 高さは .gm-scroll-root(globals.css)。
-          デスクトップ 1210vh / モバイル 920vh(タイムライン長 T と比例) */}
+          デスクトップ 1330vh / モバイル 1010vh(タイムライン長 T と比例) */}
       <div ref={scrollRootRef} className="gm-scroll-root">
         <div
           ref={stageRef}
@@ -1318,6 +1353,48 @@ export default function GumonScroll() {
                   </Link>
                 </div>
               </div>
+            </div>
+
+            {/* S2 — 問いの帳(記憶層2): 店名の意味への入口。主文の一行だけを
+                立て、hold-quiet で読む時間を確保してから残像となって S3 の
+                応答を受ける。派手にしない(S4の最大ピークを弱めない) */}
+            <div
+              data-scene="question"
+              style={{
+                position: "absolute",
+                inset: 0,
+                zIndex: 5,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                textAlign: "center",
+                padding: "0 24px",
+                opacity: 0,
+                pointerEvents: "none",
+                willChange: "opacity",
+              }}
+            >
+              <h2 style={{ margin: 0 }}>
+                <span className="mask" style={{ display: "block" }}>
+                  <span
+                    data-question-line
+                    style={{
+                      display: "inline-block",
+                      fontFamily: SERIF,
+                      fontWeight: 400,
+                      fontSize: "clamp(21px,3.2vw,40px)",
+                      letterSpacing: ".22em",
+                      textIndent: ".22em",
+                      lineHeight: 1.9,
+                      whiteSpace: "nowrap",
+                      color: "#f2f0eb",
+                      textShadow: "0 2px 20px rgba(0,0,0,.5)",
+                    }}
+                  >
+                    おいしいとは、なにか。
+                  </span>
+                </span>
+              </h2>
             </div>
 
             {/* BEAT 2 — about */}
