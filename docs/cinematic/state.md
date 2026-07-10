@@ -13,9 +13,9 @@
 
 ## 現在地
 
-- 現在のStage: **11 Incremental Implementation（進行中）** — Increment 2「S6→S7の間＋S7一杯の静けさ」**合格（2026-07-10・PC/375px実画面確認）・コミット済み**。Increment 3未着手 — ユーザーの指示待ち
-- 次のアクション（再開時に最初にやること）: ユーザーから次Increment着手の指示を受けたら、implementation-plan 1.9 実装順序の残項目（S9 letter-spacing置換／削除テスト／モバイル通し調整／純リファクタリング）から指示された単位で実施
-- 進行中メモ: レビュー付記: S6→S7の受け渡しは完全な静止ではなく背景が溶けるTransitionだが、休符として成立しているため変更不要（承認済み）。表現・タイミングの追加変更なしでコミット
+- 現在のStage: **11 Incremental Implementation — Block A（最終実装）実装・検証済み。人間レビュー待ち・コード未コミット。Stage 12（Block B）未着手**
+- 次のアクション（再開時に最初にやること）: ユーザーのBlock Aレビュー結果を確認 → 承認なら**2コミットに分離**（①Part 1: S9完成＋削除テスト ②Part 2: 純リファクタ）→ 指示を待ってBlock B（Stage 12包括QA）へ
+- 進行中メモ: Block A内容 = A-1 S9 letterSpacing→2文字translateX置換（静的字間.1em・CLSゼロ・role=img） / A-2 結末一行「答えは、席で。」追加 / A-3 削除テスト（視差グロー=削除〈壁レイヤーに常時遮蔽で視覚出力ゼロと判明〉・進捗ヘアライン=残す〈モバイル現在地・QS13〉） / A-4 Scene別ビルダー関数化（挿入順・演出値完全維持）。検証: build/lint/diff-check/コンソール0/158KB不変/DOM実測OK。ウィンドウ不可視のため通し目視は未 — レビューで S9質感・全Scene回帰・375px・reduced-motion の目視をお願いする
 
 ## 実行範囲（今回の依頼で確定）
 
@@ -53,7 +53,14 @@
 
 ## 保留中の質問・承認依頼
 
-（なし — Increment 2合格・コミット済み。次の停止はIncrement 3着手指示待ち）
+<!-- 再開時はこれをそのまま再提示する -->
+
+**Stage 11 Block A（最終実装）レビュー依頼** — 実装・検証完了・未コミット。実ブラウザでの確認をお願いします:
+1. S9の収束（2文字translateX置換）の質感 — 旧letterSpacing版と同じ「散っていた問いが店名に集まる」余韻に見えるか
+2. S9の読み順: 愚問 → **答えは、席で。** → ご予約を承っております → 電話番号 → CTA
+3. 視差グロー削除後の全景（変化が知覚されないことの確認）
+4. S1→S9通し（リファクタ後の回帰なし）／375px／reduced-motion
+承認後: ①Part 1（S9＋削除テスト）②Part 2（純リファクタ）の2コミットに分離してコミット予定。
 
 ## 成果物ポインタ
 
@@ -76,4 +83,6 @@
 - 2026-07-10 / Stage 11 Increment 1 / S2「問いの帳」実装（question/questionGhostのT追加・about以降+1.5・アンビエントS2まで残留・scroll-root 1330/1010vh・reduced-motion 56vh静的）。S1→S2→S3接続とS4/S5回帰なしを実画面確認。build/lint/diff--check合格・First Load JS不変。検証中の黒画面・scrollTo不発の真因を「タブ非表示によるrAF停止（テスト作為）」と確定し、qa-baselineの旧切り分け（既存問題扱い）を訂正。未コミットのまま人間レビュー待ちで停止
 - 2026-07-10 / Stage 11 Increment 1 レビュー / **合格（軽微修正後に合格）**。軽微修正3点を実施: ①S2残像 autoAlpha 0.18→0.09（タイミング・位置不変） ②アンビエントpause判定を固定スクロール距離(vh*2.4)→タイムライン基準（`tl.time() > T.ambientOut`、T.ambientOut=3.1=退場tween完了点をnamed offset追加。リスナー追加なし） ③T直前コメントを現在値（PC≈78.8/モバイル≈59.8vh/unit）へ修正。build/lint/diff--check合格。コード＋文書をコミット: **`ead5d5f`** feat: add cinematic question scene
 - 2026-07-10 / Stage 11 Increment 2 / S6→S7のhold-quiet（menuRest=12.0→drink=12.9の0.9unit。間の内容=バー開放＋フィルム→壁の受け渡し=B6実装）＋S7弱化（初期y8px・blurなし・fade-quiet 0.8/power1.out・stagger0.12・読了後保持0.5unit）＋S8/S9一律+1.4＋scroll-root 1440/1095vh（78.8/59.9vh/unit維持）。DOM・リスナー・依存追加ゼロ。build/lint/diff--check/コンソール0/158KB不変。ウィンドウ不可視（rAF停止）のため通し目視は未=レビュー依頼に記載。未コミットのまま人間レビュー待ちで停止
-- 2026-07-10 / Stage 11 Increment 2 レビュー / **合格**（PC/375px実画面確認。間0.9unit・壁への受け渡し・S7弱化・保持0.5unit・再配分・モバイル表現を承認。受け渡しの「溶けるTransition」は休符として成立のため変更不要と判定）。表現の追加変更なしでコード＋文書をコミット: **`402fd03`** feat: add quiet rest between menu and drink scenes。**Increment 3未着手**
+- 2026-07-10 / Stage 11 Increment 2 レビュー / **合格**（PC/375px実画面確認。間0.9unit・壁への受け渡し・S7弱化・保持0.5unit・再配分・モバイル表現を承認。受け渡しの「溶けるTransition」は休符として成立のため変更不要と判定）。表現の追加変更なしでコード＋文書をコミット: **`402fd03`** feat: add quiet rest between menu and drink scenes
+- 2026-07-10 / Stage 11 棚卸し / TOP完成までの残作業をBlock A（最終実装1回: S9置換・S9結末一行・削除テスト・純リファクタ）とBlock B（Stage 12包括QA: QS22最低セット・LCP改善・実機/Safari・Creative QA）へ集約（implementation-plan.md 5章）。Blocker5・Required6・Optional5・Reject6を分類。コード変更なし・コミットなし・Increment 3/Stage 12未着手。Block A着手指示待ちで停止
+- 2026-07-10 / Stage 11 Block A / Part 1: S9 letterSpacing tween廃止→2文字translateX ±0.16em置換（静的字間・role=img/aria-label・CLSゼロ）＋結末一行「答えは、席で。」追加＋削除テスト（視差グロー削除=壁に常時遮蔽で視覚出力ゼロをA/B+z-order解析で確認／進捗ヘアライン残置=モバイル現在地QS13）。Part 2: タイムラインをScene別ビルダー11関数へ純リファクタ（挿入順・演出値完全維持）。build/lint/diff-check/コンソール0/158KB不変/DOM実測OK。ウィンドウ不可視のため通し目視は未。**未コミットのまま人間レビュー待ちで停止。Stage 12未着手**
