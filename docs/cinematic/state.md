@@ -9,13 +9,13 @@
 - 案件タイプ: 既存サイト変換
 - 成果物の保存場所: docs/cinematic/
 - 最終更新: 2026-07-10
-- 案件ステータス: 進行中（Stage 10 代表Scene実装）
+- 案件ステータス: 進行中（Stage 10 完了・Stage 11 未着手）
 
 ## 現在地
 
-- 現在のStage: 10 Representative Scene（S4「火の返事」＋S5「受け止めの半拍」）
-- 次のアクション（再開時に最初にやること）: 実測ベースライン取得（実ブラウザ通し・動画内容確認・Lighthouse・build/lint）→ S4+S5実装 → 検証 → **コミット前に差分提示・レビュー待ち（G2）で停止**
-- 進行中メモ: G1承認記録済み（implementation-plan.md 2章）。実装範囲はS4+S5と、それを成立させる最小限のタイムライン調整のみ。S2/Hero/drink以降の演出改善は禁止
+- 現在のStage: 10 Representative Scene **完了（G2合格）**。Stage 11 は未着手 — ユーザーの明示的な指示があるまで進まない
+- 次のアクション（再開時に最初にやること）: ユーザーからStage 11着手の指示を受けたら、implementation-plan 1.9 の実装順序2（S2「問いの帳」＋S1接続）から1Sceneずつ実施
+- 進行中メモ: Stage 10 のコード＋関連文書はコミット済み（feat: implement cinematic fire response scene）。G2軽微修正（章句タイミングのT基準化・文書修正）も同コミットに含む
 
 ## 実行範囲（今回の依頼で確定）
 
@@ -40,7 +40,7 @@
 | 7 Motion Direction | 完了 | experience-plan.md 8〜9章（理由記録率100%・トークン定義済み） |
 | 8 Transformation Plan | 完了 | implementation-plan.md 1章（Hero 3案・代表Scene=S4+S5・23項目網羅） |
 | 9 Approval Gate (G1) | 完了 | 2026-07-10 全5項目承認（A1〜A5承認・素材利用確認済み。範囲: implementation-plan.md 2章） |
-| 10 Representative Scene (G2) | 進行中 | S4+S5のみ。完了後レビュー待ち（G2）で停止 |
+| 10 Representative Scene (G2) | 完了 | **G2合格（2026-07-10・軽微修正後に合格）**。軽微修正=章句タイミングのT基準化・文書修正。実装記録: implementation-plan 3章 |
 | 11 Incremental Implementation | 未着手 | G2合格まで進まない |
 | 12 Technical QA | 未着手 | |
 | 13 Creative QA | 未着手 | |
@@ -49,11 +49,11 @@
 ## 承認・レビュー記録（要約とポインタ）
 
 - G1承認: **済**（2026-07-10 / 範囲: Concept・9 Scene・Hero案A・代表Scene=S4+S5・変更ファイル4+docs・依存追加なし・コンテンツ削除なし。A1〜A5承認、A3は映像実確認が条件。素材は利用前提で確認済み。全文: implementation-plan.md 2章）
-- G2判定: 未（S4+S5実装・検証後にレビュー依頼予定）
+- G2判定: **合格（2026-07-10・軽微修正後に合格）** — 承認内容: S4の映像と章句の表現／3章句（素材・火・時間）／S5の休符／S5コピー「答えは、まだ湯気の中に。」／S4→S5→S6の接続／375pxでの表現／現在の代表Scene方針。条件だった軽微修正（章句タイミングのT.film/T.rest相対化・implementation-planのtrailing whitespace除去・state.md表記修正・qa-baselineの成果物登録）は実施済み
 
 ## 保留中の質問・承認依頼
 
-（なし — G1回答受領済み。次の停止はG2レビュー依頼）
+（なし — G2合格受領・記録済み。次の停止はStage 11着手指示待ち）
 
 ## 成果物ポインタ
 
@@ -64,9 +64,12 @@
 | experience-plan.md | 完了（1〜9章） | docs/cinematic/experience-plan.md |
 | implementation-plan.md | 1章 完了（2章以降はG1後） | docs/cinematic/implementation-plan.md |
 | qa-report.md | 未作成 | docs/cinematic/qa-report.md |
+| qa-baseline.md（Stage 10 正式成果物: 実測ベースライン・実装後比較・A3映像確認記録） | 完了 | docs/cinematic/qa-baseline.md |
 
 ## セッションログ
 
 - 2026-07-10 / Stage 0 / 新規開始。上位文書読了・Git clean確認・実行範囲をStage 0〜8に限定（ユーザー指示）。既存ブランド資産（project/artifacts/*.json・design-system/gumon/MASTER.md・wdos-diagnosisレポート）の存在を確認 — Stage 1で活用する
 - 2026-07-10 / Stage 1〜8 / 全設計成果物を作成。主な判断: ①Interview質問ゼロ（G1格のトーンはクライアント確定コピーで[推定]解決） ②既存6ビート全継承＋新設2 Scene（問いの帳・受け止めの半拍）のみ ③依存追加ゼロ・コンテンツ削除ゼロ ④Hero推奨=案A ⑤代表Scene=S4+S5 ⑥最大リスク=タイムライン時間再配分。G1承認依頼を提示し承認待ちで停止（Stage 9以降・コード変更は未実施）
 - 2026-07-10 / Stage 9 / G1承認受領・記録（全5項目承認・A1〜A5承認・素材利用確認）。設計成果物をコミットし、Stage 10（S4+S5実装）へ。実測ベースライン→実装→検証→G2レビュー待ち停止の手順で進行
+- 2026-07-10 / Stage 10 / ベースライン実測（build/lint/実ブラウザ通し/動画内容確認/Lighthouse: qa-baseline.md）。A3条件履行: 動画は「完成皿の連なり」で調理カットなし→章句を「問い×答えの映像」構造に調整、「火に問う」を麻婆豆腐に配時。S4+S5実装（T定数化・章句・休符・スクリム・1210/920vh）。スコープ自制2件（drink弱化と壁受け渡し前倒しを差し戻し）。検証済み・性能悪化なし。黒画面現象は旧ビルドでも再現=非回帰と切り分け。コード未コミットのままG2レビュー待ちで停止
+- 2026-07-10 / Stage 10 G2 / **G2合格（軽微修正後に合格）**を受領・記録。軽微修正を実施: ①章句タイミングをT.film/T.rest相対値へ統一（wordIn=[T.film+0.35, +1.05, +1.75]・退場=T.rest-0.4・スクリム点灯=T.film+0.2。見た目の値は不変） ②implementation-planのtrailing whitespace除去 ③state.md表記修正 ④qa-baseline.mdを成果物ポインタへ登録。再検証（build/lint/diff --check）後、コード＋文書を1コミットに統合（feat: implement cinematic fire response scene）。Stage 11へは進んでいない

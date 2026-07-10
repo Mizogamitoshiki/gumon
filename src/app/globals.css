@@ -153,14 +153,17 @@ body {
 
 /* pinned scroll runway — shorter on mobile so a thumb-flick journey doesn't
    drag (same beats, tighter spacing). JS reads the computed height, so the
-   ScrollTrigger end adapts automatically. 861px = .gm-nav breakpoint */
+   ScrollTrigger end adapts automatically. 861px = .gm-nav breakpoint.
+   高さはマスタータイムライン長(GumonScroll.tsx の T)と比例させる:
+   S4(フィルム単独章)+S5(受け止めの半拍)の挿入で 820/620 → 1210/920 に延長
+   (スクロール量/タイムライン unit の比は従来とほぼ同じ ≈85vh/unit) */
 .gm-scroll-root {
   position: relative;
-  height: 820vh;
+  height: 1210vh;
 }
 @media (max-width: 860px) {
   .gm-scroll-root {
-    height: 620vh;
+    height: 920vh;
   }
 }
 

@@ -8,6 +8,7 @@ import Link from "next/link";
 import FoodNavDropdown from "./FoodNavDropdown";
 import InstagramLink from "./InstagramLink";
 import { CATS, DRINK_ITEMS, FOOD_CATEGORIES } from "@/lib/menu";
+import { GUMON_SCENE_MOTION } from "@/lib/motion-tokens";
 import { HOTPEPPER_URL } from "@/lib/site";
 import { useMobileNavA11y } from "@/lib/use-mobile-nav";
 
@@ -110,6 +111,13 @@ export default function GumonScroll() {
         el.style.minHeight = "100vh";
         el.style.inset = "auto";
       });
+      // S5(受け止めの半拍)は一行だけの休符 — 静的縦積みでは 100vh も要らない
+      const restStatic = q('[data-scene="rest"]');
+      if (restStatic) restStatic.style.minHeight = "42vh";
+      // S4 の章句はフィルム(動画)専用の演出 — 静的表示では /about が同じ
+      // 言葉(素材に問う/火に問う/時間に問う)を担うため出さない
+      const filmWordsEl = q("[data-filmwords]");
+      if (filmWordsEl) filmWordsEl.style.display = "none";
       qa(".mask > span").forEach((s) => (s.style.transform = "none"));
       qa("[data-fade]").forEach((s) => {
         s.style.opacity = "1";
@@ -213,13 +221,23 @@ export default function GumonScroll() {
     const reserve = q('[data-scene="reserve"]');
     const reserveLogo = q("[data-reserve-logo]");
     const cue = q("[data-cue]");
+    // S4 章句(三つの問い)と S5 受け止めの半拍(docs/cinematic/experience-plan.md)
+    const filmWordsWrap = q("[data-filmwords]");
+    const filmWords = qa("[data-film-line]");
+    const restScene = q('[data-scene="rest"]');
+    const restLine = q("[data-rest-line]");
 
     /* ---- initial states ---- */
     // autoAlpha (opacity + visibility) so off-beat scenes are removed from
     // hit-testing AND tab order — their detail links aren't clickable/focusable
     // until the scene is on screen. Visually identical to opacity.
-    gsap.set([about, food, drink, access, reserve], { autoAlpha: 0 });
+    gsap.set([about, food, restScene, drink, access, reserve], { autoAlpha: 0 });
     gsap.set(foodLabel, { opacity: 0 });
+    // S5 の一行は fade-quiet(blur なし・8px)で現す
+    gsap.set(restLine, { opacity: 0, y: GUMON_SCENE_MOTION.fadeQuiet.y });
+    // 章句コンテナ(下部スクリム込み)は章句の出現期間だけ灯す —
+    // 常時表示だと壁のビートまで暗くしてしまうため opacity をタイムラインで持つ
+    gsap.set(filmWordsWrap, { opacity: 0 });
     // background layers: gentle, monotonic Ken Burns (transform-only, no blur).
     // carved 愚問 sits left/right of the centered title; the dark center gap
     // frames the hero text rather than duplicating it.
@@ -265,24 +283,47 @@ export default function GumonScroll() {
     // in filmTick converts it to currentTime with cinematic weight
     const filmScrub = { p: 0 };
 
+    /* ---- Scene time offsets (timeline units) — single source of truth.
+       S4(フィルム単独章)と S5(受け止めの半拍)の挿入で各ビートはここから
+       位置を引く。スクロール距離は .gm-scroll-root(globals.css)の高さと
+       比例(≈85vh/unit デスクトップ)。高さを変えたらここも見直すこと ---- */
+    const T = {
+      heroExit: 0.3,
+      about: 1.15,
+      aboutOut: 2.3,
+      dim: 2.4, // 幕間の減光(フィルムを迎える暗転)
+      film: 2.5, // S4 火の返事 — スクラブ本編(単独章。品書きはもう重ねない)
+      rest: 5.7, // S5 受け止めの半拍 — 圧倒直後の「吐く」
+      food: 7.2, // S6 お品書き
+      foodExit: 9.9,
+      breath: 10.1, // フィルムの take が p=1 に達する点(S6 の終わり。以降は静止フレーム)
+      drink: 10.8,
+      drinkOut: 11.9,
+      access: 12.0,
+      accessOut: 13.2,
+      reserve: 13.5,
+      drift: 14.2, // 全域リニア視差(glow/壁)の長さ ≒ タイムライン全長
+    } as const;
+    const SM = GUMON_SCENE_MOTION;
+
     /* ---- one master timeline, scrubbed by ScrollTrigger ---- */
     const tl = gsap.timeline({ paused: true, defaults: { ease: E } });
 
     // continuous vertical parallax across the WHOLE scroll (linear = correct for
     // depth); calm magnitudes so the glows drift, not surge
-    tl.to(glow, { yPercent: 14, scale: 1.08, ease: "none", duration: 9.6 }, 0);
-    tl.to(glow2, { yPercent: -12, scale: 1.06, ease: "none", duration: 9.6 }, 0);
+    tl.to(glow, { yPercent: 14, scale: 1.08, ease: "none", duration: T.drift }, 0);
+    tl.to(glow2, { yPercent: -12, scale: 1.06, ease: "none", duration: T.drift }, 0);
 
     // BEAT 1 — hero -> food reveal
     tl.to(cue, { opacity: 0, duration: 0.3 }, 0);
     // autoAlpha: 退場後は hit-test からも外す(hero に CTA ボタンがあるため、
     // 不可視のまま tel: リンクが誤タップされる事故を防ぐ)
-    tl.to(hero, { autoAlpha: 0, scale: 1.04, duration: 0.7, ease: "power2.in" }, 0.3);
+    tl.to(hero, { autoAlpha: 0, scale: 1.04, duration: 0.7, ease: "power2.in" }, T.heroExit);
     tl.fromTo(
       lines(hero),
       { yPercent: 0 },
       { yPercent: -110, duration: 0.7, ease: "power2.in", stagger: 0.05 },
-      0.3
+      T.heroExit
     );
     // hero のアンビエント映像は hero と一緒に静かに退場(復帰はしない)
     tl.to(heroAmbient, { opacity: 0, duration: 0.55, ease: "power2.in" }, 0.35);
@@ -290,47 +331,102 @@ export default function GumonScroll() {
     // whole scroll — a single living photograph slowly breathing. No reversals,
     // no rotation, no horizontal pan, no animated blur (GPU transform only).
     // 8% travel sits inside the layer's -10% overscan, so edges never show.
-    tl.to(foodhero, { scale: 1.04, yPercent: 4, ease: "none", duration: 8.3 }, 0);
+    tl.to(foodhero, { scale: 1.04, yPercent: 4, ease: "none", duration: 12.9 }, 0);
 
-    // scroll-scrubbed CUISINE FILM (the signature move): one continuous take
-    // runs behind the 料理 and 飲み物 beats. Scroll drives the playhead
-    // (filmScrub.p -> currentTime in filmTick), the frame opens via clip-path
-    // mask, the zoom relaxes monotonically 1.12 -> 1.01, and letterbox bars
-    // close in for the film chapter. Opacity/transform/clip-path only.
-    tl.to(film, { opacity: 1, duration: 0.9, ease: "power1.inOut" }, 2.5);
-    tl.to(film, { clipPath: "inset(0% 0% 0% 0%)", duration: 1.4 }, 2.5);
-    tl.to(film, { scale: 1.05, yPercent: 0, duration: 1.4 }, 2.5);
-    tl.to(foodhero, { opacity: 0, duration: 1.0, ease: "power1.in" }, 2.6);
-    // slow linear drift for the rest of the take (still monotonic zoom-out)
-    tl.to(film, { scale: 1.01, yPercent: 1.5, ease: "none", duration: 3.1 }, 3.9);
-    tl.to([barTop, barBot], { scaleY: 1, duration: 0.9, stagger: 0.06 }, 2.6);
-    // scroll position IS the playhead: 0..1 across the whole film chapter
-    tl.to(filmScrub, { p: 1, ease: "none", duration: 4.5 }, 2.5);
+    // S4 火の返事 — scroll-scrubbed CUISINE FILM (the signature move, now a
+    // SOLO chapter: the menu no longer overlaps it). Scroll drives the
+    // playhead (filmScrub.p -> currentTime in filmTick), the frame opens via
+    // clip-path mask ("台所の窓が開く"), the zoom relaxes monotonically
+    // 1.12 -> 1.01, letterbox bars close in. Opacity/transform/clip-path only.
+    tl.to(film, { opacity: 1, duration: 0.9, ease: "power1.inOut" }, T.film);
+    tl.to(film, { clipPath: "inset(0% 0% 0% 0%)", duration: 1.4 }, T.film);
+    tl.to(film, { scale: 1.05, yPercent: 0, duration: 1.4 }, T.film);
+    tl.to(foodhero, { opacity: 0, duration: 1.0, ease: "power1.in" }, T.film + 0.1);
+    // slow linear drift for the rest of the take (still monotonic zoom-out).
+    // ends where the film starts handing back to the wall (T.drinkOut+0.05)
+    tl.to(film, { scale: 1.01, yPercent: 1.5, ease: "none", duration: 8.0 }, 3.9);
+    tl.to([barTop, barBot], { scaleY: 1, duration: 0.9, stagger: 0.06 }, T.film + 0.1);
+    // scroll position IS the playhead. The take spends its main travel
+    // (p 0 -> .85) inside S4, then crawls to 1 behind S5/S6 — the dish is
+    // handed over mid-change, never shown "finished" (完成皿は見せきらない)
+    tl.to(filmScrub, { p: 0.85, ease: "none", duration: T.rest - T.film }, T.film);
+    tl.to(filmScrub, { p: 1, ease: "none", duration: T.breath - T.rest }, T.rest);
+
+    // S4 章句 — 三つの問い。映像(答えの連なり)の上に問いだけを積む。
+    // 「火に問う」は麻婆豆腐の寄り(v≈2.8s)に重なる配時(qa-baseline.md)。
+    // 3行が順に立ち、フィルム章の終わりに揃って退場して S5 へ手を渡す
+    // 章句のタイミングは全て T.film / T.rest からの相対値で持つ —
+    // フィルム章の位置を動かしても章句だけが取り残されないようにする
+    const wordIn = [T.film + 0.35, T.film + 1.05, T.film + 1.75];
+    // 下部スクリム(コンテナ背景)ごと点灯・消灯: 明るい映像上での可読性確保
+    tl.to(
+      filmWordsWrap,
+      { opacity: 1, duration: 0.5, ease: "power1.inOut" },
+      T.film + 0.2
+    );
+    tl.to(filmWordsWrap, { opacity: 0, duration: 0.45, ease: "power1.in" }, T.rest + 0.15);
+    filmWords.forEach((w, i) => {
+      tl.to(
+        w,
+        { yPercent: 0, duration: SM.riseLine.duration, ease: SM.riseLine.ease },
+        wordIn[i] ?? T.film + 0.5
+      );
+    });
+    tl.to(
+      filmWords,
+      {
+        yPercent: -110,
+        duration: SM.exitLine.duration,
+        ease: SM.exitLine.ease,
+        stagger: 0.05,
+      },
+      T.rest - 0.4
+    );
+
+    // S5 受け止めの半拍 — 圧倒直後の「吐く」(QS 7章)。一行だけの静けさ。
+    // フィルムは減光したまま奥で crawl を続ける(湯気は続いている)
+    tl.to(restScene, { autoAlpha: 1, duration: 0.4 }, T.rest + 0.1);
+    tl.to(
+      restLine,
+      { opacity: 1, y: 0, duration: SM.fadeQuiet.duration, ease: SM.fadeQuiet.ease },
+      T.rest + 0.25
+    );
+    tl.to(
+      restLine,
+      { opacity: 0, y: -6, duration: SM.exitLine.duration, ease: SM.exitLine.ease },
+      T.food - 0.4
+    );
+    tl.to(restScene, { autoAlpha: 0, duration: 0.4 }, T.food - 0.25);
+
     // hand back to the wall for the drink→access transition (fires after
-    // the drink text is read, not behind it)
-    tl.to([barTop, barBot], { scaleY: 0, duration: 0.6, ease: "power2.in" }, 6.9);
-    tl.to(film, { opacity: 0, duration: 1.0, ease: "power1.in" }, 7.0);
-    tl.to(foodhero, { opacity: 1, duration: 1.0, ease: "power1.inOut" }, 6.95);
+    // the drink text is read, not behind it — 現行の相対位置を維持。
+    // S6→S7 の「壁の上の drink」への変更は S7 の演出改善なので今回は行わない)
+    tl.to([barTop, barBot], { scaleY: 0, duration: 0.6, ease: "power2.in" }, T.drinkOut - 0.05);
+    tl.to(film, { opacity: 0, duration: 1.0, ease: "power1.in" }, T.drinkOut + 0.05);
+    tl.to(foodhero, { opacity: 1, duration: 1.0, ease: "power1.inOut" }, T.drinkOut);
 
-    // BEAT 2 — about
-    tl.to(about, { autoAlpha: 1, duration: 0.5 }, 1.15);
-    tl.to(lines(about), { yPercent: 0, duration: 1.0, stagger: 0.1 }, 1.2);
+    // BEAT 2 — about (S3 台所の姿勢)
+    tl.to(about, { autoAlpha: 1, duration: 0.5 }, T.about);
+    tl.to(lines(about), { yPercent: 0, duration: 1.0, stagger: 0.1 }, T.about + 0.05);
     tl.to(
       fades(about),
       { opacity: 1, y: 0, ...blurOut(), duration: 1.0, stagger: 0.1 },
-      1.35
+      T.about + 0.2
     );
-    tl.to(about, { autoAlpha: 0, duration: 0.6, ease: "power2.in" }, 2.3);
-    // darken the wall (not hide it) so foreground text stays legible
-    tl.to(darken, { opacity: 0.72, duration: 0.7, ease: "power2.in" }, 2.4);
+    tl.to(about, { autoAlpha: 0, duration: 0.6, ease: "power2.in" }, T.aboutOut);
+    // 減光の呼吸: フィルム章(S4)は明るく見せ(0.34)、S5 で翳り(0.62)、
+    // 品書き(S6)の可読コントラストで 0.72(wdos-diagnosis-003 の改善値)へ
+    tl.to(darken, { opacity: 0.34, duration: 0.7, ease: "power2.in" }, T.dim);
+    tl.to(darken, { opacity: 0.62, duration: 0.7, ease: "power1.inOut" }, T.rest);
+    tl.to(darken, { opacity: 0.72, duration: 0.6, ease: "power1.inOut" }, T.food - 0.2);
 
-    // BEAT 3 — editorial menu. Sections reveal in sequence (header rule draws,
+    // S6 — editorial menu. Sections reveal in sequence (header rule draws,
     // rows rise) then PERSIST so the whole menu can be read; the panel fades out
-    // as one unit at the BEAT3→BEAT4 boundary. All transform/opacity/blur only.
-    tl.to(food, { autoAlpha: 1, duration: 0.5 }, 2.6);
-    tl.to(foodLabel, { opacity: 1, duration: 0.8 }, 2.65);
+    // as one unit before the S6→S7 gap. All transform/opacity/blur only.
+    tl.to(food, { autoAlpha: 1, duration: 0.5 }, T.food);
+    tl.to(foodLabel, { opacity: 1, duration: 0.8 }, T.food + 0.05);
 
-    const catTimes = [2.85, 3.4, 3.9];
+    const catTimes = [T.food + 0.25, T.food + 0.8, T.food + 1.3];
     cats.forEach((cat, i) => {
       const t = catTimes[i];
       const rise = qaIn(cat, "[data-cat-rise]");
@@ -351,46 +447,46 @@ export default function GumonScroll() {
       );
     });
     // hold the fully-revealed menu, then fade the whole panel out as one unit
-    // (kicker + sections are children) at the BEAT3→BEAT4 boundary
-    tl.to(food, { autoAlpha: 0, y: -18, duration: 0.6, ease: "power2.in" }, 5.4);
+    // (kicker + sections are children) before the S6→S7 gap ("間")
+    tl.to(food, { autoAlpha: 0, y: -18, duration: 0.6, ease: "power2.in" }, T.foodExit);
 
-    // BEAT 4 — drink
-    tl.to(drink, { autoAlpha: 1, duration: 0.5 }, 5.85);
-    tl.to(lines(drink), { yPercent: 0, duration: 1.0, stagger: 0.08 }, 5.95);
+    // S7 — drink (時刻シフトのみ。演出値の変更は Stage 11 の担当範囲)
+    tl.to(drink, { autoAlpha: 1, duration: 0.5 }, T.drink);
+    tl.to(lines(drink), { yPercent: 0, duration: 1.0, stagger: 0.08 }, T.drink + 0.1);
     tl.to(
       fades(drink),
       { opacity: 1, y: 0, ...blurOut(), duration: 1.0, stagger: 0.09 },
-      6.1
+      T.drink + 0.25
     );
-    tl.to(drink, { autoAlpha: 0, duration: 0.6, ease: "power2.in" }, 6.95);
+    tl.to(drink, { autoAlpha: 0, duration: 0.6, ease: "power2.in" }, T.drinkOut);
 
-    // BEAT 5 — access
-    tl.to(access, { autoAlpha: 1, duration: 0.5 }, 7.05);
-    tl.to(lines(access), { yPercent: 0, duration: 1.0, stagger: 0.1 }, 7.15);
+    // S8 — access
+    tl.to(access, { autoAlpha: 1, duration: 0.5 }, T.access);
+    tl.to(lines(access), { yPercent: 0, duration: 1.0, stagger: 0.1 }, T.access + 0.1);
     tl.to(
       fades(access),
       { opacity: 1, y: 0, ...blurOut(), duration: 1.0, stagger: 0.12 },
-      7.3
+      T.access + 0.25
     );
     tl.to(
       mapEl,
       { clipPath: "inset(0% 0% 0% 0%)", scale: 1, ...blurOut(), duration: 1.2 },
-      7.25
+      T.access + 0.2
     );
-    tl.to(access, { autoAlpha: 0, duration: 0.6, ease: "power2.in" }, 8.25);
+    tl.to(access, { autoAlpha: 0, duration: 0.6, ease: "power2.in" }, T.accessOut);
 
-    // BEAT 6 — reserve
-    tl.to(reserve, { autoAlpha: 1, duration: 0.5 }, 8.55);
+    // S9 — reserve
+    tl.to(reserve, { autoAlpha: 1, duration: 0.5 }, T.reserve);
     tl.fromTo(
       reserveLogo,
       { letterSpacing: "0.42em", opacity: 0.35, y: 14, ...blurIn(9) },
       { letterSpacing: "0.1em", opacity: 1, y: 0, ...blurOut(), duration: 1.2 },
-      8.6
+      T.reserve + 0.05
     );
     tl.to(
       fades(reserve),
       { opacity: 1, y: 0, ...blurOut(), duration: 1.0, stagger: 0.12 },
-      8.95
+      T.reserve + 0.4
     );
 
     // drive the timeline with ScrollTrigger. scrub:0.6 gives the scrubbed
@@ -858,7 +954,7 @@ export default function GumonScroll() {
       </div>
 
       {/* one pinned, scrubbed timeline — 高さは .gm-scroll-root(globals.css)。
-          デスクトップ 820vh / モバイル 620vh */}
+          デスクトップ 1210vh / モバイル 920vh(タイムライン長 T と比例) */}
       <div ref={scrollRootRef} className="gm-scroll-root">
         <div
           ref={stageRef}
@@ -1301,7 +1397,92 @@ export default function GumonScroll() {
               </Link>
             </div>
 
-            {/* BEAT 3 — editorial menu (whole dishes spread sits behind) */}
+            {/* S4 章句 — 三つの問い(素材・火・時間)。フィルム(=答えの連なり)の
+                上に問いだけを積む。装飾的な章題(本文は /about が担う)なので
+                aria-hidden。reduced-motion では表示しない(上の分岐で hide) */}
+            <div
+              data-filmwords
+              aria-hidden="true"
+              style={{
+                position: "absolute",
+                inset: 0,
+                zIndex: 4,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "flex-end",
+                gap: "clamp(10px,1.6svh,16px)",
+                paddingBottom: "clamp(96px,18svh,170px)",
+                textAlign: "center",
+                pointerEvents: "none",
+                opacity: 0,
+                willChange: "opacity",
+                // 明るい映像上での可読性を守る下部スクリム(コンテナごと点灯)
+                background:
+                  "linear-gradient(180deg, rgba(22,20,18,0) 44%, rgba(22,20,18,.42) 70%, rgba(22,20,18,.6) 100%)",
+              }}
+            >
+              {["素材に問う", "火に問う", "時間に問う"].map((t) => (
+                <p key={t} className="mask" style={{ margin: 0 }}>
+                  <span
+                    data-film-line
+                    style={{
+                      display: "inline-block",
+                      fontFamily: SERIF,
+                      fontSize: "clamp(16px,2.1vw,24px)",
+                      fontWeight: 400,
+                      letterSpacing: ".3em",
+                      textIndent: ".3em",
+                      color: "#f2f0eb",
+                      textShadow: "0 2px 22px rgba(0,0,0,.65)",
+                    }}
+                  >
+                    {t}
+                  </span>
+                </p>
+              ))}
+            </div>
+
+            {/* S5 — 受け止めの半拍: フィルムの圧倒の直後、一行だけの静けさ。
+                コピー比較と採用判断は docs/cinematic/implementation-plan.md 3章 */}
+            <div
+              data-scene="rest"
+              style={{
+                position: "absolute",
+                inset: 0,
+                zIndex: 5,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                textAlign: "center",
+                padding: "0 24px",
+                opacity: 0,
+                willChange: "opacity",
+                // 一行の背後だけを翳らせる局所スクリム(sceneのopacityに連動)。
+                // 明るいカットに重なっても QS コントラストを割らない濃度
+                background:
+                  "radial-gradient(82% 60% at 50% 50%, rgba(22,20,18,.78), rgba(22,20,18,.25) 58%, rgba(22,20,18,0) 76%)",
+              }}
+            >
+              <p
+                data-rest-line
+                style={{
+                  margin: 0,
+                  fontFamily: SERIF,
+                  fontSize: "clamp(15px,1.9vw,21px)",
+                  fontWeight: 300,
+                  letterSpacing: ".22em",
+                  textIndent: ".22em",
+                  lineHeight: 2,
+                  color: "rgba(242,240,235,.85)",
+                  textShadow: "0 2px 20px rgba(0,0,0,.55)",
+                }}
+              >
+                答えは、まだ湯気の中に。
+              </p>
+            </div>
+
+            {/* S6 — editorial menu (the film's still frame sits behind) */}
             <div
               data-scene="food"
               className="gm-menu-panel"
