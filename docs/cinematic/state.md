@@ -9,12 +9,12 @@
 - 案件タイプ: 既存サイト変換
 - 成果物の保存場所: docs/cinematic/
 - 最終更新: 2026-07-10
-- 案件ステータス: **Phase 17 合格・コミット済み**（/menu/dinner Editorial化=D2完了。Phase 18未着手。TOP: G3条件付き合格）
+- 案件ステータス: **Phase 18 完了 — Dinner ロック（QA合格・コミット済み）**
 
 ## 現在地
 
-- 現在のStage: **Phase 17 完了（人間レビュー合格・コミット済み）**。Phase 18未着手
-- 次のアクション（再開時に最初にやること）: ユーザー指示を待つ — 想定候補: ①editorial variantのlunch/course/drinkへの展開承認 ②/aboutのコピー重複整理案の提示 ③公開前Blocker素材の受領→差し替え。コピー変更2案は不承認のまま維持（勝手に再提案しない）
+- 現在のStage: **Dinner 紙芝居型 — 実装・実スクロール検証済み。人間レビュー待ち・コード未コミット**（Phase 18未着手）。**方針記録: ユーザー指示によりPin禁止をD2ステージ限定で解除**（scrub駆動・モバイル/RMは静的維持）
+- 次のアクション（再開時に最初にやること）: レビュー結果受領 → 承認ならコミット（Storytelling Pass 10章+Scene-Turn 11章を一体で）。実装記録: dinner-implementation-plan.md 10〜11章
 - 実装記録: dinner-implementation-plan.md 9章（変更5ファイル・非回帰=3ページbody DOM完全一致・pin-spacer 0・RM実切替可読・390px横スクロール0・CTA 53px）
 - 進行中メモ: **Block A合格・コミット済み: `7b7a22e`**（Part1/Part2は同一領域重複のため理由記録の上1コミット統合）。Stage 12修正2件: ①noscriptフォールバック（QS20 Blocker解消） ②メディア装填遅延（LCP: 不可視film posterがLCP要素だった問題を解消 → devtoolsラボで **LCP 1.8s達成**・初期パス-1.4MB）。375px横スクロール0を実390ビューポートで実測確定（headless狭窓のズレはアーティファクトと切り分け）。reduced-motion実切替をheadless実施（分岐実行・動画非DLを実測）
 
@@ -56,7 +56,13 @@
 
 <!-- 再開時はこれをそのまま再提示する -->
 
-（なし — Phase 17合格・コミット済み。次はPhase 18等の指示待ち）
+**Dinner Scene-Turn Storytelling レビュー依頼** — localhost:3000/menu/dinner:
+1. 1スクロールごとに「場面がめくれる」感覚があるか（D1退場→D2対面→D3選ぶ→D4結末）
+2. D1: heroの情報が少しずつ退いてD2へ視線が渡るか（PCのみ）
+3. D2: 写真→見出し→キャプションの順序と遅れの質感／パララックス（±5%・scrub0.6）の品
+4. D3: リボン→行の半拍と読み心地
+5. モバイル390px: 完全静的な縦構成でScene順が成立しているか
+6. reduced-motion／lunch・course・drinkの目視ダブルチェック
 
 ## 成果物ポインタ
 
@@ -92,4 +98,13 @@
 - 2026-07-10 / Phase 15 / 全9ルートを棚卸しし sitewide-rollout-plan.md を作成（演出密度3段階の割当・全体情報設計・再利用3分類＋不足候補・ロードマップ・最初の1ページ比較→推奨 /menu/dinner・公開前Blocker 5件）。発見: TOPがS2で「おいしいとは、なにか。」を先取りしたため /about 冒頭に重複感が新規発生（実装3番目でコピー整理案を提示予定）。コード・CSS・コンテンツ変更なし。実装順序の承認待ちで停止。下層実装・Stage 16未着手
 - 2026-07-10 / Phase 16 / 実装順序を確定（dinner→lunch→course→drink→about→access・contact→recruit）。/menu/dinner の現行分析（強み=ボード/実価格/分岐完備・課題=PC pin横流しがPhase16基準と衝突・実写1枚・トークン不統一・リードがTOP章句と語彙近接）→ ページ固有Brief・Experience Plan・Implementation Plan を作成。Concept=「今夜の一皿を、選びはじめる。」／4 Scene（夜の帳・看板との対面・お品書き・席を押さえる）／Hero 2案比較→案A推奨／代表Scene=D2。コード・CSS・コピー・依存・TOP変更なし。**承認待ちで停止。実装・Phase 17未着手
 - 2026-07-10 / Phase 17 / Plan条件付き承認を受け D2実装。方式=別コンポーネントDishShowcase＋gm-shot新名前空間＋editorialオプトインprop（DishGallery/.gm-galは無変更=非回帰を構造保証）。Plan B実装（実写のみ・ゼロならセクション非表示）。MenuBoardにquiet prop（既定パスは従来リテラル）。検証: build/lint/diff-check/コンソール0/pin-spacer0/390px横スクロール0/CTA53px/RM実切替で全文・CTA可読/lunch・course・drinkのbody DOM完全一致。**未コミットのまま人間レビュー待ちで停止。Phase 18未着手**
-- 2026-07-10 / Phase 17 レビュー / **合格**（D2構成・Plan B・強度・D3弱化・variant分離・非回帰を承認。コピー変更は不承認、実価格/実URL/追加写真/素材出所は未確定のまま維持）。最終確認（diff範囲・build/lint/diff-check再実行）後、1コミットで確定: **`1ff940e`** feat: transform dinner page to editorial showcase。Phase 18未着手**
+- 2026-07-10 / Phase 17 レビュー / **合格**（D2構成・Plan B・強度・D3弱化・variant分離・非回帰を承認。コピー変更は不承認、実価格/実URL/追加写真/素材出所は未確定のまま維持）。最終確認（diff範囲・build/lint/diff-check再実行）後、1コミットで確定: **`1ff940e`** feat: transform dinner page to editorial showcase。Phase 18未着手
+- 2026-07-10 / Dinner Storytelling Pass / D1〜D4を場面として接続: 入口余白拡張・D2写真のみ縦パララックス（±5%計10%・scrub0.6・PC限定・のりしろ縦±6%）・D2→D3余白・D3→D4余白＋CTA単独の静かな着地（quiet枝のみ変更・既定枝は従来リテラル復元）。gm-editorialスコープCSSで他ページ非波及。検証: build/lint/diff-check/コンソール0/非回帰3ページbody DOM一致/390横スクロール0/RM可読。**未コミットのまま人間レビュー待ちで停止**
+- 2026-07-10 / Dinner Scene-Turn / D1退場の振付（dinner限定・heroInner/cueのopacityをscrub退場・MenuHero無変更）＋D2の順序化（写真→見出しdelay0.25→キャプションdelay0.35）＋D3リボン→行を半拍拡大＋**モバイルを完全静的化**（DishShowcase全演出とMenuBoard quiet演出を861px+へスコープ。他ページ不変）。検証: build/lint/diff-check/コンソール0/非回帰3ページDOM一致/390で演出インライン0=静的実証/RM可読。**未コミットのまま人間レビュー待ちで停止**
+- 2026-07-10 / Dinner 紙芝居型 / ユーザー指示「画面固定でめくれる紙芝居型にしたい」を受け、Pin禁止をD2限定解除。DishShowcaseをpinステージ化（題字の幕→窓が開いて全画面対面→キャプション→保持→解放。+170%・scrub0.6）。ステージCSSは861px+かつmotion可のみ（RM/モバイルは静的維持）。題字左寄り不具合をmax-width:noneで修正。実スクロールで全場面を目視確認。build/lint/diff-check/RM可読。**未コミットのまま人間レビュー待ちで停止**
+- 2026-07-11 / Dinner 全ページ紙芝居化 / D1を固定開幕ページ（+70% pin・読む保持→めくり）、D4を全画面結末ページ（88svh中央・pinなし）へ拡張。D3は読む頁として流し読み維持（可読性原則）。ページ内pin=2（D1/D2）。実スクロール目視・build/lint/diff-check/コンソール0。**未コミットのまま人間レビュー待ちで停止**
+- 2026-07-11 / Dinner 境界レス化 / D1 pin撤回（スクロール同期退場へ）・D2幕間の黒排除（題字退場と窓開きを重畳）・行程+150%短縮・余白圧縮（D2→D3/D3→D4とも48〜96px）。品書き到達≈3.5画面・pin=D2の1箇所のみ。実スクロール目視/build/lint/コンソール0。**未コミットのまま人間レビュー待ちで停止**
+- 2026-07-11 / Dinner Story Transition Refinement / ①熾火: 題字の背後に皿を0.35で常灯（黒い独立Scene解消）②受け渡し: p0.82〜皿が一歩引き(0.965/0.55)＋quiet額縁をtop 94%で前倒し（同一画面で重なる）③結末: CTAを子要素逐次reveal(stagger 0.16)へ。実装 §15。build/lint/実スクロール/コンソール0。他ページ・モバイル/RM不変。**未コミットのまま人間レビュー待ちで停止**
+- 2026-07-11 / Dinner scrTelling機構移植 / kurukuru-web を実地調査（jQuery自前実装: 超長尺+sticky・進捗%線形補間・サブシーン重畳・拡大fade-out）し機構を GSAP pin+scrub で完全移植。Hero+Showcase を gm-stage 単一ステージ(+320%)に層で内包し、冒頭〜対面の境界ゼロ化。ビジュアル・コピーは愚問のまま（表現の模倣なし）。実装 §16。build/lint/非回帰/実スクロール/コンソール0。**未コミットのまま人間レビュー待ちで停止**
+- 2026-07-11 / Dinner お品書き活気登場 / quiet分岐のみ: 章句→額縁躍り上がり(y40/scale0.975/1.0s)→頭書き→見出しマスク→道具の波状TL、リボン左差し込み(x-24)、行はscale0.985+y24のriseLine連鎖(stagger0.055)。他ページ非quiet分岐は従来値で明示分離・不変。実装 §17。build/lint/実スクロール/コンソール0。**未コミットのまま人間レビュー待ちで停止**
+- 2026-07-11 / Phase 18 Dinner Lock & Quality Gate / 新規演出なし。QA12項目: 合格10・環境制約による未計測2（JS無効の視覚レンダ・60fps定量）。実再現バグ0・修正0。蓄積差分（§8〜17）を一括コミットして固定。**

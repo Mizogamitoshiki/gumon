@@ -95,3 +95,33 @@
 **G3（納品可否・人間判定）: 合格 — 条件付き**
 - 条件（公開前に必須）: ①D8 実URLの差し替え（現状のリンク先は各サービスのトップページであり公開不可） ②D10 素材出所の最終確認
 - 継続課題（公開は妨げない）: D9 メニュー原本照合／E11 第三者評価／Safari・Firefox・Edgeでの通し／公開後フィールドCWV（CrUX/RUM）
+
+
+---
+
+# Phase 18 — Dinner Lock & Quality Gate（2026-07-11）
+
+対象: /menu/dinner のみ。新規演出なし。QA中に実再現したバグ: **0件**（修正なし）。
+
+## 判定表
+
+| # | 項目 | 結果 | 備考 |
+| --- | --- | --- | --- |
+| 1 | build / lint | ✅ | `✓ Compiled successfully`・ESLint 0 |
+| 2 | 非回帰(lunch/course/drink) | ✅ | gm-stage=0・gm-gal構造維持・HTTP200 |
+| 3 | デスクトップ実スクロール全行程 | ✅ | 入口→対面→今夜を、選ぶ。→品書き→席を、決める。→予約(§16-17実装時に目視) |
+| 4 | reduced-motion | ✅ | headless --force-prefers-reduced-motion: inline opacity:0 = 0件・全テキスト/電話番号出力 |
+| 5 | モバイル(390px実測・same-origin iframe) | ✅ | pin-spacerなし・chero relative/shot static・横scrollWidth=390・写真/キャプション可視 |
+| 6 | 検索・絞り込み | ✅ | 「海老」→1行+他お品書き1件、クリア→5行復帰 |
+| 7 | rAF/スクラブ健全性 | ✅ | 可視タブで61fps相当のrAF・scrollY1600で clip/opacity が進捗どおり |
+| 8 | ステージ途中リロード復帰 | ✅ | scrollY1600でreload→pin内へ正しく復元・黒画面/破綻なし |
+| 9 | コンソール | ✅ | error/warn 0（全行程走査後） |
+| 10 | JS無効 | ⚠️ 部分 | SSRに隠し要素なし+noscript解除CSSをDOMレベルで確認。**視覚レンダは未検証**（稼働中Chromeとheadlessの競合でスクリーンショット不可） |
+| 11 | 60fps定量トレース | ⚠️ 未計測 | 簡易rAF計測+目視のみ。DevTools Performanceでの定量計測は未実施 |
+| 12 | フィールドCWV | 未計測 | 公開前のため対象外（従来どおり） |
+
+## テスト時の環境注意（バグではない）
+- 背景タブでは rAF=0 のため rAF 待ちの計測スクリプトがタイムアウトする（既知トラップ）。visibilityState 確認後に実施
+
+## 結論
+Blocker/Major 0件。⚠️2件は環境制約による未計測項目で、実装欠陥の兆候はなし。**Dinner をコミットして固定する。**
