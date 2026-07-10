@@ -1,0 +1,37 @@
+{
+  "name": "bloom-cinematic-engine",
+  "engine_version": "1.0.0",
+  "skill_version": "1.0.0",
+  "installed_at": "2026-07-10 12:35:43",
+  "updated_at": "2026-07-10 12:35:43",
+  "source": "/Users/mizokamimirai/Desktop/mizogamitoshiki/Bloom-L-Cinematic-Engine",
+  "created_claude_md": false,
+  "files": [
+    ".claude/skills/storytelling/references/creative-brief.md",
+    ".claude/skills/storytelling/references/creative-interview.md",
+    ".claude/skills/storytelling/references/emotion-story-scene.md",
+    ".claude/skills/storytelling/references/implementation-gates.md",
+    ".claude/skills/storytelling/references/motion-direction.md",
+    ".claude/skills/storytelling/references/project-analysis.md",
+    ".claude/skills/storytelling/references/qa-protocol.md",
+    ".claude/skills/storytelling/references/runtime.md",
+    ".claude/skills/storytelling/references/scroll-rhythm.md",
+    ".claude/skills/storytelling/references/workflow.md",
+    ".claude/skills/storytelling/SKILL.md",
+    ".claude/skills/storytelling/templates/creative-brief-template.md",
+    ".claude/skills/storytelling/templates/experience-plan-template.md",
+    ".claude/skills/storytelling/templates/implementation-plan-template.md",
+    ".claude/skills/storytelling/templates/project-analysis-template.md",
+    ".claude/skills/storytelling/templates/qa-report-template.md",
+    ".claude/skills/storytelling/templates/state-template.md",
+    "docs/bloom-cinematic/BLOOM_RULES.md",
+    "docs/bloom-cinematic/creative/CREATIVE_DIRECTOR_ENGINE.md",
+    "docs/bloom-cinematic/creative/CREATIVE_METHODOLOGY.md",
+    "docs/bloom-cinematic/creative/KNOWLEDGE_SYSTEM.md",
+    "docs/bloom-cinematic/PROJECT_CHARTER.md",
+    "docs/bloom-cinematic/QUALITY_STANDARD.md"
+  ],
+  "history": [
+    {"date": "2026-07-10 12:35:43", "action": "install", "engine_version": "1.0.0"}
+  ]
+}
