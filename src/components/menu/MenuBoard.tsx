@@ -9,7 +9,7 @@ import {
   type MenuSection,
 } from "@/lib/menu";
 import { gsap, useGSAP } from "@/lib/gsap-setup";
-import { GUMON_MOTION } from "@/lib/motion-tokens";
+import { GUMON_MOTION, GUMON_SCENE_MOTION } from "@/lib/motion-tokens";
 import { HOTPEPPER_URL } from "@/lib/site";
 
 const SERIF = "var(--font-noto-serif-jp), serif";
@@ -40,7 +40,16 @@ function matches(item: MenuItem, q: string): boolean {
 // パレットに翻訳したもの: 額縁+コーナーマーク、リボン見出し、点線価格、
 // コースは紙(アイボリー)カード、締めの一枚、注記、電話 CTA。
 // 検索(全カテゴリ横断)と「おすすめのみ」絞り込みに対応。
-export default function MenuBoard({ category }: { category: MenuSection }) {
+// quiet(Phase 17・現状 dinner のみ): Reveal を fade-quiet 基準(8px・短め・
+// power1.out)へ弱化する(読む区間は演出最弱 — CDE 6.4)。未指定ページは
+// 従来値のまま一切変わらない。構造・DOM・機能は quiet でも不変。
+export default function MenuBoard({
+  category,
+  quiet = false,
+}: {
+  category: MenuSection;
+  quiet?: boolean;
+}) {
   const rootRef = useRef<HTMLElement>(null);
   const isCourse = category.titleEn === "COURSE";
   const others = BOARD_LINKS.filter((l) => l.titleEn !== category.titleEn);
@@ -78,12 +87,17 @@ export default function MenuBoard({ category }: { category: MenuSection }) {
         const root = rootRef.current;
         if (!root) return;
 
+        // quiet 時の弱化値(fade-quiet)。既定は従来値そのまま
+        const rise = quiet ? GUMON_SCENE_MOTION.fadeQuiet.y : null;
+        const dur = quiet ? GUMON_SCENE_MOTION.fadeQuiet.duration : null;
+        const ez = quiet ? GUMON_SCENE_MOTION.fadeQuiet.ease : null;
+
         // ボードの額縁: 近づいたら静かに現す
         gsap.from(".gm-board-frame", {
           autoAlpha: 0,
-          y: 26,
-          duration: GUMON_MOTION.durationLong,
-          ease: GUMON_MOTION.ease,
+          y: rise ?? 26,
+          duration: dur ?? GUMON_MOTION.durationLong,
+          ease: ez ?? GUMON_MOTION.ease,
           scrollTrigger: { trigger: root, start: "top 78%", once: true },
         });
         // MENU 見出し: 行マスクのせり上がり
@@ -102,16 +116,18 @@ export default function MenuBoard({ category }: { category: MenuSection }) {
           });
           tl.from(sec.querySelector(".gm-board-ribbon"), {
             autoAlpha: 0,
-            y: 16,
-            duration: GUMON_MOTION.duration,
+            y: rise ?? 16,
+            duration: dur ?? GUMON_MOTION.duration,
+            ease: ez ?? undefined,
           });
           tl.from(
             sec.querySelectorAll(".gm-board-row, .gm-board-card"),
             {
               autoAlpha: 0,
-              y: 20,
-              duration: GUMON_MOTION.duration,
-              stagger: 0.07,
+              y: rise ?? 20,
+              duration: dur ?? GUMON_MOTION.duration,
+              ease: ez ?? undefined,
+              stagger: quiet ? 0.06 : 0.07,
             },
             0.15,
           );
@@ -136,9 +152,9 @@ export default function MenuBoard({ category }: { category: MenuSection }) {
           ),
           {
             autoAlpha: 0,
-            y: 20,
-            duration: GUMON_MOTION.duration,
-            ease: GUMON_MOTION.ease,
+            y: rise ?? 20,
+            duration: dur ?? GUMON_MOTION.duration,
+            ease: ez ?? GUMON_MOTION.ease,
             stagger: GUMON_MOTION.stagger,
             scrollTrigger: {
               trigger: ".gm-board-others",

@@ -9,12 +9,13 @@
 - 案件タイプ: 既存サイト変換
 - 成果物の保存場所: docs/cinematic/
 - 最終更新: 2026-07-10
-- 案件ステータス: **Phase 16: /menu/dinner Transformation Plan・承認待ち**（TOP: G3条件付き合格／実装順序: dinner→lunch→course→drink→about→access・contact→recruit で確定）
+- 案件ステータス: **Phase 17 合格・コミット済み**（/menu/dinner Editorial化=D2完了。Phase 18未着手。TOP: G3条件付き合格）
 
 ## 現在地
 
-- 現在のStage: **Phase 16 — /menu/dinner Transformation Plan 作成済み・承認待ち**（dinner-creative-brief / dinner-experience-plan / dinner-implementation-plan。実装は未着手）
-- 次のアクション（再開時に最初にやること）: Plan承認を受領 → dinner-implementation-plan 4章の手順で代表Scene D2「看板との対面」から実装（DishGallery縦型化・Plan B内蔵）→ 人間レビュー → D3弱化 → QA → コミット。コピー変更2案（リード差し替え・CTA反響）は個別承認
+- 現在のStage: **Phase 17 完了（人間レビュー合格・コミット済み）**。Phase 18未着手
+- 次のアクション（再開時に最初にやること）: ユーザー指示を待つ — 想定候補: ①editorial variantのlunch/course/drinkへの展開承認 ②/aboutのコピー重複整理案の提示 ③公開前Blocker素材の受領→差し替え。コピー変更2案は不承認のまま維持（勝手に再提案しない）
+- 実装記録: dinner-implementation-plan.md 9章（変更5ファイル・非回帰=3ページbody DOM完全一致・pin-spacer 0・RM実切替可読・390px横スクロール0・CTA 53px）
 - 進行中メモ: **Block A合格・コミット済み: `7b7a22e`**（Part1/Part2は同一領域重複のため理由記録の上1コミット統合）。Stage 12修正2件: ①noscriptフォールバック（QS20 Blocker解消） ②メディア装填遅延（LCP: 不可視film posterがLCP要素だった問題を解消 → devtoolsラボで **LCP 1.8s達成**・初期パス-1.4MB）。375px横スクロール0を実390ビューポートで実測確定（headless狭窓のズレはアーティファクトと切り分け）。reduced-motion実切替をheadless実施（分岐実行・動画非DLを実測）
 
 ## 実行範囲（履歴）
@@ -48,19 +49,14 @@
 
 - G1承認: **済**（2026-07-10 / 範囲: Concept・9 Scene・Hero案A・代表Scene=S4+S5・変更ファイル4+docs・依存追加なし・コンテンツ削除なし。A1〜A5承認、A3は映像実確認が条件。素材は利用前提で確認済み。全文: implementation-plan.md 2章）
 - G2判定: **合格（2026-07-10・軽微修正後に合格）** — 承認内容: S4の映像と章句の表現／3章句（素材・火・時間）／S5の休符／S5コピー「答えは、まだ湯気の中に。」／S4→S5→S6の接続／375pxでの表現／現在の代表Scene方針。条件だった軽微修正（章句タイミングのT.film/T.rest相対化・implementation-planのtrailing whitespace除去・state.md表記修正・qa-baselineの成果物登録）は実施済み
+- **Phase 17レビュー: 合格（2026-07-10）** — 承認: D2縦型Editorial／Plan B（麻婆1枚大判）／clip-reveal1回+fade-quiet強度／D3静かなReveal／dinner専用variant分離／他3ページ非影響。**コピー変更は不承認**・実価格/実URL/追加写真/素材出所は未確定のまま維持。コミットIDはセッションログ参照
 - **G3判定: 合格 — 条件付き（2026-07-10）**。ユーザー「確認完了OK」（チェックリスト一括回答）。公開前必須条件: ①ホットペッパー/Instagram実URLの差し替え（site.ts現状はトップページTODO＝公開不可） ②素材一次出所の最終確認。第三者評価(E11)は実施報告なしのため未確認と記録。全文: qa-report.md 5章
 
 ## 保留中の質問・承認依頼
 
 <!-- 再開時はこれをそのまま再提示する -->
 
-**Phase 16 /menu/dinner Transformation Plan 承認依頼（dinner-implementation-plan.md）**:
-1. 変更の中心: DishGalleryのpin・横流し廃止 → 縦型エディトリアル「看板との対面」へ（Plan B=実写がある品のみ額縁表示・現状は麻婆豆腐1枚を主役）
-2. Hero=案A（現行深化）／代表Scene=D2「看板との対面」
-3. D3ボードのReveal弱化（fade-quietトークン適用・値のみ）
-4. 変更ファイル: DishGallery.tsx・globals.css(.gm-gal系)・MenuBoard.tsx(値のみ)・docs
-5. コピー変更2案は別途承認: ①リード差し替え候補 ②CTA反響「今夜の答えを、お取り置きします。」
-6. .gm-gal CSSはmenu4ページ共用のため型が横展開される（意図した波及）ことの了承
+（なし — Phase 17合格・コミット済み。次はPhase 18等の指示待ち）
 
 ## 成果物ポインタ
 
@@ -75,7 +71,7 @@
 | sitewide-rollout-plan.md（Phase 15: 全ページ棚卸し・演出密度・再利用分類・ロードマップ） | 承認済み（実装順序確定） | docs/cinematic/sitewide-rollout-plan.md |
 | dinner-creative-brief.md（Phase 16: ページ固有override） | 承認待ち | docs/cinematic/dinner-creative-brief.md |
 | dinner-experience-plan.md（Phase 16: 感情・Story・4 Scene・Motion） | 承認待ち | docs/cinematic/dinner-experience-plan.md |
-| dinner-implementation-plan.md（Phase 16: 分類・実装/QA計画・Blocker） | 承認待ち | docs/cinematic/dinner-implementation-plan.md |
+| dinner-implementation-plan.md（Phase 16計画+Phase 17実装記録9章） | 実装済み・レビュー待ち | docs/cinematic/dinner-implementation-plan.md |
 
 ## セッションログ
 
@@ -94,4 +90,5 @@
 - 2026-07-10 / Stage 13 / 最終確認チェックリスト（12項目・5〜10分・合格/修正希望/未確認形式）を作成し提示。コード・CSS・依存・コンテンツの変更なし。人間確認待ちで停止
 - 2026-07-10 / Stage 13→14 / ユーザー「確認完了OK」受領。A〜C・総合=合格、D8実URL=未解決（site.tsのTODOを再確認=客観事実）、D9価格6箇所未確定、E11第三者=未確認と正直に記録（qa-report 5章）。**G3=合格（条件付き: 公開前に実URL差し替え+素材出所確認）**。Stage 14完了報告を提示し、案件ステータスを報告済みへ。下層ページは未着手（新規指示待ち）
 - 2026-07-10 / Phase 15 / 全9ルートを棚卸しし sitewide-rollout-plan.md を作成（演出密度3段階の割当・全体情報設計・再利用3分類＋不足候補・ロードマップ・最初の1ページ比較→推奨 /menu/dinner・公開前Blocker 5件）。発見: TOPがS2で「おいしいとは、なにか。」を先取りしたため /about 冒頭に重複感が新規発生（実装3番目でコピー整理案を提示予定）。コード・CSS・コンテンツ変更なし。実装順序の承認待ちで停止。下層実装・Stage 16未着手
-- 2026-07-10 / Phase 16 / 実装順序を確定（dinner→lunch→course→drink→about→access・contact→recruit）。/menu/dinner の現行分析（強み=ボード/実価格/分岐完備・課題=PC pin横流しがPhase16基準と衝突・実写1枚・トークン不統一・リードがTOP章句と語彙近接）→ ページ固有Brief・Experience Plan・Implementation Plan を作成。Concept=「今夜の一皿を、選びはじめる。」／4 Scene（夜の帳・看板との対面・お品書き・席を押さえる）／Hero 2案比較→案A推奨／代表Scene=D2。コード・CSS・コピー・依存・TOP変更なし。**承認待ちで停止。実装・Phase 17未着手**
+- 2026-07-10 / Phase 16 / 実装順序を確定（dinner→lunch→course→drink→about→access・contact→recruit）。/menu/dinner の現行分析（強み=ボード/実価格/分岐完備・課題=PC pin横流しがPhase16基準と衝突・実写1枚・トークン不統一・リードがTOP章句と語彙近接）→ ページ固有Brief・Experience Plan・Implementation Plan を作成。Concept=「今夜の一皿を、選びはじめる。」／4 Scene（夜の帳・看板との対面・お品書き・席を押さえる）／Hero 2案比較→案A推奨／代表Scene=D2。コード・CSS・コピー・依存・TOP変更なし。**承認待ちで停止。実装・Phase 17未着手
+- 2026-07-10 / Phase 17 / Plan条件付き承認を受け D2実装。方式=別コンポーネントDishShowcase＋gm-shot新名前空間＋editorialオプトインprop（DishGallery/.gm-galは無変更=非回帰を構造保証）。Plan B実装（実写のみ・ゼロならセクション非表示）。MenuBoardにquiet prop（既定パスは従来リテラル）。検証: build/lint/diff-check/コンソール0/pin-spacer0/390px横スクロール0/CTA53px/RM実切替で全文・CTA可読/lunch・course・drinkのbody DOM完全一致。**未コミットのまま人間レビュー待ちで停止。Phase 18未着手****

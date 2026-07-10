@@ -48,6 +48,44 @@
 
 麻婆豆腐ほか実価格・夜メニュー原本／ホットペッパー実URL（CTA内リンク）／料理実写2〜4点（陰影・一点光）／素材一次出所。**いずれも推測で埋めない。**
 
-## 8. 承認記録（承認後に記入）
+## 8. 承認記録
 
-- 承認日時／承認者／範囲: （未 — Phase 16 Transformation Plan承認待ち）
+- **Phase 16 Plan承認（2026-07-10・条件付き）**: Hero案A維持／D2を代表Sceneとして実装／Plan B採用（実写のみ大判・プレースホルダ非表示）／D3弱化はdinner内限定／電話CTA・SEO・MenuHero・検索絞込は維持。**重要制約: `.gm-gal`を直接変更せず、lunch/course/drinkへ未承認の見た目変更を波及させない（dinner専用variant必須）**。コピー変更・menu.ts変更・新素材・依存追加・TOP変更・Phase 18は禁止
+
+## 9. Phase 17 実装記録（2026-07-10）【人間レビュー待ち・未コミット】
+
+### 変更ファイル
+
+| ファイル | 変更 |
+| --- | --- |
+| `src/components/menu/DishShowcase.tsx` | **新規** — D2「看板との対面」dinner専用variant。縦型・実写のみ（Plan B: `items.filter(i=>i.img)`・実写ゼロならセクション自体を出さない）。額縁clip-reveal各1回（expo.out 1.3・once）＋キャプション/見出しはfade-quiet（8px・0.8・power1.out）。useGSAP+scope・matchMediaでRM時は何も構築しない。pin・横流し・進捗バー・水平視差なし |
+| `src/components/menu/MenuDetailPage.tsx` | `editorial?: boolean`（既定false）を追加。true時のみ DishShowcase＋MenuBoard quiet。**未指定ページはDOM・見た目・Motionとも従来と完全同一** |
+| `src/components/menu/MenuBoard.tsx` | `quiet?: boolean`（既定false）を追加。quiet時のみ額縁/リボン/行/導線CTAのRevealを fade-quiet 値へ弱化（`rise ?? 26` 等のnull合体で**既定パスは従来リテラルのまま**）。見出しマスクと締めの一枚clipは維持（ページのクリップ=D2額縁＋締めの計2回） |
+| `src/app/menu/dinner/page.tsx` | `editorial` を渡すのみ |
+| `src/app/globals.css` | `.gm-shot*` 新規クラス群を**追記のみ**（`.gm-gal`は一切変更なし）。額縁は`aspect-ratio: 4/3`でサイズ先確保=CLSゼロ |
+
+### Dinner専用variantの設計理由
+
+別コンポーネント（DishShowcase）＋新規クラス名前空間（gm-shot）＋オプトインprop方式を採用。**DishGallery.tsxと.gm-galは1バイトも変更していない**ため、他ページの非回帰が構造的に保証される。将来は各ページの`editorial`フラグを立てるだけで同variantを承認後に展開できる。
+
+### 他メニュー非回帰の確認結果（客観検証）
+
+- 変更前後のSSR HTMLを取得し、script/link（チャンクハッシュ）を除いた**body DOMを厳密比較 → lunch/course/drink 3ページとも完全一致** ✅
+- dinnerのみ変更（gm-gal出現0＝横流し撤去・gm-shot 11・麻婆/価格/CTA存在）✅
+- コード上もDishGallery無変更＋MenuBoard既定パスは従来リテラル ✅（Motion非回帰）
+
+### 実装したD2のMotion目的
+
+額縁clip-reveal（1回）=「対面の瞬間」（感情を変える。D3より強く、TOP S4フィルムより弱いページ唯一のピーク）／キャプションfade-quiet=読み優先（理解を助ける）／RM時=構築ゼロで全文静置。
+
+### 検証結果
+
+build ✅／lint ✅ 0件／diff --check ✅／コンソール0 ✅／**pin-spacer 0個（pin不在をDOMで実証）**✅／PC: 額縁933×700(4:3)・電話CTA 214×**53px** ✅／390px（実iframe計測）: scrollWidth=390=横スクロール0・額縁375幅・CTA 53px ✅／**reduced-motion実切替（headless --force-prefers-reduced-motion）: gm-shot・board内にopacity:0残留ゼロ、麻婆豆腐・酢豚・¥980・tel CTA全て可読** ✅／noscript: SSRに品名・価格・CTA存在（メニューページは元よりインライン隠しなし）✅
+
+### 未確認素材・公開Blocker（変更なし・推測で埋めていない）
+
+麻婆豆腐ほか実価格[未確認]／夜メニュー原本[未確認]／ホットペッパー実URL[未確認]／追加の料理実写[未確認]（現状Plan B=麻婆1枚のみ）／素材一次出所[未確認]
+
+### 人間に確認してほしい観点
+
+①D2「対面」の質感（大判1枚の額縁が「看板」として立っているか・clip-revealの重さ）②D2がD3より強くTOP S4より弱い階調に感じられるか ③1枚だけでも寂しくないか（Plan Bの妥当性）④D3弱化後の品書きの読み心地 ⑤PC/iPhoneの通し（Hero→対面→品書き→CTA）⑥lunch/course/drinkがいつも通りか（目視でのダブルチェック）
