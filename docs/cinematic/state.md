@@ -9,20 +9,18 @@
 - 案件タイプ: 既存サイト変換
 - 成果物の保存場所: docs/cinematic/
 - 最終更新: 2026-07-10
-- 案件ステータス: 進行中（Stage 11 — Increment 2 合格・コミット済み。Increment 3 未着手）
+- 案件ステータス: **報告済み**（TOP: Stage 14完了。G3=合格〈条件付き: 実URL差し替え・素材出所最終確認が公開前必須〉。下層ページは未着手）
 
 ## 現在地
 
-- 現在のStage: **12 Technical QA 完了（Creative QAの判定材料整理まで実施・qa-report.md作成済み）。Stage 13以降・下層ページは未着手** — TOP最終確認（人間）待ち
-- 次のアクション（再開時に最初にやること）: qa-report.md 3章「人間による確認が必要な項目」の結果を受領 → 合格ならStage 13（Creative QA人間判定）→ Stage 14（完了報告・G3判定材料）へ
+- 現在のStage: **14 Completion Report 完了（報告済み）**
+- 次のアクション（再開時に最初にやること）: ①公開前必須2件の解消（実URL受領→site.ts差し替え／素材出所の最終確認）②継続課題（メニュー原本照合・第三者評価・Safari/Firefox/Edge通し）③公開後フィールドCWV（CrUX/RUM）を運用QAとして記録 ④下層ページ展開はユーザーの新規指示で開始（再利用/TOP固有の切り分けは implementation-plan 5.5）
 - 進行中メモ: **Block A合格・コミット済み: `7b7a22e`**（Part1/Part2は同一領域重複のため理由記録の上1コミット統合）。Stage 12修正2件: ①noscriptフォールバック（QS20 Blocker解消） ②メディア装填遅延（LCP: 不可視film posterがLCP要素だった問題を解消 → devtoolsラボで **LCP 1.8s達成**・初期パス-1.4MB）。375px横スクロール0を実390ビューポートで実測確定（headless狭窓のズレはアーティファクトと切り分け）。reduced-motion実切替をheadless実施（分岐実行・動画非DLを実測）
 
-## 実行範囲（今回の依頼で確定）
+## 実行範囲（履歴）
 
-- **実行するStage: 0〜8のみ。** Stage 8完了後に state.md を「承認待ち」へ更新して停止する。Stage 9以降へ進まない
-- 変更してよいファイル: docs/cinematic/ 配下の設計成果物のみ（state.md / project-analysis.md / creative-brief.md / experience-plan.md / implementation-plan.md）
-- 禁止: src/ 以下・CSS・コンテンツ・画像動画・package.json・依存・GSAP/ScrollTrigger/Lenis設定・ビルド設定への一切の変更。参考サイトの模倣
-- 既存資産（GSAP / ScrollTrigger / Lenis / pin stage / 6ビート構成）は「残す / 変更する / 追加する / 削除候補」に分類し、理由を示す
+- 当初依頼はStage 0〜8のみ → 以降、各ゲート（G1/G2/Inc1/Inc2/棚卸し/Block A/Stage 12/Stage 13）ごとにユーザー指示で範囲を拡張し、**Stage 14まで完了**。全承認範囲はimplementation-plan 2章と本ファイルの承認記録・セッションログが正
+- 不変の禁止事項: 依存追加・コンテンツ削除・参考サイト模倣・transform/opacity(/clip-path)以外のアニメーション・下層ページ実装（未指示）
 
 ## Stage状況
 
@@ -43,19 +41,18 @@
 | 10 Representative Scene (G2) | 完了 | **G2合格（2026-07-10・軽微修正後に合格）**。軽微修正=章句タイミングのT基準化・文書修正。実装記録: implementation-plan 3章 |
 | 11 Incremental Implementation | 完了 | Inc1合格(ead5d5f)・Inc2合格(402fd03)・**Block A合格(7b7a22e)** — S9完成(収束transform化・答えは、席で。)・削除テスト(グロー削除/ヘアライン残置)・Scene別ビルダー化 |
 | 12 Technical QA | 完了（人間確認項目あり） | qa-report.md作成。修正2件(noscript/LCPメディア装填遅延)。LCP 1.8s(devtoolsラボ)達成。未検証=Safari/iOS実機・スクロール中CPU4x等はqa-report 3章へ |
-| 13 Creative QA | 判定材料整理済み・人間判定待ち | qa-report.md 2章。疲労・第三者・最終合否は人間 |
-| 14 Completion Report | 未着手 | Stage 13の人間判定後 |
+| 13 Creative QA | 完了 | 人間確認「確認完了OK」受領（2026-07-10）。A〜C・総合=合格／D8実URL=未解決（客観事実）／E11第三者=未確認と記録（qa-report 5章） |
+| 14 Completion Report | **完了（報告済み）** | **G3=合格（条件付き）**: 公開前必須=実URL差し替え・素材出所最終確認。qa-report.md 5章に記録 |
 
 ## 承認・レビュー記録（要約とポインタ）
 
 - G1承認: **済**（2026-07-10 / 範囲: Concept・9 Scene・Hero案A・代表Scene=S4+S5・変更ファイル4+docs・依存追加なし・コンテンツ削除なし。A1〜A5承認、A3は映像実確認が条件。素材は利用前提で確認済み。全文: implementation-plan.md 2章）
 - G2判定: **合格（2026-07-10・軽微修正後に合格）** — 承認内容: S4の映像と章句の表現／3章句（素材・火・時間）／S5の休符／S5コピー「答えは、まだ湯気の中に。」／S4→S5→S6の接続／375pxでの表現／現在の代表Scene方針。条件だった軽微修正（章句タイミングのT.film/T.rest相対化・implementation-planのtrailing whitespace除去・state.md表記修正・qa-baselineの成果物登録）は実施済み
+- **G3判定: 合格 — 条件付き（2026-07-10）**。ユーザー「確認完了OK」（チェックリスト一括回答）。公開前必須条件: ①ホットペッパー/Instagram実URLの差し替え（site.ts現状はトップページTODO＝公開不可） ②素材一次出所の最終確認。第三者評価(E11)は実施報告なしのため未確認と記録。全文: qa-report.md 5章
 
 ## 保留中の質問・承認依頼
 
-<!-- 再開時はこれをそのまま再提示する -->
-
-**TOP最終確認のお願い（qa-report.md 3章）**: ①S1→S9通し体感（S9収束の質感・最初の操作でアンビエントが灯る挙動・S6→S7の間）②疲労チェック3回・量産感の最終判定（第三者推奨）③Safari/Firefox/iOS実機 ④CPU4xスクロール中フレーム ⑤実URL（ホットペッパー/Instagram）・実価格・素材一次出所の確定（納品前コンテンツBlocker）。合格判定後にStage 13/14（完了報告・G3材料）へ。
+（なし — TOPはStage 14報告済み。公開前必須2件〈実URL・素材出所〉の材料受領、または下層ページ着手の指示を待つ）
 
 ## 成果物ポインタ
 
@@ -64,8 +61,8 @@
 | project-analysis.md | 完了 | docs/cinematic/project-analysis.md |
 | creative-brief.md | 完了 | docs/cinematic/creative-brief.md |
 | experience-plan.md | 完了（1〜9章） | docs/cinematic/experience-plan.md |
-| implementation-plan.md | 1章 完了（2章以降はG1後） | docs/cinematic/implementation-plan.md |
-| qa-report.md | Stage 12完了・Stage 13材料整理済み | docs/cinematic/qa-report.md |
+| implementation-plan.md | 完了（1〜5章: 計画・承認記録・実装記録・棚卸し） | docs/cinematic/implementation-plan.md |
+| qa-report.md | 完了（1〜5章: Technical/Creative/人間確認/サマリー/G3記録） | docs/cinematic/qa-report.md |
 | qa-baseline.md（Stage 10 正式成果物: 実測ベースライン・実装後比較・A3映像確認記録） | 完了 | docs/cinematic/qa-baseline.md |
 
 ## セッションログ
@@ -81,4 +78,6 @@
 - 2026-07-10 / Stage 11 Increment 2 レビュー / **合格**（PC/375px実画面確認。間0.9unit・壁への受け渡し・S7弱化・保持0.5unit・再配分・モバイル表現を承認。受け渡しの「溶けるTransition」は休符として成立のため変更不要と判定）。表現の追加変更なしでコード＋文書をコミット: **`402fd03`** feat: add quiet rest between menu and drink scenes
 - 2026-07-10 / Stage 11 棚卸し / TOP完成までの残作業をBlock A（最終実装1回: S9置換・S9結末一行・削除テスト・純リファクタ）とBlock B（Stage 12包括QA: QS22最低セット・LCP改善・実機/Safari・Creative QA）へ集約（implementation-plan.md 5章）。Blocker5・Required6・Optional5・Reject6を分類。コード変更なし・コミットなし・Increment 3/Stage 12未着手。Block A着手指示待ちで停止
 - 2026-07-10 / Stage 11 Block A / Part 1: S9 letterSpacing tween廃止→2文字translateX ±0.16em置換（静的字間・role=img/aria-label・CLSゼロ）＋結末一行「答えは、席で。」追加＋削除テスト（視差グロー削除=壁に常時遮蔽で視覚出力ゼロをA/B+z-order解析で確認／進捗ヘアライン残置=モバイル現在地QS13）。Part 2: タイムラインをScene別ビルダー11関数へ純リファクタ（挿入順・演出値完全維持）。build/lint/diff-check/コンソール0/158KB不変/DOM実測OK。ウィンドウ不可視のため通し目視は未。未コミットのまま人間レビュー待ちで停止
-- 2026-07-10 / Stage 11 Block A合格 → Stage 12 / Block Aを`7b7a22e`でコミット（Part分離は同一領域重複のため理由記録の上統合）。Stage 12実施: JS無効時の情報到達（SSR全文確認+noscriptフォールバック新設=QS20解消）／reduced-motion実切替（headless --force-prefers-reduced-motion で分岐実行・動画非DL実測）／LCP原因特定（不可視film posterがLCP要素）→メディア装填を最初のユーザー操作へ遅延 → **devtoolsラボ perf0.93・LCP1.8s・CLS0（目標達成。simulate法は4.1〜6.7sの振れ=モデリング起因と記録）**／実390ビューポートで横スクロール0・hero中央・CTA折返しを実測（headless狭窓のズレはアーティファクト）／タップ領域47px実測／qa-report.md作成。未検証（Safari/iOS実機・スクロール中CPU4x・疲労/第三者）は3章の人間確認項目へ。**Stage 13以降・下層ページ未着手**
+- 2026-07-10 / Stage 11 Block A合格 → Stage 12 / Block Aを`7b7a22e`でコミット（Part分離は同一領域重複のため理由記録の上統合）。Stage 12実施: JS無効時の情報到達（SSR全文確認+noscriptフォールバック新設=QS20解消）／reduced-motion実切替（headless --force-prefers-reduced-motion で分岐実行・動画非DL実測）／LCP原因特定（不可視film posterがLCP要素）→メディア装填を最初のユーザー操作へ遅延 → **devtoolsラボ perf0.93・LCP1.8s・CLS0（目標達成。simulate法は4.1〜6.7sの振れ=モデリング起因と記録）**／実390ビューポートで横スクロール0・hero中央・CTA折返しを実測（headless狭窓のズレはアーティファクト）／タップ領域47px実測／qa-report.md作成。未検証（Safari/iOS実機・スクロール中CPU4x・疲労/第三者）は3章の人間確認項目へ。Stage 13以降・下層ページ未着手
+- 2026-07-10 / Stage 13 / 最終確認チェックリスト（12項目・5〜10分・合格/修正希望/未確認形式）を作成し提示。コード・CSS・依存・コンテンツの変更なし。人間確認待ちで停止
+- 2026-07-10 / Stage 13→14 / ユーザー「確認完了OK」受領。A〜C・総合=合格、D8実URL=未解決（site.tsのTODOを再確認=客観事実）、D9価格6箇所未確定、E11第三者=未確認と正直に記録（qa-report 5章）。**G3=合格（条件付き: 公開前に実URL差し替え+素材出所確認）**。Stage 14完了報告を提示し、案件ステータスを報告済みへ。下層ページは未着手（新規指示待ち）
