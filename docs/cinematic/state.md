@@ -107,4 +107,4 @@
 - 2026-07-11 / Dinner Story Transition Refinement / ①熾火: 題字の背後に皿を0.35で常灯（黒い独立Scene解消）②受け渡し: p0.82〜皿が一歩引き(0.965/0.55)＋quiet額縁をtop 94%で前倒し（同一画面で重なる）③結末: CTAを子要素逐次reveal(stagger 0.16)へ。実装 §15。build/lint/実スクロール/コンソール0。他ページ・モバイル/RM不変。**未コミットのまま人間レビュー待ちで停止**
 - 2026-07-11 / Dinner scrTelling機構移植 / kurukuru-web を実地調査（jQuery自前実装: 超長尺+sticky・進捗%線形補間・サブシーン重畳・拡大fade-out）し機構を GSAP pin+scrub で完全移植。Hero+Showcase を gm-stage 単一ステージ(+320%)に層で内包し、冒頭〜対面の境界ゼロ化。ビジュアル・コピーは愚問のまま（表現の模倣なし）。実装 §16。build/lint/非回帰/実スクロール/コンソール0。**未コミットのまま人間レビュー待ちで停止**
 - 2026-07-11 / Dinner お品書き活気登場 / quiet分岐のみ: 章句→額縁躍り上がり(y40/scale0.975/1.0s)→頭書き→見出しマスク→道具の波状TL、リボン左差し込み(x-24)、行はscale0.985+y24のriseLine連鎖(stagger0.055)。他ページ非quiet分岐は従来値で明示分離・不変。実装 §17。build/lint/実スクロール/コンソール0。**未コミットのまま人間レビュー待ちで停止**
-- 2026-07-11 / Phase 18 Dinner Lock & Quality Gate / 新規演出なし。QA12項目: 合格10・環境制約による未計測2（JS無効の視覚レンダ・60fps定量）。実再現バグ0・修正0。蓄積差分（§8〜17）を一括コミットして固定。**
+- 2026-07-11 / Phase 18 Dinner Lock & Quality Gate / 新規演出なし。QA12項目: 合格10・環境制約による未計測2（JS無効の視覚レンダ・60fps定量）。実再現バグ0・修正0。蓄積差分（§8〜17）を一括コミットして固定。コミットID: 64586ab（feat: unify dinner page into seamless cinematic scroll stage）**
