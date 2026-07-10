@@ -9,13 +9,13 @@
 - 案件タイプ: 既存サイト変換
 - 成果物の保存場所: docs/cinematic/
 - 最終更新: 2026-07-10
-- 案件ステータス: 進行中（Stage 11 — Increment 1 合格・コミット済み。Increment 2 未着手）
+- 案件ステータス: 進行中（Stage 11 — Increment 2 合格・コミット済み。Increment 3 未着手）
 
 ## 現在地
 
-- 現在のStage: **11 Incremental Implementation（進行中）** — Increment 1「S2 問いの帳」**合格（2026-07-10・軽微修正後に合格）・コミット済み**。次のIncrement（実装順序3: S6→S7の間の整備 等）へは未着手 — ユーザーの指示待ち
-- 次のアクション（再開時に最初にやること）: ユーザーから次Increment着手の指示を受けたら、implementation-plan 1.9 実装順序の次項目を1Sceneずつ実施
-- 進行中メモ: Increment 1レビューの軽微修正3点（残像0.18→0.09／アンビエントpauseをtl.time()>T.ambientOut基準へ／vh-unitコメント現在値化）を実施しコミット。修正後の視覚再確認は検証ウィンドウのオクルージョン（rAF停止）により初期描画のみ — 次回レビュー時に残像0.09とアンビエント再開の目視をお願いする
+- 現在のStage: **11 Incremental Implementation（進行中）** — Increment 2「S6→S7の間＋S7一杯の静けさ」**合格（2026-07-10・PC/375px実画面確認）・コミット済み**。Increment 3未着手 — ユーザーの指示待ち
+- 次のアクション（再開時に最初にやること）: ユーザーから次Increment着手の指示を受けたら、implementation-plan 1.9 実装順序の残項目（S9 letter-spacing置換／削除テスト／モバイル通し調整／純リファクタリング）から指示された単位で実施
+- 進行中メモ: レビュー付記: S6→S7の受け渡しは完全な静止ではなく背景が溶けるTransitionだが、休符として成立しているため変更不要（承認済み）。表現・タイミングの追加変更なしでコミット
 
 ## 実行範囲（今回の依頼で確定）
 
@@ -41,7 +41,7 @@
 | 8 Transformation Plan | 完了 | implementation-plan.md 1章（Hero 3案・代表Scene=S4+S5・23項目網羅） |
 | 9 Approval Gate (G1) | 完了 | 2026-07-10 全5項目承認（A1〜A5承認・素材利用確認済み。範囲: implementation-plan.md 2章） |
 | 10 Representative Scene (G2) | 完了 | **G2合格（2026-07-10・軽微修正後に合格）**。軽微修正=章句タイミングのT基準化・文書修正。実装記録: implementation-plan 3章 |
-| 11 Incremental Implementation | 進行中 | **Increment 1「S2問いの帳」合格（軽微修正後）・コミット済み**。Increment 2以降は未着手 |
+| 11 Incremental Implementation | 進行中 | Increment 1 合格（ead5d5f）。**Increment 2「S6→S7の間＋S7弱化」合格・コミット済み**。Increment 3未着手 |
 | 12 Technical QA | 未着手 | |
 | 13 Creative QA | 未着手 | |
 | 14 Completion Report | 未着手 | |
@@ -53,7 +53,7 @@
 
 ## 保留中の質問・承認依頼
 
-（なし — Increment 1合格・コミット済み。次の停止はIncrement 2着手指示待ち。次回レビュー時のお願い: 残像0.09の濃度とアンビエント再開の目視確認）
+（なし — Increment 2合格・コミット済み。次の停止はIncrement 3着手指示待ち）
 
 ## 成果物ポインタ
 
@@ -74,4 +74,6 @@
 - 2026-07-10 / Stage 10 / ベースライン実測（build/lint/実ブラウザ通し/動画内容確認/Lighthouse: qa-baseline.md）。A3条件履行: 動画は「完成皿の連なり」で調理カットなし→章句を「問い×答えの映像」構造に調整、「火に問う」を麻婆豆腐に配時。S4+S5実装（T定数化・章句・休符・スクリム・1210/920vh）。スコープ自制2件（drink弱化と壁受け渡し前倒しを差し戻し）。検証済み・性能悪化なし。黒画面現象は旧ビルドでも再現=非回帰と切り分け。コード未コミットのままG2レビュー待ちで停止
 - 2026-07-10 / Stage 10 G2 / **G2合格（軽微修正後に合格）**を受領・記録。軽微修正を実施: ①章句タイミングをT.film/T.rest相対値へ統一（wordIn=[T.film+0.35, +1.05, +1.75]・退場=T.rest-0.4・スクリム点灯=T.film+0.2。見た目の値は不変） ②implementation-planのtrailing whitespace除去 ③state.md表記修正 ④qa-baseline.mdを成果物ポインタへ登録。再検証（build/lint/diff --check）後、コード＋文書を1コミットに統合（feat: implement cinematic fire response scene）。Stage 11へは進んでいない
 - 2026-07-10 / Stage 11 Increment 1 / S2「問いの帳」実装（question/questionGhostのT追加・about以降+1.5・アンビエントS2まで残留・scroll-root 1330/1010vh・reduced-motion 56vh静的）。S1→S2→S3接続とS4/S5回帰なしを実画面確認。build/lint/diff--check合格・First Load JS不変。検証中の黒画面・scrollTo不発の真因を「タブ非表示によるrAF停止（テスト作為）」と確定し、qa-baselineの旧切り分け（既存問題扱い）を訂正。未コミットのまま人間レビュー待ちで停止
-- 2026-07-10 / Stage 11 Increment 1 レビュー / **合格（軽微修正後に合格）**。軽微修正3点を実施: ①S2残像 autoAlpha 0.18→0.09（タイミング・位置不変） ②アンビエントpause判定を固定スクロール距離(vh*2.4)→タイムライン基準（`tl.time() > T.ambientOut`、T.ambientOut=3.1=退場tween完了点をnamed offset追加。リスナー追加なし） ③T直前コメントを現在値（PC≈78.8/モバイル≈59.8vh/unit）へ修正。build/lint/diff--check合格。コード＋文書をコミット: **`ead5d5f`** feat: add cinematic question scene。**Increment 2へは未着手**
+- 2026-07-10 / Stage 11 Increment 1 レビュー / **合格（軽微修正後に合格）**。軽微修正3点を実施: ①S2残像 autoAlpha 0.18→0.09（タイミング・位置不変） ②アンビエントpause判定を固定スクロール距離(vh*2.4)→タイムライン基準（`tl.time() > T.ambientOut`、T.ambientOut=3.1=退場tween完了点をnamed offset追加。リスナー追加なし） ③T直前コメントを現在値（PC≈78.8/モバイル≈59.8vh/unit）へ修正。build/lint/diff--check合格。コード＋文書をコミット: **`ead5d5f`** feat: add cinematic question scene
+- 2026-07-10 / Stage 11 Increment 2 / S6→S7のhold-quiet（menuRest=12.0→drink=12.9の0.9unit。間の内容=バー開放＋フィルム→壁の受け渡し=B6実装）＋S7弱化（初期y8px・blurなし・fade-quiet 0.8/power1.out・stagger0.12・読了後保持0.5unit）＋S8/S9一律+1.4＋scroll-root 1440/1095vh（78.8/59.9vh/unit維持）。DOM・リスナー・依存追加ゼロ。build/lint/diff--check/コンソール0/158KB不変。ウィンドウ不可視（rAF停止）のため通し目視は未=レビュー依頼に記載。未コミットのまま人間レビュー待ちで停止
+- 2026-07-10 / Stage 11 Increment 2 レビュー / **合格**（PC/375px実画面確認。間0.9unit・壁への受け渡し・S7弱化・保持0.5unit・再配分・モバイル表現を承認。受け渡しの「溶けるTransition」は休符として成立のため変更不要と判定）。表現の追加変更なしでコード＋文書をコミット（IDは下行）。**Increment 3未着手**

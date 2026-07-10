@@ -155,17 +155,18 @@ body {
    drag (same beats, tighter spacing). JS reads the computed height, so the
    ScrollTrigger end adapts automatically. 861px = .gm-nav breakpoint.
    高さはマスタータイムライン長(GumonScroll.tsx の T)と比例させる:
-   S4+S5 で 820/620 → 1210/920、S2(問いの帳)の挿入(+1.5unit)で
-   1210/920 → 1330/1010 に延長。1unit あたりのスクロール量は維持:
-   デスクトップ 1210/15.38 ≈ 1330/16.88 ≈ 78.8vh/unit、
-   モバイル 920/15.38 ≈ 1010/16.88 ≈ 59.8vh/unit(体感速度は G2 合格時と同一) */
+   S4+S5 で 820/620 → 1210/920、S2 で 1330/1010、S6→S7 の間+S7 保持
+   (+1.4unit・タイムライン全長 16.88→18.28)で 1440/1095 に延長。
+   1unit あたりのスクロール量は一貫して維持:
+   デスクトップ 1440/18.28 ≈ 78.8vh/unit、モバイル 1095/18.28 ≈ 59.9vh/unit
+   (= 体感スクロール速度は G2 合格時と同一) */
 .gm-scroll-root {
   position: relative;
-  height: 1330vh;
+  height: 1440vh;
 }
 @media (max-width: 860px) {
   .gm-scroll-root {
-    height: 1010vh;
+    height: 1095vh;
   }
 }
 

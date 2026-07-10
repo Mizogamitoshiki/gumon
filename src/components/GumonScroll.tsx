@@ -274,6 +274,15 @@ export default function GumonScroll() {
     qa("[data-fade]").forEach((s) =>
       gsap.set(s, { opacity: 0, y: 18, ...blurIn(7) })
     );
+    // S7 drink(静けさ区間)だけ弱い初期状態に上書き: fade-quiet(8px・blurなし)。
+    // 他 Scene の data-fade には影響させない(CDE 6.4 弱化条件)
+    qaIn(q('[data-scene="drink"]'), "[data-fade]").forEach((s) =>
+      gsap.set(s, {
+        opacity: 0,
+        y: GUMON_SCENE_MOTION.fadeQuiet.y,
+        ...(lite ? {} : { filter: "blur(0px)" }),
+      })
+    );
     qa("[data-cat-row]").forEach((s) =>
       gsap.set(s, { opacity: 0, y: 16, ...blurIn(6) })
     );
@@ -294,7 +303,7 @@ export default function GumonScroll() {
     /* ---- Scene time offsets (timeline units) — single source of truth.
        S4(フィルム単独章)・S5(受け止めの半拍)・S2(問いの帳)は各ビートを
        ここから引く。スクロール距離は .gm-scroll-root(globals.css)の高さと
-       比例(デスクトップ 1330vh ≈78.8vh/unit・モバイル 1010vh ≈59.8vh/unit)。
+       比例(デスクトップ 1440vh ≈78.8vh/unit・モバイル 1095vh ≈59.9vh/unit)。
        高さを変えたらここも見直すこと ---- */
     const T = {
       heroExit: 0.3,
@@ -309,12 +318,13 @@ export default function GumonScroll() {
       food: 8.7, // S6 お品書き
       foodExit: 11.4,
       breath: 11.6, // フィルムの take が p=1 に達する点(S6 の終わり。以降は静止フレーム)
-      drink: 12.3,
-      drinkOut: 13.4,
-      access: 13.5,
-      accessOut: 14.7,
-      reserve: 15.0,
-      drift: 15.7, // 全域リニア視差(glow/壁)の長さ ≒ タイムライン全長
+      menuRest: 12.0, // S6→S7 の hold-quiet 開始(品書きが引かれ終わる点)。ここでバー退場・フィルム→壁の受け渡し(=休符の背景)
+      drink: 12.9, // S7 一杯の静けさ — 開始。hold-quiet は menuRest→drink の 0.9unit
+      drinkOut: 14.8, // S7 終了。読み終わり(≈14.31)から静かな保持 ≈0.5unit を置く
+      access: 14.9, // ここから下は Increment 2 で一律 +1.4(内部の演出値は不変)
+      accessOut: 16.1,
+      reserve: 16.4,
+      drift: 17.1, // 全域リニア視差(glow/壁)の長さ ≒ タイムライン全長
     } as const;
     const SM = GUMON_SCENE_MOTION;
 
@@ -358,7 +368,7 @@ export default function GumonScroll() {
     // whole scroll — a single living photograph slowly breathing. No reversals,
     // no rotation, no horizontal pan, no animated blur (GPU transform only).
     // 8% travel sits inside the layer's -10% overscan, so edges never show.
-    tl.to(foodhero, { scale: 1.04, yPercent: 4, ease: "none", duration: 14.4 }, 0);
+    tl.to(foodhero, { scale: 1.04, yPercent: 4, ease: "none", duration: 15.5 }, 0);
 
     // S4 火の返事 — scroll-scrubbed CUISINE FILM (the signature move, now a
     // SOLO chapter: the menu no longer overlaps it). Scroll drives the
@@ -373,7 +383,7 @@ export default function GumonScroll() {
     // ends where the film starts handing back to the wall (T.drinkOut+0.05)
     tl.to(
       film,
-      { scale: 1.01, yPercent: 1.5, ease: "none", duration: 8.0 },
+      { scale: 1.01, yPercent: 1.5, ease: "none", duration: 7.6 },
       T.film + 1.4
     );
     tl.to([barTop, barBot], { scaleY: 1, duration: 0.9, stagger: 0.06 }, T.film + 0.1);
@@ -429,12 +439,13 @@ export default function GumonScroll() {
     );
     tl.to(restScene, { autoAlpha: 0, duration: 0.4 }, T.food - 0.25);
 
-    // hand back to the wall for the drink→access transition (fires after
-    // the drink text is read, not behind it — 現行の相対位置を維持。
-    // S6→S7 の「壁の上の drink」への変更は S7 の演出改善なので今回は行わない)
-    tl.to([barTop, barBot], { scaleY: 0, duration: 0.6, ease: "power2.in" }, T.drinkOut - 0.05);
-    tl.to(film, { opacity: 0, duration: 1.0, ease: "power1.in" }, T.drinkOut + 0.05);
-    tl.to(foodhero, { opacity: 1, duration: 1.0, ease: "power1.inOut" }, T.drinkOut);
+    // S6→S7 hold-quiet(Increment 2): 品書きが引かれた直後、無情報の間を置く。
+    // この間の「内容」はフィルム→壁の受け渡しそのもの — バーが開き、静止した
+    // 一皿の映像が呼吸する壁に溶けて、S7 は静かな壁の上に置かれる
+    // (experience-plan 5章 B6「溶ける(間をおいて)」・7章 S7=静けさ区間)
+    tl.to([barTop, barBot], { scaleY: 0, duration: 0.6, ease: "power2.in" }, T.menuRest);
+    tl.to(film, { opacity: 0, duration: 0.9, ease: "power1.in" }, T.menuRest + 0.1);
+    tl.to(foodhero, { opacity: 1, duration: 0.9, ease: "power1.inOut" }, T.menuRest + 0.05);
 
     // BEAT 2 — about (S3 台所の姿勢)
     tl.to(about, { autoAlpha: 1, duration: 0.5 }, T.about);
@@ -481,12 +492,21 @@ export default function GumonScroll() {
     // (kicker + sections are children) before the S6→S7 gap ("間")
     tl.to(food, { autoAlpha: 0, y: -18, duration: 0.6, ease: "power2.in" }, T.foodExit);
 
-    // S7 — drink (時刻シフトのみ。演出値の変更は Stage 11 の担当範囲)
+    // S7 — 一杯の静けさ(Increment 2 で弱化): ピーク(S4)と情報密度(S6)を
+    // 受けた「吐く」区間。fade-quiet(8px・blurなし・power1.out)を S6 の行
+    // (16px・blur・expo)より明確に弱く、stagger は急かさず 0.12。
+    // 読み終わり(≈T.drink+1.41)から T.drinkOut まで静かな保持
     tl.to(drink, { autoAlpha: 1, duration: 0.5 }, T.drink);
     tl.to(lines(drink), { yPercent: 0, duration: 1.0, stagger: 0.08 }, T.drink + 0.1);
     tl.to(
       fades(drink),
-      { opacity: 1, y: 0, ...blurOut(), duration: 1.0, stagger: 0.09 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: SM.fadeQuiet.duration,
+        ease: SM.fadeQuiet.ease,
+        stagger: 0.12,
+      },
       T.drink + 0.25
     );
     tl.to(drink, { autoAlpha: 0, duration: 0.6, ease: "power2.in" }, T.drinkOut);
@@ -989,7 +1009,7 @@ export default function GumonScroll() {
       </div>
 
       {/* one pinned, scrubbed timeline — 高さは .gm-scroll-root(globals.css)。
-          デスクトップ 1330vh / モバイル 1010vh(タイムライン長 T と比例) */}
+          デスクトップ 1440vh / モバイル 1095vh(タイムライン長 T と比例) */}
       <div ref={scrollRootRef} className="gm-scroll-root">
         <div
           ref={stageRef}
