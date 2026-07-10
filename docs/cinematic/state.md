@@ -13,9 +13,9 @@
 
 ## 現在地
 
-- 現在のStage: **11 Incremental Implementation — Block A（最終実装）実装・検証済み。人間レビュー待ち・コード未コミット。Stage 12（Block B）未着手**
-- 次のアクション（再開時に最初にやること）: ユーザーのBlock Aレビュー結果を確認 → 承認なら**2コミットに分離**（①Part 1: S9完成＋削除テスト ②Part 2: 純リファクタ）→ 指示を待ってBlock B（Stage 12包括QA）へ
-- 進行中メモ: Block A内容 = A-1 S9 letterSpacing→2文字translateX置換（静的字間.1em・CLSゼロ・role=img） / A-2 結末一行「答えは、席で。」追加 / A-3 削除テスト（視差グロー=削除〈壁レイヤーに常時遮蔽で視覚出力ゼロと判明〉・進捗ヘアライン=残す〈モバイル現在地・QS13〉） / A-4 Scene別ビルダー関数化（挿入順・演出値完全維持）。検証: build/lint/diff-check/コンソール0/158KB不変/DOM実測OK。ウィンドウ不可視のため通し目視は未 — レビューで S9質感・全Scene回帰・375px・reduced-motion の目視をお願いする
+- 現在のStage: **12 Technical QA 完了（Creative QAの判定材料整理まで実施・qa-report.md作成済み）。Stage 13以降・下層ページは未着手** — TOP最終確認（人間）待ち
+- 次のアクション（再開時に最初にやること）: qa-report.md 3章「人間による確認が必要な項目」の結果を受領 → 合格ならStage 13（Creative QA人間判定）→ Stage 14（完了報告・G3判定材料）へ
+- 進行中メモ: **Block A合格・コミット済み: `7b7a22e`**（Part1/Part2は同一領域重複のため理由記録の上1コミット統合）。Stage 12修正2件: ①noscriptフォールバック（QS20 Blocker解消） ②メディア装填遅延（LCP: 不可視film posterがLCP要素だった問題を解消 → devtoolsラボで **LCP 1.8s達成**・初期パス-1.4MB）。375px横スクロール0を実390ビューポートで実測確定（headless狭窓のズレはアーティファクトと切り分け）。reduced-motion実切替をheadless実施（分岐実行・動画非DLを実測）
 
 ## 実行範囲（今回の依頼で確定）
 
@@ -41,10 +41,10 @@
 | 8 Transformation Plan | 完了 | implementation-plan.md 1章（Hero 3案・代表Scene=S4+S5・23項目網羅） |
 | 9 Approval Gate (G1) | 完了 | 2026-07-10 全5項目承認（A1〜A5承認・素材利用確認済み。範囲: implementation-plan.md 2章） |
 | 10 Representative Scene (G2) | 完了 | **G2合格（2026-07-10・軽微修正後に合格）**。軽微修正=章句タイミングのT基準化・文書修正。実装記録: implementation-plan 3章 |
-| 11 Incremental Implementation | 進行中 | Increment 1 合格（ead5d5f）。**Increment 2「S6→S7の間＋S7弱化」合格・コミット済み**。Increment 3未着手 |
-| 12 Technical QA | 未着手 | |
-| 13 Creative QA | 未着手 | |
-| 14 Completion Report | 未着手 | |
+| 11 Incremental Implementation | 完了 | Inc1合格(ead5d5f)・Inc2合格(402fd03)・**Block A合格(7b7a22e)** — S9完成(収束transform化・答えは、席で。)・削除テスト(グロー削除/ヘアライン残置)・Scene別ビルダー化 |
+| 12 Technical QA | 完了（人間確認項目あり） | qa-report.md作成。修正2件(noscript/LCPメディア装填遅延)。LCP 1.8s(devtoolsラボ)達成。未検証=Safari/iOS実機・スクロール中CPU4x等はqa-report 3章へ |
+| 13 Creative QA | 判定材料整理済み・人間判定待ち | qa-report.md 2章。疲労・第三者・最終合否は人間 |
+| 14 Completion Report | 未着手 | Stage 13の人間判定後 |
 
 ## 承認・レビュー記録（要約とポインタ）
 
@@ -55,12 +55,7 @@
 
 <!-- 再開時はこれをそのまま再提示する -->
 
-**Stage 11 Block A（最終実装）レビュー依頼** — 実装・検証完了・未コミット。実ブラウザでの確認をお願いします:
-1. S9の収束（2文字translateX置換）の質感 — 旧letterSpacing版と同じ「散っていた問いが店名に集まる」余韻に見えるか
-2. S9の読み順: 愚問 → **答えは、席で。** → ご予約を承っております → 電話番号 → CTA
-3. 視差グロー削除後の全景（変化が知覚されないことの確認）
-4. S1→S9通し（リファクタ後の回帰なし）／375px／reduced-motion
-承認後: ①Part 1（S9＋削除テスト）②Part 2（純リファクタ）の2コミットに分離してコミット予定。
+**TOP最終確認のお願い（qa-report.md 3章）**: ①S1→S9通し体感（S9収束の質感・最初の操作でアンビエントが灯る挙動・S6→S7の間）②疲労チェック3回・量産感の最終判定（第三者推奨）③Safari/Firefox/iOS実機 ④CPU4xスクロール中フレーム ⑤実URL（ホットペッパー/Instagram）・実価格・素材一次出所の確定（納品前コンテンツBlocker）。合格判定後にStage 13/14（完了報告・G3材料）へ。
 
 ## 成果物ポインタ
 
@@ -70,7 +65,7 @@
 | creative-brief.md | 完了 | docs/cinematic/creative-brief.md |
 | experience-plan.md | 完了（1〜9章） | docs/cinematic/experience-plan.md |
 | implementation-plan.md | 1章 完了（2章以降はG1後） | docs/cinematic/implementation-plan.md |
-| qa-report.md | 未作成 | docs/cinematic/qa-report.md |
+| qa-report.md | Stage 12完了・Stage 13材料整理済み | docs/cinematic/qa-report.md |
 | qa-baseline.md（Stage 10 正式成果物: 実測ベースライン・実装後比較・A3映像確認記録） | 完了 | docs/cinematic/qa-baseline.md |
 
 ## セッションログ
@@ -85,4 +80,5 @@
 - 2026-07-10 / Stage 11 Increment 2 / S6→S7のhold-quiet（menuRest=12.0→drink=12.9の0.9unit。間の内容=バー開放＋フィルム→壁の受け渡し=B6実装）＋S7弱化（初期y8px・blurなし・fade-quiet 0.8/power1.out・stagger0.12・読了後保持0.5unit）＋S8/S9一律+1.4＋scroll-root 1440/1095vh（78.8/59.9vh/unit維持）。DOM・リスナー・依存追加ゼロ。build/lint/diff--check/コンソール0/158KB不変。ウィンドウ不可視（rAF停止）のため通し目視は未=レビュー依頼に記載。未コミットのまま人間レビュー待ちで停止
 - 2026-07-10 / Stage 11 Increment 2 レビュー / **合格**（PC/375px実画面確認。間0.9unit・壁への受け渡し・S7弱化・保持0.5unit・再配分・モバイル表現を承認。受け渡しの「溶けるTransition」は休符として成立のため変更不要と判定）。表現の追加変更なしでコード＋文書をコミット: **`402fd03`** feat: add quiet rest between menu and drink scenes
 - 2026-07-10 / Stage 11 棚卸し / TOP完成までの残作業をBlock A（最終実装1回: S9置換・S9結末一行・削除テスト・純リファクタ）とBlock B（Stage 12包括QA: QS22最低セット・LCP改善・実機/Safari・Creative QA）へ集約（implementation-plan.md 5章）。Blocker5・Required6・Optional5・Reject6を分類。コード変更なし・コミットなし・Increment 3/Stage 12未着手。Block A着手指示待ちで停止
-- 2026-07-10 / Stage 11 Block A / Part 1: S9 letterSpacing tween廃止→2文字translateX ±0.16em置換（静的字間・role=img/aria-label・CLSゼロ）＋結末一行「答えは、席で。」追加＋削除テスト（視差グロー削除=壁に常時遮蔽で視覚出力ゼロをA/B+z-order解析で確認／進捗ヘアライン残置=モバイル現在地QS13）。Part 2: タイムラインをScene別ビルダー11関数へ純リファクタ（挿入順・演出値完全維持）。build/lint/diff-check/コンソール0/158KB不変/DOM実測OK。ウィンドウ不可視のため通し目視は未。**未コミットのまま人間レビュー待ちで停止。Stage 12未着手**
+- 2026-07-10 / Stage 11 Block A / Part 1: S9 letterSpacing tween廃止→2文字translateX ±0.16em置換（静的字間・role=img/aria-label・CLSゼロ）＋結末一行「答えは、席で。」追加＋削除テスト（視差グロー削除=壁に常時遮蔽で視覚出力ゼロをA/B+z-order解析で確認／進捗ヘアライン残置=モバイル現在地QS13）。Part 2: タイムラインをScene別ビルダー11関数へ純リファクタ（挿入順・演出値完全維持）。build/lint/diff-check/コンソール0/158KB不変/DOM実測OK。ウィンドウ不可視のため通し目視は未。未コミットのまま人間レビュー待ちで停止
+- 2026-07-10 / Stage 11 Block A合格 → Stage 12 / Block Aを`7b7a22e`でコミット（Part分離は同一領域重複のため理由記録の上統合）。Stage 12実施: JS無効時の情報到達（SSR全文確認+noscriptフォールバック新設=QS20解消）／reduced-motion実切替（headless --force-prefers-reduced-motion で分岐実行・動画非DL実測）／LCP原因特定（不可視film posterがLCP要素）→メディア装填を最初のユーザー操作へ遅延 → **devtoolsラボ perf0.93・LCP1.8s・CLS0（目標達成。simulate法は4.1〜6.7sの振れ=モデリング起因と記録）**／実390ビューポートで横スクロール0・hero中央・CTA折返しを実測（headless狭窓のズレはアーティファクト）／タップ領域47px実測／qa-report.md作成。未検証（Safari/iOS実機・スクロール中CPU4x・疲労/第三者）は3章の人間確認項目へ。**Stage 13以降・下層ページ未着手**

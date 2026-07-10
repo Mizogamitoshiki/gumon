@@ -192,6 +192,7 @@ export default function GumonScroll() {
       autoRaf: false,
     });
     lenis.on("scroll", () => {
+      armMedia(); // 最初のスクロールで動画/poster を装填(下の media arming 参照)
       ScrollTrigger.update();
       onScroll();
     });
@@ -605,25 +606,48 @@ export default function GumonScroll() {
       // readyState gate could never be satisfied on gesture-less devices
       if (video.readyState < 2) video.currentTime = 0.01;
     };
-    if (video) {
-      video.addEventListener("loadedmetadata", onFilmMeta);
-      video.poster = "/dishes-poster.webp";
-      video.src = "/cuisine-cinematic-opt.mp4";
-      video.load();
-      if (video.readyState >= 1) onFilmMeta();
-    }
-    // hero アンビエント: 同一ファイルの通常ループ再生(キャッシュ共有)。
-    // 自動再生が拒否されても致命ではない(静かな壁のまま)
-    if (heroAmbientVideo) {
-      heroAmbientVideo.src = "/cuisine-cinematic-opt.mp4";
-      heroAmbientVideo.play().catch(() => {});
-      gsap.to(heroAmbient, {
-        opacity: 0.16,
-        duration: 2.2,
-        ease: "power2.out",
-        delay: 0.5,
-      });
-    }
+    if (video) video.addEventListener("loadedmetadata", onFilmMeta);
+
+    /* ---- media arming(Stage 12 LCP対策): 動画2本(同一URL・キャッシュ共有)と
+       film poster の装填は「最初のユーザー操作」まで遅らせる。
+       - Lighthouse で LCP 要素が不可視の film poster(339KB)になっており、
+         初期クリティカルパスに mp4 1.1MB + poster が乗っていた(qa-report)
+       - 実ユーザーの操作(pointermove/touch/スクロール)は数百ms以内に起きる
+         ため、アンビエントの立ち上がり体感はマウント時装填とほぼ同等
+       - フィルム章は全行程の約22%地点なので装填猶予は十分
+       - reduced-motion は上の分岐で return 済み(元々非ダウンロード) ---- */
+    let mediaArmed = false;
+    const armMedia = () => {
+      if (mediaArmed) return;
+      mediaArmed = true;
+      removeArmListeners();
+      if (video) {
+        video.poster = "/dishes-poster.webp";
+        video.src = "/cuisine-cinematic-opt.mp4";
+        video.load();
+        if (video.readyState >= 1) onFilmMeta();
+      }
+      // hero アンビエント: 同一ファイルの通常ループ再生(キャッシュ共有)。
+      // 自動再生が拒否されても致命ではない(静かな壁のまま)
+      if (heroAmbientVideo) {
+        heroAmbientVideo.src = "/cuisine-cinematic-opt.mp4";
+        heroAmbientVideo.play().catch(() => {});
+        gsap.to(heroAmbient, {
+          opacity: 0.16,
+          duration: 2.2,
+          ease: "power2.out",
+          delay: 0.5,
+        });
+      }
+    };
+    const ARM_EVENTS = ["pointermove", "pointerdown", "touchstart", "keydown"];
+    const removeArmListeners = () =>
+      ARM_EVENTS.forEach((ev) => window.removeEventListener(ev, armMedia));
+    ARM_EVENTS.forEach((ev) =>
+      window.addEventListener(ev, armMedia, { passive: true })
+    );
+    // 復元スクロール(深いリンク・リロード)で既にページ中腹にいる場合は即装填
+    if ((window.scrollY || 0) > 0) armMedia();
     const filmTick = () => {
       if (!video || !filmDur || video.readyState < 2 || video.seeking) return;
       const target = filmScrub.p * Math.max(0, filmDur - 0.06);
@@ -643,6 +667,7 @@ export default function GumonScroll() {
     };
     function filmUnlock() {
       if (!video) return;
+      armMedia(); // ジェスチャ時点で未装填なら先に装填(src なしの play() は失敗する)
       video
         .play()
         .then(() => {
@@ -742,6 +767,7 @@ export default function GumonScroll() {
     // (ignoreMobileResize でアドレスバー分は無視)。手動リスナーは張らない
     return () => {
       root.removeEventListener("click", navHandler);
+      removeArmListeners();
       removeFilmUnlock();
       if (video) video.removeEventListener("loadedmetadata", onFilmMeta);
       gsap.ticker.remove(filmTick);
@@ -757,6 +783,20 @@ export default function GumonScroll() {
 
   return (
     <div ref={rootRef} style={{ position: "relative", background: "#1c1b19" }}>
+      {/* graceful degradation(QS20): JS が読み込めない環境では演出を構築でき
+          ず、Scene 容器のインライン opacity:0 が残って本文が見えない。noscript
+          スタイルで reduced-motion 分岐と同じ「静的縦積み・全文可読」へ倒す
+          (JS 有効時にはこの style は一切適用されない) */}
+      <noscript>
+        <style>{`
+          .gm-scroll-root{height:auto !important}
+          .gm-scroll-root > div{position:static !important;height:auto !important;min-height:0 !important;overflow:visible !important}
+          [data-velocity]{position:static !important;inset:auto !important}
+          [data-scene]{position:relative !important;inset:auto !important;opacity:1 !important;visibility:visible !important;min-height:0 !important;padding-top:48px !important;padding-bottom:48px !important}
+          [data-foodhero],[data-film],[data-dishes],[data-hero-ambient],[data-filmwords],[data-bar-top],[data-bar-bot],[data-cue],[data-darken]{display:none !important}
+          .mask > span{transform:none !important}
+        `}</style>
+      </noscript>
       {/* cinematic vignette + film grain (unify the photography) */}
       <div className="gm-vignette" aria-hidden="true" />
       <div className="gm-grain" aria-hidden="true" />
