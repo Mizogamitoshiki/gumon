@@ -10,3 +10,4 @@ npm-debug.log*
 next-env.d.ts
 *.bak
 /project/_originals
+/src/lib/menu.generated.ts

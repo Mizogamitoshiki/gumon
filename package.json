@@ -3,10 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "predev": "node scripts/sync-menu.mjs",
     "dev": "next dev",
+    "prebuild": "node scripts/sync-menu.mjs",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "sync:menu": "node scripts/sync-menu.mjs"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
