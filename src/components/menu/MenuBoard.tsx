@@ -46,9 +46,13 @@ function matches(item: MenuItem, q: string): boolean {
 export default function MenuBoard({
   category,
   quiet = false,
+  brisk = false,
 }: {
   category: MenuSection;
   quiet?: boolean;
+  // brisk(Phase 19B・lunch): 「迷わず選ぶ」ための軽快な登場。quiet(dinner の
+  // 活気)より移動を小さく・連鎖を速く。既定/quiet 分岐には触れない
+  brisk?: boolean;
 }) {
   const rootRef = useRef<HTMLElement>(null);
   const isCourse = category.titleEn === "COURSE";
@@ -83,10 +87,10 @@ export default function MenuBoard({
   useGSAP(
     () => {
       const mm = gsap.matchMedia();
-      // quiet(dinner の Scene-Turn): モバイルは静的な縦構成(演出なし)のため
+      // quiet(dinner)/brisk(lunch): モバイルは静的な縦構成(演出なし)のため
       // デスクトップのみ構築する。既定(他ページ)は従来どおり全幅で構築
       mm.add(
-        quiet
+        quiet || brisk
           ? "(min-width: 861px) and (prefers-reduced-motion: no-preference)"
           : "(prefers-reduced-motion: no-preference)",
         () => {
@@ -141,6 +145,43 @@ export default function MenuBoard({
             { autoAlpha: 0, y: 16, duration: SM.duration, stagger: 0.08 },
             0.46
           );
+        } else if (brisk) {
+          // 軽快の登場(lunch・19B): 活気(quiet)より小さく・速く。額縁が
+          // すっと持ち上がり、頭書き→見出しマスク→道具が短い波で続く。
+          // トリガー位置は既定と同じ帯(top 78%) — 早出しはしない
+          const SM = GUMON_SCENE_MOTION.riseLine;
+          const enter = gsap.timeline({
+            defaults: { ease: SM.ease },
+            scrollTrigger: { trigger: root, start: "top 78%", once: true },
+          });
+          enter.from(
+            ".gm-board-frame",
+            { autoAlpha: 0, y: 28, scale: 0.985, duration: 0.8 },
+            0
+          );
+          enter.from(
+            gsap.utils.toArray<HTMLElement>(
+              ".gm-board-head > :not(.gm-board-title)",
+              root
+            ),
+            { autoAlpha: 0, y: 14, duration: SM.duration, stagger: 0.07 },
+            0.16
+          );
+          // 見出しは行マスクのせり上がり一本(頭書きフェードから除外済み)
+          enter.from(
+            ".gm-board-title .mask > span",
+            {
+              yPercent: 115,
+              duration: GUMON_MOTION.durationLong,
+              ease: GUMON_MOTION.easeEmphasis,
+            },
+            0.18
+          );
+          enter.from(
+            gsap.utils.toArray<HTMLElement>(".gm-board-tools > *", root),
+            { autoAlpha: 0, y: 12, duration: SM.duration, stagger: 0.07 },
+            0.3
+          );
         } else {
           // 既定(他ページ): 従来どおり静かに現す — 値・順序とも不変
           gsap.from(".gm-board-frame", {
@@ -166,7 +207,8 @@ export default function MenuBoard({
             scrollTrigger: { trigger: sec, start: "top 84%", once: true },
           });
           // quiet(dinner)の活気: リボンは帯らしく左から差し込み、品々は
-          // わずかな縮みを伴って次々と躍り上がる(連鎖のテンポも速める)
+          // わずかな縮みを伴って次々と躍り上がる(連鎖のテンポも速める)。
+          // brisk(lunch)の軽快: 同じ構造をさらに小さく・速く(迷わず選ぶ)
           tl.from(
             sec.querySelector(".gm-board-ribbon"),
             quiet
@@ -176,11 +218,18 @@ export default function MenuBoard({
                   duration: GUMON_SCENE_MOTION.riseLine.duration,
                   ease: GUMON_SCENE_MOTION.riseLine.ease,
                 }
-              : {
-                  autoAlpha: 0,
-                  y: 16,
-                  duration: GUMON_MOTION.duration,
-                }
+              : brisk
+                ? {
+                    autoAlpha: 0,
+                    x: -16,
+                    duration: GUMON_SCENE_MOTION.riseLine.duration,
+                    ease: GUMON_SCENE_MOTION.riseLine.ease,
+                  }
+                : {
+                    autoAlpha: 0,
+                    y: 16,
+                    duration: GUMON_MOTION.duration,
+                  }
           );
           tl.from(
             sec.querySelectorAll(".gm-board-row, .gm-board-card"),
@@ -193,14 +242,23 @@ export default function MenuBoard({
                   ease: GUMON_SCENE_MOTION.riseLine.ease,
                   stagger: 0.055,
                 }
-              : {
-                  autoAlpha: 0,
-                  y: 20,
-                  duration: GUMON_MOTION.duration,
-                  stagger: 0.07,
-                },
-            // quiet: リボンが差し込んだ勢いのまま品々が続く(半拍→1/4拍)
-            quiet ? 0.22 : 0.15,
+              : brisk
+                ? {
+                    autoAlpha: 0,
+                    y: 18,
+                    duration: GUMON_SCENE_MOTION.riseLine.duration,
+                    ease: GUMON_SCENE_MOTION.riseLine.ease,
+                    stagger: 0.045,
+                  }
+                : {
+                    autoAlpha: 0,
+                    y: 20,
+                    duration: GUMON_MOTION.duration,
+                    stagger: 0.07,
+                  },
+            // quiet: リボンが差し込んだ勢いのまま品々が続く(半拍→1/4拍)。
+            // brisk: さらに間を詰める
+            quiet ? 0.22 : brisk ? 0.18 : 0.15,
           );
         }
         // 締めの料理写真: clip-path 展開 + 1.06 → 等倍

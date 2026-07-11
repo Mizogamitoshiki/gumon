@@ -18,17 +18,26 @@ const MENU_PATHS: Record<string, string> = {
 // DishShowcase(pin なし・実写のみ)にし、ボードの Reveal を fade-quiet へ
 // 弱化する。未指定ページは従来の DishGallery(pin 横流し)+ボードのまま —
 // DOM・見た目・Motion は一切変わらない。
+// brisk(Phase 19B・現状 lunch のみ): 「迷わず一皿を選ぶ」ための軽量 Editorial。
+// 実写ゼロのプレースホルダギャラリーを外し、品書きを第2場面として軽快に
+// 現す(pin なし)。dinner(editorial)・既定ページの分岐には触れない
 export default function MenuDetailPage({
   category,
   editorial = false,
+  brisk = false,
 }: {
   category: MenuSection;
   editorial?: boolean;
+  brisk?: boolean;
 }) {
   return (
     // gm-editorial: dinner の Storytelling Pass 用スコープ(D2→D3→D4 の
     // 余白・着地を dinner 専用セレクタで調整する)。未指定ページは従来どおり
-    <main className={`gm-cine-main${editorial ? " gm-editorial" : ""}`}>
+    <main
+      className={`gm-cine-main${editorial ? " gm-editorial" : ""}${
+        brisk ? " gm-brisk" : ""
+      }`}
+    >
       <BreadcrumbJsonLd
         trail={[
           {
@@ -58,6 +67,10 @@ export default function MenuDetailPage({
           <MenuHero category={category} />
           <DishShowcase items={category.items} titleEn={category.titleEn} />
         </div>
+      ) : brisk ? (
+        // brisk(lunch): 実写ゼロのためギャラリーは置かない(Plan B・削除テスト
+        // 承認済み 19A-A1)。品名・価格・説明は MenuBoard に全件掲載されている
+        <MenuHero category={category} />
       ) : (
         <>
           <MenuHero category={category} />
@@ -67,7 +80,7 @@ export default function MenuDetailPage({
           />
         </>
       )}
-      <MenuBoard category={category} quiet={editorial} />
+      <MenuBoard category={category} quiet={editorial} brisk={brisk} />
     </main>
   );
 }

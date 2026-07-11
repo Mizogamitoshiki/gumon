@@ -2372,6 +2372,12 @@ body {
   }
 }
 
+/* ---- Lunch Brisk Editorial(Phase 19B) — 「迷わず一皿を選ぶ」ための
+   余白圧縮。lunch 専用スコープ(.gm-brisk)のみ。既定 .gm-board は不変 ---- */
+.gm-brisk .gm-board {
+  padding-top: clamp(40px, 7vh, 80px);
+}
+
 /* ---- Dinner Storytelling Pass — 場面間の「間」と結末の着地(すべて
    dinner 専用セレクタ内。他ページの .gm-board 既定値には触れない) ---- */
 /* D1→D2: ヒーローの空気感を受ける呼吸(入口の余白を広めに) */
