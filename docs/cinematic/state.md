@@ -9,13 +9,14 @@
 - 案件タイプ: 既存サイト変換
 - 成果物の保存場所: docs/cinematic/
 - 最終更新: 2026-07-11
-- 案件ステータス: **Phase 20B：Course実装・人間レビュー待ち**
+- 案件ステータス: **Gumon Site v1：実装完了・公開前Blocker確認待ち**
 
 ## 現在地
 
-- 現在のStage: **Phase 20B 完了 — consult 分岐実装・DoD 全通過。未コミットのまま人間レビュー待ちで停止**（レビュー観点: course-implementation-report.md 末尾）
-- 次のアクション（再開時に最初にやること）: レビュー結果受領 → 合格なら最終確認（diff --check/lint/変更範囲）後に 1 コミットで確定（Phase 20C）。実装記録: course-implementation-report.md
-- 確定済みの前段: Dinner=Phase 18 ロック（64586ab）／Lunch=Phase 19C ロック（91d77da）。TOP=G3合格（条件付き）
+- 現在のStage: **Finalization Sprint（Stage A〜H）完了**。Course・Drink・About・Access/Contact・Recruitの実装/QAが全てコミット済み。全9ルート横断QA・公開前Blocker集約・Final Handoff・Pattern Catalogを作成し停止
+- 次のアクション（再開時に最初にやること）: 人間によるCreative Review（各ページ実画面確認）→ 承認後、gumon-publication-blockers.mdの1〜13（実URL・実価格・素材出所・運用情報）をオーナー確認のうえ解消 → 公開判断
+- 確定済み: TOP=G3合格（条件付き）／Dinner=Phase18ロック（64586ab）／Lunch=Phase19Cロック（91d77da）／Course=本Sprint完成（c2d0ba7）／Drink=本Sprint完成（2f026f9）／About=本Sprint完成（b8ed072）／Access・Contact=本SprintでUtility QA完了（a8b07ce）／Recruit=本SprintでQA完了・コード変更なし（1d9cab0）
+- 参照文書: `GUMON_FINAL_HANDOFF.md`（全体像・公開手順・ロールバック手順）・`gumon-final-qa-report.md`（QUALITY_STANDARD準拠の最終QA）・`gumon-pattern-catalog.md`（Engine還元Pattern7種）・`gumon-publication-blockers.md`（公開前Blocker19項目）
 
 ## 実行範囲（履歴）
 
@@ -55,13 +56,13 @@
 
 <!-- 再開時はこれをそのまま再提示する -->
 
-**Phase 20B Course Consultation Editorial レビュー依頼** — localhost:3000/menu/course:
-1. PC通しスクロール: Hero→紙カード→電話までが「急がされない」テンポか（fade-quiet の質感が Dinner の活気・Lunch の軽快と別物に見えるか）
-2. notes の電話番号リンクの見た目（下線の品）
-3. 「ご予約・ご宴会についてのご質問 →」の位置と弱さ（朱CTAを邪魔しないか）
-4. C1→C2 の余白が「間」として効いているか
-5. モバイル390px／reduced-motion の目視ダブルチェック
-6. lunch・dinner・drink が以前と変わって見えないか（非回帰）
+**Gumon Site v1 Final Creative Review依頼**（人間確認待ち）:
+1. Course/Drink/About/Access/Contact/Recruitの実画面通し確認（各ページの役割どおりの体験になっているか）
+2. About: PullQuote再配置（「店名について」直後）がTOP重複の解消として機能しているか
+3. About-copy-review.mdのB1〜B3（コピー変更候補）の承認可否
+4. Course-transformation-plan.mdのA4（Contact導線文言）は既に承認・実装済みだが、実画面での見え方の最終確認
+5. gumon-publication-blockers.mdの1〜13（実URL・実価格・素材出所・運用情報）の解消スケジュール
+6. 第三者テスト・実機確認（Safari/iOS）の実施可否・時期
 
 ## 成果物ポインタ
 
@@ -81,7 +82,17 @@
 | lunch-implementation-report.md（Phase 19A〜19C レポート） | 完了 | docs/cinematic/lunch-implementation-report.md |
 | course-project-analysis.md（Phase 20A 現状分析） | 承認済み | docs/cinematic/course-project-analysis.md |
 | course-transformation-plan.md（Phase 20A 変換計画） | 承認済み（2026-07-11 A1〜A5） | docs/cinematic/course-transformation-plan.md |
-| course-implementation-report.md（Phase 20B 実装記録） | **実装済み・レビュー待ち** | docs/cinematic/course-implementation-report.md |
+| course-implementation-report.md（Phase 20B 実装記録） | 完了（本Sprintでコミット確定 c2d0ba7） | docs/cinematic/course-implementation-report.md |
+| drink-transformation-plan.md（Finalization Sprint Stage B） | 完了（2f026f9） | docs/cinematic/drink-transformation-plan.md |
+| about-copy-review.md（Stage C: TOP重複分析） | 完了（承認待ち候補あり） | docs/cinematic/about-copy-review.md |
+| about-implementation-report.md（Stage C 実装記録） | 完了（b8ed072） | docs/cinematic/about-implementation-report.md |
+| access-contact-qa-report.md（Stage D） | 完了（a8b07ce） | docs/cinematic/access-contact-qa-report.md |
+| recruit-qa-report.md（Stage E・コード変更なし） | 完了（1d9cab0） | docs/cinematic/recruit-qa-report.md |
+| crossroute-qa-report.md（Stage F 全9ルート横断QA） | 完了（4d28aa7） | docs/cinematic/crossroute-qa-report.md |
+| gumon-publication-blockers.md（Stage G 公開前Blocker19項目） | 完了（076ffb9） | docs/cinematic/gumon-publication-blockers.md |
+| GUMON_FINAL_HANDOFF.md（Stage G 最終引き継ぎ） | 完了（076ffb9） | docs/cinematic/GUMON_FINAL_HANDOFF.md |
+| gumon-final-qa-report.md（Stage G QUALITY_STANDARD準拠サマリー） | 完了（076ffb9） | docs/cinematic/gumon-final-qa-report.md |
+| gumon-pattern-catalog.md（Stage H Engine還元Pattern7種） | 完了 | docs/cinematic/gumon-pattern-catalog.md |
 
 ## セッションログ
 
@@ -117,3 +128,4 @@
 - 2026-07-11 / Phase 19C Lunch 合格・コミット / レビュー記録「Lunch brisk Editorialは人間レビューで合格しました」。最終確認: diff --check/lint/変更範囲限定/非回帰SSR/ギャラリー除去/tel CTA操作可能性 — 全て合格。lunch-implementation-report.md 作成。コミットID: 91d77da（feat: transform lunch page to brisk editorial）**
 - 2026-07-11 / Phase 20A Course 現状分析+Transformation Plan / course-project-analysis.md・course-transformation-plan.md 作成。実画面確認（1440/390・RM強制ダンプ・SSRテキストダンプ）。要点: 現状=既定分岐のままプレースホルダ2枠pin横流しが残存（P1）／型と目的の不一致（選ぶ型に相談の中身・P2）／notes電話番号タップ不可（P3）／FAQ導線なし（P4）。Concept 3案比較→**案A「一卓の相談から、夜を整える。」推奨**（既存コピー変更ゼロで成立・案Bは未確認情報必須かつLunch近接・案Cはテンプレ感最大）。3 Scene（C1相談の入口/C2対応できることを知る/C3電話で席を整える）・Motion密度2-1-1・pinなし・fade-quiet最弱。実装候補②consult分岐を推奨。未確認事項（人数条件・飲み放題内容・個室・記念日対応等）は[未確認]のまま表示しない設計。**コード・CSS・コピー変更なし・コミットなし。A1〜A5承認待ちで停止。Phase 20B未着手**
 - 2026-07-11 / Phase 20B Course 実装 / 承認記録: 「Phase 20AのTransformation Planを承認します」（A1〜A5・導線文言「ご予約・ご宴会についてのご質問」固定）。実装: course/page.tsx に consult 付与／MenuDetailPage に consult prop（ギャラリー非描画・gm-consult スコープ）／MenuBoard に consult 分岐（全Reveal=fadeQuiet y8・見出しマスクのみ既定値・締めの一枚も fadeQuiet・gm-tel-btn は演出対象外）＋renderNote（072-430-6038 の tel: リンク化・文言不変）＋consult限定の /contact 導線／globals.css に .gm-consult 余白・.gm-note-tel（タップ44px+）・.gm-board-contact-hint。検証: build/lint/diff-check ✅・実スクロール（実ブラウザ1440）✅・モバイル390 iframe実測（横0・pin0・インライン演出0・tel 87×48）✅・RMダンプ（隠し要素0）✅・非回帰SSR+実画面（dinner gm-stage6/lunch brisk/drink gal4・混入0）✅・削除行逐語照合 ✅・横断検索無破壊 ✅・コンソール0 ✅。未検証: Safari/iOS実機・CPU4x・JS無効視覚レンダ。**未コミットのまま人間レビュー待ちで停止。Phase 20C未着手**
+- 2026-07-11 / Gumon Finalization Sprint（Stage A〜H・ユーザー指示「愚問の実装を一括で仕上げる最終スプリント」） / Course再承認・Drink/About新規実装・Access/Contact/Recruit QAを一括実施。**Stage 0**: next-server(本番プロセス)を停止しnext dev単独稼働へ整理。**Stage A**: Course最終QA後、Course関連4ファイル+docsのみをステージしてコミット（`c2d0ba7`）。**Stage B**: drink-transformation-plan.md作成→calm分岐実装（consult||calmへ統合しfadeQuiet基準を共有）。副次発見: 既定/brisk分岐がCTA全体を演出対象にし電話ボタンが初期不可視だったバグをquiet/consultと同じ除外パターンで修正（Lunchにも適用・原則0是正）。コミット`2f026f9`。**Stage C**: about-copy-review.md作成→PullQuoteをTOP重複解消のため「店名について」直後へ再配置（コピー不変・順序のみ）、本文行Revealを静的化。副次発見: InfoSection共有のTelCta電話ボタンも同種の可視性バグ→除外修正（about/access/contact/recruit全てに恩恵）。コミット`b8ed072`。**Stage D**: access-contact-qa-report.md作成。実バグ1件（`.gm-info-tel-link`タップ領域22px→51×109pxへ拡大）発見・修正。Tab-onlyキーボードナビゲーションの scroll-reveal未到達領域を発見したが、サイト全体に及ぶ大規模改修が必要なため記録のみに留め、Blockerへ記録。コミット`a8b07ce`。**Stage E**: recruit-qa-report.md作成。Recruit固有の実バグなし・コード変更なし（QA中に発見したInstagramアイコン1424px巨大化は`.next`devキャッシュ不整合と特定・`.next`削除で解消・ソース無関係）。コミット`1d9cab0`（docsのみ）。**Stage F**: 全9ルート横断QA（SEO/alt/見出し階層/リンク切れ/lint/diff-check/本番build）— 新規コード変更なしで全合格。コミット`4d28aa7`。**Stage G**: gumon-publication-blockers.md（19項目集約）・GUMON_FINAL_HANDOFF.md・gumon-final-qa-report.mdを作成。コミット`076ffb9`。**Stage H**: gumon-pattern-catalog.md（Engine還元Pattern7種+横断原則4件）作成・state.mdを最終状態へ更新。全期間を通じて「既存の未コミット変更（外部セッションによるLCP/A11y改善: GumonScroll.tsx/SiteChrome.tsx/MenuHero.tsx/decisions.log.md/icon.svg/wdos-perf-measurement-001.md）」は一度も上書き・破棄せず、常にstageごとに関連ファイルのみをgit addして分離コミットした。TOP/Dinner/Lunchへの大規模変更は行っていない（Lunchのtel-btn除外のみ最小修正として実施）。**Gumon Site v1：実装完了・公開前Blocker確認待ちで停止**
