@@ -2407,6 +2407,13 @@ body {
   margin: clamp(10px, 1.8vh, 16px) 0 0;
 }
 
+/* ---- Drink Calm Editorial(Finalization Sprint Stage B) — 「一杯の余韻」。
+   drink 専用スコープ(.gm-calm)のみ。既定 .gm-board は不変。C1→C2 の間は
+   consult ほど大きく立ち止まらず、brisk ほど詰めない「余韻の続く」幅 ---- */
+.gm-calm .gm-board {
+  padding-top: clamp(64px, 10vh, 120px);
+}
+
 /* ---- Dinner Storytelling Pass — 場面間の「間」と結末の着地(すべて
    dinner 専用セレクタ内。他ページの .gm-board 既定値には触れない) ---- */
 /* D1→D2: ヒーローの空気感を受ける呼吸(入口の余白を広めに) */

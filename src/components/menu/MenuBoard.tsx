@@ -66,6 +66,7 @@ export default function MenuBoard({
   quiet = false,
   brisk = false,
   consult = false,
+  calm = false,
 }: {
   category: MenuSection;
   quiet?: boolean;
@@ -76,6 +77,12 @@ export default function MenuBoard({
   // fade-quiet(8px)まで弱化し、notes 内電話番号の tel リンクと /contact
   // 導線を足す。既定/quiet/brisk 分岐には触れない
   consult?: boolean;
+  // calm(Finalization Sprint Stage B・drink): 「一杯の余韻」の静けさ。
+  // 演出強度は brisk 以下・consult 以上の範囲に収める指示のため、下限＝
+  // consult と同じ fade-quiet 基準を採用(Motion Has Meaningの理由記録を
+  // 簡潔にするため新規の強度値は作らない)。notes/tel リンク/Contact導線は
+  // 対象外(DRINKS に notes フィールドがなく追加事実にあたるため作らない)
+  calm?: boolean;
 }) {
   const rootRef = useRef<HTMLElement>(null);
   const isCourse = category.titleEn === "COURSE";
@@ -110,10 +117,11 @@ export default function MenuBoard({
   useGSAP(
     () => {
       const mm = gsap.matchMedia();
-      // quiet(dinner)/brisk(lunch)/consult(course): モバイルは静的な縦構成
-      // (演出なし)のためデスクトップのみ構築する。既定は従来どおり全幅で構築
+      // quiet(dinner)/brisk(lunch)/consult(course)/calm(drink): モバイルは
+      // 静的な縦構成(演出なし)のためデスクトップのみ構築する。既定は従来
+      // どおり全幅で構築
       mm.add(
-        quiet || brisk || consult
+        quiet || brisk || consult || calm
           ? "(min-width: 861px) and (prefers-reduced-motion: no-preference)"
           : "(prefers-reduced-motion: no-preference)",
         () => {
@@ -205,9 +213,12 @@ export default function MenuBoard({
             { autoAlpha: 0, y: 12, duration: SM.duration, stagger: 0.07 },
             0.3
           );
-        } else if (consult) {
-          // 相談の静けさ(course・20B): 読む区間は演出最弱 — 額縁は
-          // fade-quiet(8px)でそっと現すだけ。急がせる連鎖は組まない。
+        } else if (consult || calm) {
+          // 相談の静けさ(course・20B)/余韻の静けさ(drink・Sprint-B):
+          // 読む区間は演出最弱 — 額縁は fade-quiet(8px)でそっと現すだけ。
+          // 急がせる連鎖は組まない。calm は「Lunch以下・Course以上」の
+          // 演出強度指示をCourseと同値(下限)に固定することで満たす —
+          // Motion Has Meaningの理由記録を簡潔にするため値は共有する。
           // 見出しマスクだけは全ページ共通の文法として既定値のまま維持
           const FQ = GUMON_SCENE_MOTION.fadeQuiet;
           gsap.from(".gm-board-frame", {
@@ -250,8 +261,9 @@ export default function MenuBoard({
           // quiet(dinner)の活気: リボンは帯らしく左から差し込み、品々は
           // わずかな縮みを伴って次々と躍り上がる(連鎖のテンポも速める)。
           // brisk(lunch)の軽快: 同じ構造をさらに小さく・速く(迷わず選ぶ)。
-          // consult(course)の静けさ: 差し込まず、8px の fade-quiet で
-          // そっと置くだけ(読む・相談するページに勢いは要らない)
+          // consult(course)/calm(drink)の静けさ: 差し込まず、8px の
+          // fade-quiet でそっと置くだけ(読む・相談する/余韻のページに
+          // 勢いは要らない)
           tl.from(
             sec.querySelector(".gm-board-ribbon"),
             quiet
@@ -268,7 +280,7 @@ export default function MenuBoard({
                     duration: GUMON_SCENE_MOTION.riseLine.duration,
                     ease: GUMON_SCENE_MOTION.riseLine.ease,
                   }
-                : consult
+                : consult || calm
                   ? {
                       autoAlpha: 0,
                       y: GUMON_SCENE_MOTION.fadeQuiet.y,
@@ -300,7 +312,7 @@ export default function MenuBoard({
                     ease: GUMON_SCENE_MOTION.riseLine.ease,
                     stagger: 0.045,
                   }
-                : consult
+                : consult || calm
                   ? {
                       autoAlpha: 0,
                       y: GUMON_SCENE_MOTION.fadeQuiet.y,
@@ -315,18 +327,18 @@ export default function MenuBoard({
                       stagger: 0.07,
                     },
             // quiet: リボンが差し込んだ勢いのまま品々が続く(半拍→1/4拍)。
-            // brisk: さらに間を詰める。consult: 既定と同じ間(急がせない)
+            // brisk: さらに間を詰める。consult/calm: 既定と同じ間(急がせない)
             quiet ? 0.22 : brisk ? 0.18 : 0.15,
           );
         }
         // 締めの料理写真: clip-path 展開 + 1.06 → 等倍。
-        // consult は展開の見せ場も作らず fade-quiet で静かに(最弱で統一)
+        // consult/calm は展開の見せ場も作らず fade-quiet で静かに(最弱で統一)
         gsap.utils
           .toArray<HTMLElement>(".gm-board-photo", root)
           .forEach((el) => {
             gsap.from(
               el,
-              consult
+              consult || calm
                 ? {
                     autoAlpha: 0,
                     y: GUMON_SCENE_MOTION.fadeQuiet.y,
@@ -380,10 +392,10 @@ export default function MenuBoard({
               },
             });
           }
-        } else if (consult) {
-          // 相談の着地(course・20B): 電話は主行動 — quiet と同じく
-          // 主ボタン(gm-tel-btn)は演出対象から外し、常に操作可能を保つ。
-          // 周辺は fade-quiet で静かに現れるだけ
+        } else if (consult || calm) {
+          // 相談の着地(course・20B)/余韻の着地(drink・Sprint-B): 電話は
+          // 主行動 — quiet と同じく主ボタン(gm-tel-btn)は演出対象から
+          // 外し、常に操作可能を保つ。周辺は fade-quiet で静かに現れるだけ
           const FQ = GUMON_SCENE_MOTION.fadeQuiet;
           gsap.from(".gm-board-others", {
             autoAlpha: 0,
@@ -411,24 +423,35 @@ export default function MenuBoard({
             });
           }
         } else {
-          gsap.from(
-            gsap.utils.toArray<HTMLElement>(
-              ".gm-board-others, .gm-board-cta",
-              root,
-            ),
-            {
+          // 既定(dinner非editorial時は未使用)/brisk(lunch): 主ボタン
+          // (gm-tel-btn)は演出対象から外し、常に操作可能を保つ(Sprint
+          // 原則0の是正。quiet/consult/calm と同じ保護を適用。見た目・
+          // タイミングは電話ボタン以外すべて従来どおり)
+          gsap.from(".gm-board-others", {
+            autoAlpha: 0,
+            y: 20,
+            duration: GUMON_MOTION.duration,
+            ease: GUMON_MOTION.ease,
+            scrollTrigger: {
+              trigger: ".gm-board-others",
+              start: "top 88%",
+              once: true,
+            },
+          });
+          const cta = root.querySelector<HTMLElement>(".gm-board-cta");
+          if (cta) {
+            const ctaSequence = Array.from(cta.children).filter(
+              (child) => !child.classList.contains("gm-tel-btn"),
+            );
+            gsap.from(ctaSequence, {
               autoAlpha: 0,
               y: 20,
               duration: GUMON_MOTION.duration,
               ease: GUMON_MOTION.ease,
               stagger: GUMON_MOTION.stagger,
-              scrollTrigger: {
-                trigger: ".gm-board-others",
-                start: "top 88%",
-                once: true,
-              },
-            },
-          );
+              scrollTrigger: { trigger: cta, start: "top 88%", once: true },
+            });
+          }
         }
       });
       return () => mm.revert();

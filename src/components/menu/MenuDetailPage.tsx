@@ -24,16 +24,21 @@ const MENU_PATHS: Record<string, string> = {
 // consult(Phase 20B・現状 course のみ): 「相談できる」安心を届ける静かな
 // Editorial。プレースホルダギャラリーを外し、紙カード+notes を最弱の
 // fade-quiet で読ませ、電話相談を主役にする(pin なし)。他分岐には触れない
+// calm(Finalization Sprint Stage B・現状 drink のみ): 「一杯の余韻」を
+// 邪魔しない静かな Editorial。実写ゼロのプレースホルダギャラリーを外し、
+// 飲み物一覧を fade-quiet 基準で読ませる(pin なし)。他分岐には触れない
 export default function MenuDetailPage({
   category,
   editorial = false,
   brisk = false,
   consult = false,
+  calm = false,
 }: {
   category: MenuSection;
   editorial?: boolean;
   brisk?: boolean;
   consult?: boolean;
+  calm?: boolean;
 }) {
   return (
     // gm-editorial: dinner の Storytelling Pass 用スコープ(D2→D3→D4 の
@@ -41,7 +46,7 @@ export default function MenuDetailPage({
     <main
       className={`gm-cine-main${editorial ? " gm-editorial" : ""}${
         brisk ? " gm-brisk" : ""
-      }${consult ? " gm-consult" : ""}`}
+      }${consult ? " gm-consult" : ""}${calm ? " gm-calm" : ""}`}
     >
       <BreadcrumbJsonLd
         trail={[
@@ -72,10 +77,10 @@ export default function MenuDetailPage({
           <MenuHero category={category} />
           <DishShowcase items={category.items} titleEn={category.titleEn} />
         </div>
-      ) : brisk || consult ? (
-        // brisk(lunch)/consult(course): 実写ゼロのためギャラリーは置かない
-        // (Plan B・削除テスト承認済み 19A-A1 / 20A-A1)。品名・価格・説明は
-        // MenuBoard に全件掲載されている
+      ) : brisk || consult || calm ? (
+        // brisk(lunch)/consult(course)/calm(drink): 実写ゼロのためギャラリーは
+        // 置かない(Plan B・削除テスト承認済み 19A-A1 / 20A-A1 / Sprint-B)。
+        // 品名・価格・説明は MenuBoard に全件掲載されている
         <MenuHero category={category} />
       ) : (
         <>
@@ -91,6 +96,7 @@ export default function MenuDetailPage({
         quiet={editorial}
         brisk={brisk}
         consult={consult}
+        calm={calm}
       />
     </main>
   );
