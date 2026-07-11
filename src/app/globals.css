@@ -1280,6 +1280,11 @@ body {
   color: rgba(242, 240, 235, 0.86);
 }
 .gm-info-tel-link {
+  /* padding+negative margin でレイアウトを変えずタップ領域 44px+ を確保
+     (実測22pxはWCAG目標未達 — Sprint Stage D 是正) */
+  display: inline-block;
+  padding: 11px 4px;
+  margin: -11px -4px;
   color: #f2f0eb;
   text-decoration: none;
   letter-spacing: 0.06em;
