@@ -110,4 +110,4 @@
 - 2026-07-11 / Phase 18 Dinner Lock & Quality Gate / 新規演出なし。QA12項目: 合格10・環境制約による未計測2（JS無効の視覚レンダ・60fps定量）。実再現バグ0・修正0。蓄積差分（§8〜17）を一括コミットして固定。コミットID: 64586ab（feat: unify dinner page into seamless cinematic scroll stage）
 - 2026-07-11 / Phase 19A Lunch 現状分析+Transformation Plan / lunch-transformation-plan.md 作成。要点: 実写0・価格4品とも原本未照合[未確認]、DishGallery(プレースホルダ4枠pin)の削除テスト→外す提案、brisk分岐(軽快Editorial・pinなし・3 Scene)。承認事項 A1〜A4。**実装せず承認待ちで停止**
 - 2026-07-11 / Phase 19B Lunch 実装 / 承認記録: 「Phase 19AのTransformation Planを承認します」(A1〜A4)。DishGallery除去・brisk分岐(MenuDetailPage/MenuBoard/globals.css)・計画から逸脱なし。DoD全通過(build/lint/非回帰/実スクロール/モバイル390/RM/コンソール0)。**未コミットのまま人間レビュー待ちで停止**
-- 2026-07-11 / Phase 19C Lunch 合格・コミット / レビュー記録「Lunch brisk Editorialは人間レビューで合格しました」。最終確認: diff --check/lint/変更範囲限定/非回帰SSR/ギャラリー除去/tel CTA操作可能性 — 全て合格。lunch-implementation-report.md 作成。**
+- 2026-07-11 / Phase 19C Lunch 合格・コミット / レビュー記録「Lunch brisk Editorialは人間レビューで合格しました」。最終確認: diff --check/lint/変更範囲限定/非回帰SSR/ギャラリー除去/tel CTA操作可能性 — 全て合格。lunch-implementation-report.md 作成。コミットID: 91d77da（feat: transform lunch page to brisk editorial）**
