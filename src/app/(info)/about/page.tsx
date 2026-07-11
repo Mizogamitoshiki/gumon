@@ -66,31 +66,34 @@ export default function Page() {
       <MenuHero category={HERO} />
 
       <div className="gm-info-body">
-        <PullQuote text="おいしいとは、なにか。" />
-
         <InfoSection eyebrow="ON THE NAME" title="店名について">
           <div className="gm-info-prose">
-            <p data-info-row>
+            <p>
               「愚問」とは、愚かな問いのこと。
               誰もが答えを知っているようで、誰もほんとうには答えきれない問い。
               私たちはその愚問を、毎日、素材と火に向かって繰り返しています。
             </p>
-            <p data-info-row>
+            <p>
               今日の素材はどう仕立てるか。この火加減で合っているか。
               昨日と同じでいいのか。問いはいつも台所にあって、
               答えはいつも、お客さまの箸の先にあります。
             </p>
-            <p data-info-row>
+            <p>
               返ってきた答えを、ひと皿に盛ってお出しする。
               それがこの店の名前の由来であり、仕事のすべてです。
             </p>
           </div>
         </InfoSection>
 
+        {/* TOPのS2で先取り済みの一文。店名の由来を読み終えた直後に置くことで
+            重複の反復ではなく、意味を理解した上での反響として機能させる
+            (再配置のみ・文言不変。詳細: docs/cinematic/about-copy-review.md) */}
+        <PullQuote text="おいしいとは、なにか。" />
+
         <InfoSection eyebrow="OUR KITCHEN" title="台所の姿勢">
           <div className="gm-kodawari-grid">
             {KODAWARI.map((k) => (
-              <article key={k.title} className="gm-kodawari-card" data-info-row>
+              <article key={k.title} className="gm-kodawari-card">
                 <span className="gm-kodawari-ic" aria-hidden="true">
                   {k.icon}
                 </span>
@@ -103,13 +106,13 @@ export default function Page() {
 
         <InfoSection eyebrow="THE PLACE" title="静けさについて">
           <div className="gm-info-prose">
-            <p data-info-row>
+            <p>
               貝塚駅の東出口から、歩いておよそ10分。
               日常の延長にある一軒です。
               騒がしい演出で急かさないこと、料理の湯気と皿の音を主役にすること。
               そういう静けさを大切にしています。
             </p>
-            <p data-info-row>
+            <p>
               服装は自由です。特別な日の食事にも、仕事帰りの一皿にも、
               同じ火加減でお応えします。
             </p>
@@ -118,18 +121,18 @@ export default function Page() {
 
         <InfoSection eyebrow="YOUR TABLE" title="使い方は、ご自由に">
           <div className="gm-info-prose">
-            <p data-info-row>
+            <p>
               ふだんの晩ごはんから、ご家族の集まり、飲み放題付きの宴会コースまで。
               おひとりでも、どうぞ。夜の予算はおおよそ3,000〜4,000円ほど、
               気負わずにお使いいただける店です。
             </p>
-            <p data-info-row className="gm-info-note">
+            <p className="gm-info-note">
               個室の有無・お席の詳細・そのほか気になることは、
               お電話にてお気軽にご確認ください。よくあるご質問は
               お問い合わせページにもまとめています。
             </p>
           </div>
-          <div className="gm-info-links" data-info-row>
+          <div className="gm-info-links">
             <Link href="/menu/dinner" className="gm-detail-link">
               夜のお品書きを見る
               <span className="gm-arrow" aria-hidden="true">

@@ -52,7 +52,15 @@ export default function InfoSection({
         gsap.utils
           .toArray<HTMLElement>("[data-info-row]", section)
           .forEach((row) => {
-            gsap.from(row, {
+            // TelCta 等、電話ボタン(.gm-tel-btn)を含む row はボタンを演出
+            // 対象から除外する。遅いスクロールや途中復帰でも不可視のまま
+            // 残らないよう、主 CTA は常に操作可能を優先する
+            // (MenuBoard の quiet/consult/calm と同じ保護。Sprint原則0)
+            const telBtn = row.querySelector<HTMLElement>(".gm-tel-btn");
+            const targets = telBtn
+              ? Array.from(row.children).filter((c) => c !== telBtn)
+              : row;
+            gsap.from(targets, {
               autoAlpha: 0,
               y: 24,
               duration: GUMON_MOTION.duration,
