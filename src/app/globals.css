@@ -2378,6 +2378,35 @@ body {
   padding-top: clamp(40px, 7vh, 80px);
 }
 
+/* ---- Course Consultation Editorial(Phase 20B) — 「相談できる」静けさ。
+   course 専用スコープ(.gm-consult)のみ。既定 .gm-board は不変 ---- */
+/* C1→C2: ギャラリー除去後、ヒーローの静けさを受け止める「間」を1箇所だけ
+   広めに取る(brisk の圧縮とは逆 — 急がせない) */
+.gm-consult .gm-board {
+  padding-top: clamp(96px, 15vh, 168px);
+}
+/* notes 内の電話番号リンク: 表示文言そのまま。padding+negative margin で
+   レイアウトを変えずにタップ領域 44px+ を確保する(朱は使わない —
+   朱は主 CTA ボタンだけ) */
+.gm-note-tel {
+  display: inline-block;
+  padding: 12px 6px;
+  margin: -12px -6px;
+  color: rgba(242, 240, 235, 0.88);
+  text-decoration: underline;
+  text-decoration-color: rgba(185, 178, 166, 0.55);
+  text-underline-offset: 3px;
+}
+.gm-note-tel:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px #1c1b19, 0 0 0 3px rgba(242, 240, 235, 0.7);
+  border-radius: 1px;
+}
+/* /contact への静かな導線(notes の直後)。電話 CTA より明確に弱い */
+.gm-board-contact-hint {
+  margin: clamp(10px, 1.8vh, 16px) 0 0;
+}
+
 /* ---- Dinner Storytelling Pass — 場面間の「間」と結末の着地(すべて
    dinner 専用セレクタ内。他ページの .gm-board 既定値には触れない) ---- */
 /* D1→D2: ヒーローの空気感を受ける呼吸(入口の余白を広めに) */

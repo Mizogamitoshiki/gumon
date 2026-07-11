@@ -8,15 +8,14 @@
 - 対象プロジェクトのパス: /Users/mizokamimirai/Desktop/mizogamitoshiki/gumon-hp
 - 案件タイプ: 既存サイト変換
 - 成果物の保存場所: docs/cinematic/
-- 最終更新: 2026-07-10
-- 案件ステータス: **Phase 19C 完了 — Lunch ロック（人間レビュー合格・コミット済み）**
+- 最終更新: 2026-07-11
+- 案件ステータス: **Phase 20B：Course実装・人間レビュー待ち**
 
 ## 現在地
 
-- 現在のStage: **Dinner 紙芝居型 — 実装・実スクロール検証済み。人間レビュー待ち・コード未コミット**（Phase 18未着手）。**方針記録: ユーザー指示によりPin禁止をD2ステージ限定で解除**（scrub駆動・モバイル/RMは静的維持）
-- 次のアクション（再開時に最初にやること）: レビュー結果受領 → 承認ならコミット（Storytelling Pass 10章+Scene-Turn 11章を一体で）。実装記録: dinner-implementation-plan.md 10〜11章
-- 実装記録: dinner-implementation-plan.md 9章（変更5ファイル・非回帰=3ページbody DOM完全一致・pin-spacer 0・RM実切替可読・390px横スクロール0・CTA 53px）
-- 進行中メモ: **Block A合格・コミット済み: `7b7a22e`**（Part1/Part2は同一領域重複のため理由記録の上1コミット統合）。Stage 12修正2件: ①noscriptフォールバック（QS20 Blocker解消） ②メディア装填遅延（LCP: 不可視film posterがLCP要素だった問題を解消 → devtoolsラボで **LCP 1.8s達成**・初期パス-1.4MB）。375px横スクロール0を実390ビューポートで実測確定（headless狭窓のズレはアーティファクトと切り分け）。reduced-motion実切替をheadless実施（分岐実行・動画非DLを実測）
+- 現在のStage: **Phase 20B 完了 — consult 分岐実装・DoD 全通過。未コミットのまま人間レビュー待ちで停止**（レビュー観点: course-implementation-report.md 末尾）
+- 次のアクション（再開時に最初にやること）: レビュー結果受領 → 合格なら最終確認（diff --check/lint/変更範囲）後に 1 コミットで確定（Phase 20C）。実装記録: course-implementation-report.md
+- 確定済みの前段: Dinner=Phase 18 ロック（64586ab）／Lunch=Phase 19C ロック（91d77da）。TOP=G3合格（条件付き）
 
 ## 実行範囲（履歴）
 
@@ -56,13 +55,13 @@
 
 <!-- 再開時はこれをそのまま再提示する -->
 
-**Dinner Scene-Turn Storytelling レビュー依頼** — localhost:3000/menu/dinner:
-1. 1スクロールごとに「場面がめくれる」感覚があるか（D1退場→D2対面→D3選ぶ→D4結末）
-2. D1: heroの情報が少しずつ退いてD2へ視線が渡るか（PCのみ）
-3. D2: 写真→見出し→キャプションの順序と遅れの質感／パララックス（±5%・scrub0.6）の品
-4. D3: リボン→行の半拍と読み心地
-5. モバイル390px: 完全静的な縦構成でScene順が成立しているか
-6. reduced-motion／lunch・course・drinkの目視ダブルチェック
+**Phase 20B Course Consultation Editorial レビュー依頼** — localhost:3000/menu/course:
+1. PC通しスクロール: Hero→紙カード→電話までが「急がされない」テンポか（fade-quiet の質感が Dinner の活気・Lunch の軽快と別物に見えるか）
+2. notes の電話番号リンクの見た目（下線の品）
+3. 「ご予約・ご宴会についてのご質問 →」の位置と弱さ（朱CTAを邪魔しないか）
+4. C1→C2 の余白が「間」として効いているか
+5. モバイル390px／reduced-motion の目視ダブルチェック
+6. lunch・dinner・drink が以前と変わって見えないか（非回帰）
 
 ## 成果物ポインタ
 
@@ -77,7 +76,12 @@
 | sitewide-rollout-plan.md（Phase 15: 全ページ棚卸し・演出密度・再利用分類・ロードマップ） | 承認済み（実装順序確定） | docs/cinematic/sitewide-rollout-plan.md |
 | dinner-creative-brief.md（Phase 16: ページ固有override） | 承認待ち | docs/cinematic/dinner-creative-brief.md |
 | dinner-experience-plan.md（Phase 16: 感情・Story・4 Scene・Motion） | 承認待ち | docs/cinematic/dinner-experience-plan.md |
-| dinner-implementation-plan.md（Phase 16計画+Phase 17実装記録9章） | 実装済み・レビュー待ち | docs/cinematic/dinner-implementation-plan.md |
+| dinner-implementation-plan.md（Phase 16計画+Phase 17〜18実装記録） | 完了（Phase 18ロック 64586ab） | docs/cinematic/dinner-implementation-plan.md |
+| lunch-transformation-plan.md（Phase 19A計画+19B実装記録） | 完了（Phase 19Cロック 91d77da） | docs/cinematic/lunch-transformation-plan.md |
+| lunch-implementation-report.md（Phase 19A〜19C レポート） | 完了 | docs/cinematic/lunch-implementation-report.md |
+| course-project-analysis.md（Phase 20A 現状分析） | 承認済み | docs/cinematic/course-project-analysis.md |
+| course-transformation-plan.md（Phase 20A 変換計画） | 承認済み（2026-07-11 A1〜A5） | docs/cinematic/course-transformation-plan.md |
+| course-implementation-report.md（Phase 20B 実装記録） | **実装済み・レビュー待ち** | docs/cinematic/course-implementation-report.md |
 
 ## セッションログ
 
@@ -111,3 +115,5 @@
 - 2026-07-11 / Phase 19A Lunch 現状分析+Transformation Plan / lunch-transformation-plan.md 作成。要点: 実写0・価格4品とも原本未照合[未確認]、DishGallery(プレースホルダ4枠pin)の削除テスト→外す提案、brisk分岐(軽快Editorial・pinなし・3 Scene)。承認事項 A1〜A4。**実装せず承認待ちで停止**
 - 2026-07-11 / Phase 19B Lunch 実装 / 承認記録: 「Phase 19AのTransformation Planを承認します」(A1〜A4)。DishGallery除去・brisk分岐(MenuDetailPage/MenuBoard/globals.css)・計画から逸脱なし。DoD全通過(build/lint/非回帰/実スクロール/モバイル390/RM/コンソール0)。**未コミットのまま人間レビュー待ちで停止**
 - 2026-07-11 / Phase 19C Lunch 合格・コミット / レビュー記録「Lunch brisk Editorialは人間レビューで合格しました」。最終確認: diff --check/lint/変更範囲限定/非回帰SSR/ギャラリー除去/tel CTA操作可能性 — 全て合格。lunch-implementation-report.md 作成。コミットID: 91d77da（feat: transform lunch page to brisk editorial）**
+- 2026-07-11 / Phase 20A Course 現状分析+Transformation Plan / course-project-analysis.md・course-transformation-plan.md 作成。実画面確認（1440/390・RM強制ダンプ・SSRテキストダンプ）。要点: 現状=既定分岐のままプレースホルダ2枠pin横流しが残存（P1）／型と目的の不一致（選ぶ型に相談の中身・P2）／notes電話番号タップ不可（P3）／FAQ導線なし（P4）。Concept 3案比較→**案A「一卓の相談から、夜を整える。」推奨**（既存コピー変更ゼロで成立・案Bは未確認情報必須かつLunch近接・案Cはテンプレ感最大）。3 Scene（C1相談の入口/C2対応できることを知る/C3電話で席を整える）・Motion密度2-1-1・pinなし・fade-quiet最弱。実装候補②consult分岐を推奨。未確認事項（人数条件・飲み放題内容・個室・記念日対応等）は[未確認]のまま表示しない設計。**コード・CSS・コピー変更なし・コミットなし。A1〜A5承認待ちで停止。Phase 20B未着手**
+- 2026-07-11 / Phase 20B Course 実装 / 承認記録: 「Phase 20AのTransformation Planを承認します」（A1〜A5・導線文言「ご予約・ご宴会についてのご質問」固定）。実装: course/page.tsx に consult 付与／MenuDetailPage に consult prop（ギャラリー非描画・gm-consult スコープ）／MenuBoard に consult 分岐（全Reveal=fadeQuiet y8・見出しマスクのみ既定値・締めの一枚も fadeQuiet・gm-tel-btn は演出対象外）＋renderNote（072-430-6038 の tel: リンク化・文言不変）＋consult限定の /contact 導線／globals.css に .gm-consult 余白・.gm-note-tel（タップ44px+）・.gm-board-contact-hint。検証: build/lint/diff-check ✅・実スクロール（実ブラウザ1440）✅・モバイル390 iframe実測（横0・pin0・インライン演出0・tel 87×48）✅・RMダンプ（隠し要素0）✅・非回帰SSR+実画面（dinner gm-stage6/lunch brisk/drink gal4・混入0）✅・削除行逐語照合 ✅・横断検索無破壊 ✅・コンソール0 ✅。未検証: Safari/iOS実機・CPU4x・JS無効視覚レンダ。**未コミットのまま人間レビュー待ちで停止。Phase 20C未着手**

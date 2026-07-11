@@ -27,6 +27,24 @@ const ALL_SECTIONS: MenuSection[] = [...FOOD_CATEGORIES, DRINKS];
 const hrefOf = (titleEn: string) =>
   BOARD_LINKS.find((l) => l.titleEn === titleEn)?.href ?? "/menu/dinner";
 
+// notes 内の電話番号だけを押せるリンクにする(表示文言は 1 字も変えない)。
+// 番号を含まない note(現状 course 以外の全 note)は従来どおり文字列のまま
+const TEL_DISPLAY = "072-430-6038";
+const TEL_HREF = "tel:0724306038";
+function renderNote(text: string) {
+  if (!text.includes(TEL_DISPLAY)) return text;
+  const [before, after] = text.split(TEL_DISPLAY);
+  return (
+    <>
+      {before}
+      <a href={TEL_HREF} className="gm-note-tel">
+        {TEL_DISPLAY}
+      </a>
+      {after}
+    </>
+  );
+}
+
 function matches(item: MenuItem, q: string): boolean {
   const t = q.trim().toLowerCase();
   if (!t) return true;
@@ -47,12 +65,17 @@ export default function MenuBoard({
   category,
   quiet = false,
   brisk = false,
+  consult = false,
 }: {
   category: MenuSection;
   quiet?: boolean;
   // brisk(Phase 19B・lunch): 「迷わず選ぶ」ための軽快な登場。quiet(dinner の
   // 活気)より移動を小さく・連鎖を速く。既定/quiet 分岐には触れない
   brisk?: boolean;
+  // consult(Phase 20B・course): 「相談できる」静けさ。全 Reveal を
+  // fade-quiet(8px)まで弱化し、notes 内電話番号の tel リンクと /contact
+  // 導線を足す。既定/quiet/brisk 分岐には触れない
+  consult?: boolean;
 }) {
   const rootRef = useRef<HTMLElement>(null);
   const isCourse = category.titleEn === "COURSE";
@@ -87,10 +110,10 @@ export default function MenuBoard({
   useGSAP(
     () => {
       const mm = gsap.matchMedia();
-      // quiet(dinner)/brisk(lunch): モバイルは静的な縦構成(演出なし)のため
-      // デスクトップのみ構築する。既定(他ページ)は従来どおり全幅で構築
+      // quiet(dinner)/brisk(lunch)/consult(course): モバイルは静的な縦構成
+      // (演出なし)のためデスクトップのみ構築する。既定は従来どおり全幅で構築
       mm.add(
-        quiet || brisk
+        quiet || brisk || consult
           ? "(min-width: 861px) and (prefers-reduced-motion: no-preference)"
           : "(prefers-reduced-motion: no-preference)",
         () => {
@@ -182,6 +205,24 @@ export default function MenuBoard({
             { autoAlpha: 0, y: 12, duration: SM.duration, stagger: 0.07 },
             0.3
           );
+        } else if (consult) {
+          // 相談の静けさ(course・20B): 読む区間は演出最弱 — 額縁は
+          // fade-quiet(8px)でそっと現すだけ。急がせる連鎖は組まない。
+          // 見出しマスクだけは全ページ共通の文法として既定値のまま維持
+          const FQ = GUMON_SCENE_MOTION.fadeQuiet;
+          gsap.from(".gm-board-frame", {
+            autoAlpha: 0,
+            y: FQ.y,
+            duration: FQ.duration,
+            ease: FQ.ease,
+            scrollTrigger: { trigger: root, start: "top 78%", once: true },
+          });
+          gsap.from(".gm-board-title .mask > span", {
+            yPercent: 115,
+            duration: GUMON_MOTION.durationLong,
+            ease: GUMON_MOTION.easeEmphasis,
+            scrollTrigger: { trigger: root, start: "top 74%", once: true },
+          });
         } else {
           // 既定(他ページ): 従来どおり静かに現す — 値・順序とも不変
           gsap.from(".gm-board-frame", {
@@ -208,7 +249,9 @@ export default function MenuBoard({
           });
           // quiet(dinner)の活気: リボンは帯らしく左から差し込み、品々は
           // わずかな縮みを伴って次々と躍り上がる(連鎖のテンポも速める)。
-          // brisk(lunch)の軽快: 同じ構造をさらに小さく・速く(迷わず選ぶ)
+          // brisk(lunch)の軽快: 同じ構造をさらに小さく・速く(迷わず選ぶ)。
+          // consult(course)の静けさ: 差し込まず、8px の fade-quiet で
+          // そっと置くだけ(読む・相談するページに勢いは要らない)
           tl.from(
             sec.querySelector(".gm-board-ribbon"),
             quiet
@@ -225,11 +268,18 @@ export default function MenuBoard({
                     duration: GUMON_SCENE_MOTION.riseLine.duration,
                     ease: GUMON_SCENE_MOTION.riseLine.ease,
                   }
-                : {
-                    autoAlpha: 0,
-                    y: 16,
-                    duration: GUMON_MOTION.duration,
-                  }
+                : consult
+                  ? {
+                      autoAlpha: 0,
+                      y: GUMON_SCENE_MOTION.fadeQuiet.y,
+                      duration: GUMON_SCENE_MOTION.fadeQuiet.duration,
+                      ease: GUMON_SCENE_MOTION.fadeQuiet.ease,
+                    }
+                  : {
+                      autoAlpha: 0,
+                      y: 16,
+                      duration: GUMON_MOTION.duration,
+                    }
           );
           tl.from(
             sec.querySelectorAll(".gm-board-row, .gm-board-card"),
@@ -250,28 +300,48 @@ export default function MenuBoard({
                     ease: GUMON_SCENE_MOTION.riseLine.ease,
                     stagger: 0.045,
                   }
-                : {
-                    autoAlpha: 0,
-                    y: 20,
-                    duration: GUMON_MOTION.duration,
-                    stagger: 0.07,
-                  },
+                : consult
+                  ? {
+                      autoAlpha: 0,
+                      y: GUMON_SCENE_MOTION.fadeQuiet.y,
+                      duration: GUMON_SCENE_MOTION.fadeQuiet.duration,
+                      ease: GUMON_SCENE_MOTION.fadeQuiet.ease,
+                      stagger: 0.08,
+                    }
+                  : {
+                      autoAlpha: 0,
+                      y: 20,
+                      duration: GUMON_MOTION.duration,
+                      stagger: 0.07,
+                    },
             // quiet: リボンが差し込んだ勢いのまま品々が続く(半拍→1/4拍)。
-            // brisk: さらに間を詰める
+            // brisk: さらに間を詰める。consult: 既定と同じ間(急がせない)
             quiet ? 0.22 : brisk ? 0.18 : 0.15,
           );
         }
-        // 締めの料理写真: clip-path 展開 + 1.06 → 等倍
+        // 締めの料理写真: clip-path 展開 + 1.06 → 等倍。
+        // consult は展開の見せ場も作らず fade-quiet で静かに(最弱で統一)
         gsap.utils
           .toArray<HTMLElement>(".gm-board-photo", root)
           .forEach((el) => {
-            gsap.from(el, {
-              clipPath: "inset(12% 8% 12% 8%)",
-              scale: 1.06,
-              duration: 1.3,
-              ease: GUMON_MOTION.easeEmphasis,
-              scrollTrigger: { trigger: el, start: "top 84%", once: true },
-            });
+            gsap.from(
+              el,
+              consult
+                ? {
+                    autoAlpha: 0,
+                    y: GUMON_SCENE_MOTION.fadeQuiet.y,
+                    duration: GUMON_SCENE_MOTION.fadeQuiet.duration,
+                    ease: GUMON_SCENE_MOTION.fadeQuiet.ease,
+                    scrollTrigger: { trigger: el, start: "top 84%", once: true },
+                  }
+                : {
+                    clipPath: "inset(12% 8% 12% 8%)",
+                    scale: 1.06,
+                    duration: 1.3,
+                    ease: GUMON_MOTION.easeEmphasis,
+                    scrollTrigger: { trigger: el, start: "top 84%", once: true },
+                  },
+            );
           });
         // 導線 + CTA
         if (quiet) {
@@ -308,6 +378,36 @@ export default function MenuBoard({
                 start: "top 75%",
                 once: true,
               },
+            });
+          }
+        } else if (consult) {
+          // 相談の着地(course・20B): 電話は主行動 — quiet と同じく
+          // 主ボタン(gm-tel-btn)は演出対象から外し、常に操作可能を保つ。
+          // 周辺は fade-quiet で静かに現れるだけ
+          const FQ = GUMON_SCENE_MOTION.fadeQuiet;
+          gsap.from(".gm-board-others", {
+            autoAlpha: 0,
+            y: FQ.y,
+            duration: FQ.duration,
+            ease: FQ.ease,
+            scrollTrigger: {
+              trigger: ".gm-board-others",
+              start: "top 88%",
+              once: true,
+            },
+          });
+          const cta = root.querySelector<HTMLElement>(".gm-board-cta");
+          if (cta) {
+            const ctaSequence = Array.from(cta.children).filter(
+              (child) => !child.classList.contains("gm-tel-btn"),
+            );
+            gsap.from(ctaSequence, {
+              autoAlpha: 0,
+              y: FQ.y,
+              duration: FQ.duration,
+              ease: FQ.ease,
+              stagger: 0.08,
+              scrollTrigger: { trigger: cta, start: "top 80%", once: true },
             });
           }
         } else {
@@ -462,10 +562,23 @@ export default function MenuBoard({
             <div className="gm-board-notes">
               {category.notes.map((n) => (
                 <p key={n} className="gm-menu-note">
-                  {n}
+                  {renderNote(n)}
                 </p>
               ))}
             </div>
+          )}
+
+          {/* 相談ページ(consult)のみ: 不安の解消(FAQ)への静かな導線。
+              電話 CTA(朱)より明確に弱く、事実情報はここに足さない */}
+          {consult && (
+            <p className="gm-board-contact-hint">
+              <Link href="/contact" className="gm-detail-link">
+                ご予約・ご宴会についてのご質問
+                <span className="gm-arrow" aria-hidden="true">
+                  →
+                </span>
+              </Link>
+            </p>
           )}
         </section>
 

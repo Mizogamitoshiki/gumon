@@ -11,5 +11,5 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
-  return <MenuDetailPage category={getFoodCategory("course")!} />;
+  return <MenuDetailPage category={getFoodCategory("course")!} consult />;
 }
