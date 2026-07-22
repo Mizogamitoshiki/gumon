@@ -14,7 +14,8 @@ export const TEL_LINK = "tel:0724306038";
 // ※ホットペッパーは成約手数料が発生するため、UI 上は電話予約を常に主役にし、
 //   Web 予約はセカンダリ+「お電話がいちばんありがたい」の一文を添える方針
 export const INSTAGRAM_URL = "https://www.instagram.com/"; // TODO: 公式アカウント URL へ差し替え
-export const HOTPEPPER_URL = "https://www.hotpepper.jp/"; // TODO: 店舗ページ URL へ差し替え
+// 実店舗ページ(オーナー提供 2026-07-22)
+export const HOTPEPPER_URL = "https://www.hotpepper.jp/strJ003850704/";
 
 export const ADDRESS = {
   full: "大阪府貝塚市加神1-4-26 貝塚セルシー",

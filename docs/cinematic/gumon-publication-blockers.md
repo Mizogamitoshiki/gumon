@@ -6,7 +6,7 @@
 
 | # | 項目 | 現状 | ソース |
 | --- | --- | --- | --- |
-| 1 | ホットペッパーグルメの店舗ページURL | `src/lib/site.ts`が`https://www.hotpepper.jp/`（トップページ）を仮設定・TODOコメントあり | site.ts:17／qa-report.md 5章／sitewide-rollout-plan.md 5章 |
+| 1 | ホットペッパーグルメの店舗ページURL | **解消済み（2026-07-22）**: オーナー提供の実URL `https://www.hotpepper.jp/strJ003850704/` へ差し替え済み（HTTP 200確認） | site.ts |
 | 2 | Instagram公式アカウントURL | `src/lib/site.ts`が`https://www.instagram.com/`（トップページ）を仮設定・TODOコメントあり | site.ts:16／同上 |
 | 3 | 本番ドメイン（NEXT_PUBLIC_SITE_URL） | **未購入（2026-07-22 オーナー確認: AWS掲載予定・ドメイン取得から必要）**。未設定時は`https://gumon-hp.vercel.app`にフォールバック（canonical/OGURL/JSON-LDに影響） | site.ts:6-7／GUMON_FINAL_HANDOFF.md 7章 |
 
