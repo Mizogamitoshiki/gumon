@@ -71,16 +71,35 @@ a8b07ce fix: complete access and contact utility QA
 4. 店舗運用情報（駐車場・支払い方法・採用条件）
 5. 技術的既知事項（Tab-onlyキーボードナビゲーションの一部・サブピクセル横スクロール）— 広範囲改修が必要なため今回は見送り、記録のみ
 
-## 7. 公開手順（想定・Vercelデプロイ前提）
+## 7. 公開手順（AWS掲載・2026-07-22 オーナー決定により Vercel 前提から改訂）
 
-1. `docs/cinematic/gumon-publication-blockers.md` の1〜13（実URL・価格・素材・運用情報）をオーナー確認のうえ確定し、該当箇所（`src/lib/site.ts`・`src/lib/menu.ts`）を差し替える
-2. `NEXT_PUBLIC_SITE_URL` を本番ドメインに設定（Vercel環境変数）
-3. `npm run build` がローカルで成功することを確認
-4. `main`（または配信ブランチ）へ`feature/bloom-cinematic-storytelling`をマージ
-5. Vercelへデプロイ（自動デプロイ設定時はpush後に自動実行）
-6. デプロイ後、9ルート全てを実機（PC・モバイル）で目視確認
-7. Google Search Consoleでsitemap.xml再送信・インデックス状況を確認
-8. 公開後1〜2週間でフィールドCore Web Vitals（CrUX）を確認
+前提の確定事項（2026-07-22）: ホスティングは **AWS**。**本番ドメインは未購入**。
+技術特性: 全9ルート静的プリレンダー・next/image 不使用・APIルート/middleware なし
+→ 完全静的配信が可能。メニュー品目は **ビルド時に Bloom-lCMS から取得**
+（`prebuild` の sync-menu.mjs）のため、**ビルド環境に `BLOOM_API_URL` /
+`BLOOM_API_KEY` が必須**（旧手順に記載漏れ。.env.example 参照）。
+CMSでメニューを更新したら再ビルド・再デプロイが必要（Webhook 連携を推奨）。
+
+構成候補（どちらでも成立。選定はオーナー/Bloom-L判断）:
+- **案A: AWS Amplify Hosting（推奨）** — Git連携の自動ビルド/デプロイ・環境変数管理・
+  Incoming Webhook（CMS更新→再ビルド）・独自ドメイン+SSL(ACM)自動化が揃い運用が最も軽い
+- **案B: S3 + CloudFront** — 最安の完全静的配信。`next.config` に `output: 'export'`
+  追加が必要。CI（GitHub Actions等でビルド→S3 sync→CloudFront invalidation）・
+  ACM証明書・Route 53・クリーンURL処理（trailingSlash か CloudFront Function）を自前構築
+
+手順:
+1. **本番ドメインを購入・決定**（オーナー作業。Route 53 で取得すると DNS/ACM 連携が容易）
+2. `docs/cinematic/gumon-publication-blockers.md` の1〜13（実URL・価格・素材・運用情報）を
+   オーナー確認のうえ確定し、該当箇所（`src/lib/site.ts`・`src/lib/menu.ts` または CMS）を差し替える
+3. AWS側のビルド環境に環境変数を設定: `NEXT_PUBLIC_SITE_URL`（本番ドメイン）・
+   `BLOOM_API_URL`・`BLOOM_API_KEY`
+4. `npm run build` がローカルで成功することを確認（案Bの場合は `output: 'export'` 追加後に確認）
+5. `main`（または配信ブランチ）へ `feature/bloom-cinematic-storytelling` をマージ
+6. AWSへデプロイ（案A: Amplify の Git 連携 push で自動 ／ 案B: CI 実行）
+7. Bloom-lCMS の Webhook にデプロイフックを登録（メニュー更新→自動再ビルド）
+8. デプロイ後、9ルート全てを実機（PC・モバイル）で目視確認（https・www正規化・404含む）
+9. Google Search Console でドメイン所有権確認・sitemap.xml 送信・インデックス状況を確認
+10. 公開後1〜2週間でフィールド Core Web Vitals（CrUX）を確認
 
 ## 8. ロールバック手順
 
