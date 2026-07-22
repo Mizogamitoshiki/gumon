@@ -133,6 +133,21 @@ export const GUMON_MOTION: MotionPreset = {
   distance: 32,
 };
 
+// ============================================================
+// シネマティック変換(docs/cinematic/experience-plan.md 9章)の追加トークン。
+// S4「火の返事」の章句・S5「受け止めの半拍」など、scrub タイムライン内の
+// 新規演出はここから値を引く(rise-line / exit-line / fade-quiet)。
+// duration はタイムライン単位(スクロール比率)、非 scrub の実時間ではない。
+// ============================================================
+export const GUMON_SCENE_MOTION = {
+  /** 章句の行マスク入場(rise-line) */
+  riseLine: { duration: 0.7, ease: "expo.out" },
+  /** 章句・休符行の退場(exit-line) */
+  exitLine: { duration: 0.5, ease: "power2.in" },
+  /** 静けさ区間の弱い出現(fade-quiet)。blur なし・移動 8px */
+  fadeQuiet: { duration: 0.8, ease: "power1.out", y: 8 },
+} as const;
+
 /** GUMON のテーマ色。コンポーネントに raw hex を直書きしないための唯一の出所 */
 export const THEME_COLORS = {
   bg: "#1c1b19", // マットブラック(背景)

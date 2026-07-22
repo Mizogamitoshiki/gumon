@@ -153,14 +153,20 @@ body {
 
 /* pinned scroll runway — shorter on mobile so a thumb-flick journey doesn't
    drag (same beats, tighter spacing). JS reads the computed height, so the
-   ScrollTrigger end adapts automatically. 861px = .gm-nav breakpoint */
+   ScrollTrigger end adapts automatically. 861px = .gm-nav breakpoint.
+   高さはマスタータイムライン長(GumonScroll.tsx の T)と比例させる:
+   S4+S5 で 820/620 → 1210/920、S2 で 1330/1010、S6→S7 の間+S7 保持
+   (+1.4unit・タイムライン全長 16.88→18.28)で 1440/1095 に延長。
+   1unit あたりのスクロール量は一貫して維持:
+   デスクトップ 1440/18.28 ≈ 78.8vh/unit、モバイル 1095/18.28 ≈ 59.9vh/unit
+   (= 体感スクロール速度は G2 合格時と同一) */
 .gm-scroll-root {
   position: relative;
-  height: 820vh;
+  height: 1440vh;
 }
 @media (max-width: 860px) {
   .gm-scroll-root {
-    height: 620vh;
+    height: 1095vh;
   }
 }
 
@@ -1274,6 +1280,11 @@ body {
   color: rgba(242, 240, 235, 0.86);
 }
 .gm-info-tel-link {
+  /* padding+negative margin でレイアウトを変えずタップ領域 44px+ を確保
+     (実測22pxはWCAG目標未達 — Sprint Stage D 是正) */
+  display: inline-block;
+  padding: 11px 4px;
+  margin: -11px -4px;
   color: #f2f0eb;
   text-decoration: none;
   letter-spacing: 0.06em;
@@ -2274,4 +2285,284 @@ body {
 }
 .gm-mlist-eyebrow {
   margin: 0;
+}
+
+/* ---- D2「看板との対面」(gm-shot) — /menu/dinner 専用の Editorial variant
+   (Phase 17)。縦型・写真主役・pin なし。共有の .gm-gal(他メニューの横流し
+   ギャラリー)には一切触れない。dinner の DishShowcase からのみ参照される。
+   額縁は aspect-ratio でサイズを先に確保し、画像読込で CLS を起こさない ---- */
+.gm-shot {
+  padding: clamp(72px, 12vh, 128px) clamp(20px, 5vw, 56px);
+}
+.gm-shot-intro {
+  max-width: 880px;
+  margin: 0 auto clamp(36px, 6vh, 64px);
+  text-align: center;
+}
+.gm-shot-en {
+  margin: 0 0 14px;
+  font-family: var(--font-noto-sans-jp), sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: #b9b2a6;
+}
+.gm-shot-title {
+  margin: 0;
+  font-family: var(--font-noto-serif-jp), serif;
+  font-size: clamp(24px, 3.4vw, 40px);
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-indent: 0.12em;
+}
+.gm-shot-panel {
+  max-width: 880px;
+  margin: 0 auto clamp(56px, 9vh, 96px);
+}
+.gm-shot-panel:last-of-type {
+  margin-bottom: 0;
+}
+.gm-shot-frame {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  background: #161412;
+  border: 1px solid rgba(242, 240, 235, 0.08);
+}
+.gm-shot-media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.gm-shot-caption {
+  max-width: 680px;
+  margin: clamp(18px, 3vh, 28px) auto 0;
+  text-align: center;
+}
+.gm-shot-name {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0 0 10px;
+  font-family: var(--font-noto-serif-jp), serif;
+  font-size: clamp(20px, 2.4vw, 28px);
+  font-weight: 400;
+  letter-spacing: 0.08em;
+}
+.gm-shot-price {
+  margin: 0 0 12px;
+  font-size: 15px;
+  letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums;
+  color: rgba(242, 240, 235, 0.9);
+}
+.gm-shot-desc {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 2;
+  color: rgba(242, 240, 235, 0.72);
+}
+@media (max-width: 860px) {
+  .gm-shot {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+  .gm-shot-frame {
+    aspect-ratio: 4 / 3;
+  }
+}
+
+/* ---- Lunch Brisk Editorial(Phase 19B) — 「迷わず一皿を選ぶ」ための
+   余白圧縮。lunch 専用スコープ(.gm-brisk)のみ。既定 .gm-board は不変 ---- */
+.gm-brisk .gm-board {
+  padding-top: clamp(40px, 7vh, 80px);
+}
+
+/* ---- Course Consultation Editorial(Phase 20B) — 「相談できる」静けさ。
+   course 専用スコープ(.gm-consult)のみ。既定 .gm-board は不変 ---- */
+/* C1→C2: ギャラリー除去後、ヒーローの静けさを受け止める「間」を1箇所だけ
+   広めに取る(brisk の圧縮とは逆 — 急がせない) */
+.gm-consult .gm-board {
+  padding-top: clamp(96px, 15vh, 168px);
+}
+/* notes 内の電話番号リンク: 表示文言そのまま。padding+negative margin で
+   レイアウトを変えずにタップ領域 44px+ を確保する(朱は使わない —
+   朱は主 CTA ボタンだけ) */
+.gm-note-tel {
+  display: inline-block;
+  padding: 12px 6px;
+  margin: -12px -6px;
+  color: rgba(242, 240, 235, 0.88);
+  text-decoration: underline;
+  text-decoration-color: rgba(185, 178, 166, 0.55);
+  text-underline-offset: 3px;
+}
+.gm-note-tel:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px #1c1b19, 0 0 0 3px rgba(242, 240, 235, 0.7);
+  border-radius: 1px;
+}
+/* /contact への静かな導線(notes の直後)。電話 CTA より明確に弱い */
+.gm-board-contact-hint {
+  margin: clamp(10px, 1.8vh, 16px) 0 0;
+}
+
+/* ---- Drink Calm Editorial(Finalization Sprint Stage B) — 「一杯の余韻」。
+   drink 専用スコープ(.gm-calm)のみ。既定 .gm-board は不変。C1→C2 の間は
+   consult ほど大きく立ち止まらず、brisk ほど詰めない「余韻の続く」幅 ---- */
+.gm-calm .gm-board {
+  padding-top: clamp(64px, 10vh, 120px);
+}
+
+/* ---- Dinner Storytelling Pass — 場面間の「間」と結末の着地(すべて
+   dinner 専用セレクタ内。他ページの .gm-board 既定値には触れない) ---- */
+/* D1→D2: ヒーローの空気感を受ける呼吸(入口の余白を広めに) */
+.gm-editorial .gm-shot {
+  padding-top: clamp(96px, 16vh, 176px);
+  /* D2→D3: 写真を見せ切ったあと、選ぶ時間に入る前の余白 */
+  padding-bottom: clamp(110px, 18vh, 200px);
+}
+/* D3→D4: 品書きを読み終えてから結末(CTA)までの短い余白。
+   2026-07-22「夜のお品書きの構成に統一」: 場面句・締め句・CTA余白の
+   スコープを lunch(.gm-brisk)/course(.gm-consult)/drink(.gm-calm)にも拡張 */
+.gm-editorial .gm-board-cta,
+.gm-brisk .gm-board-cta,
+.gm-consult .gm-board-cta,
+.gm-calm .gm-board-cta {
+  margin-top: clamp(48px, 8vh, 96px);
+}
+.gm-editorial .gm-board-scene-cue,
+.gm-editorial .gm-board-cta-cue,
+.gm-brisk .gm-board-scene-cue,
+.gm-brisk .gm-board-cta-cue,
+.gm-consult .gm-board-scene-cue,
+.gm-consult .gm-board-cta-cue,
+.gm-calm .gm-board-scene-cue,
+.gm-calm .gm-board-cta-cue {
+  margin: 0 0 clamp(18px, 3vh, 30px);
+  font-family: var(--font-noto-serif-jp), serif;
+  font-size: clamp(18px, 2.1vw, 28px);
+  font-weight: 400;
+  letter-spacing: 0.16em;
+  line-height: 1.45;
+  text-indent: 0.16em;
+  color: rgba(242, 240, 235, 0.9);
+}
+.gm-editorial .gm-board-scene-cue,
+.gm-brisk .gm-board-scene-cue,
+.gm-consult .gm-board-scene-cue,
+.gm-calm .gm-board-scene-cue {
+  padding-bottom: clamp(14px, 2.5vh, 24px);
+  border-bottom: 1px solid rgba(242, 240, 235, 0.14);
+}
+.gm-editorial .gm-board-cta-cue,
+.gm-brisk .gm-board-cta-cue,
+.gm-consult .gm-board-cta-cue,
+.gm-calm .gm-board-cta-cue {
+  margin-bottom: clamp(24px, 4vh, 42px);
+  text-align: center;
+}
+/* ---- D2 紙芝居ステージ(dinner・デスクトップ・motion可のみ) ----
+   ビューポート固定の場面合成: 題字の幕 → 窓が開いて一皿が全画面 → キャプション。
+   reduced-motion のデスクトップと全モバイルはこのブロック外(静的縦積みの
+   基本レイアウトのまま)。JS(DishShowcase)の pin タイムラインと対応 */
+.gm-shot-scrim {
+  display: none;
+}
+@media (min-width: 861px) and (prefers-reduced-motion: no-preference) {
+  /* gm-stage: 夜の入口(Hero)〜一皿との対面を重ねる単一の画面固定ステージ
+     (scrTelling 機構の移植: 長尺の pin 内で 100svh の層にサブシーンを合成し、
+     前の場面の退場と次の入場を必ず重ねる)。
+     層順: hero(z3・不透明の幕) > intro(z2・gm-shot 内) > frame(z1) */
+  .gm-editorial .gm-stage {
+    position: relative;
+    height: 100svh;
+    overflow: hidden;
+    margin-bottom: clamp(48px, 8vh, 96px); /* ステージ解放→品書きへすぐ流す */
+  }
+  .gm-editorial .gm-stage .gm-chero {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    min-height: 0;
+    /* 下層(熾火の一皿)を伏せる不透明の幕。退場フェードとともに下層が現れる */
+    background: #1c1b19;
+  }
+  .gm-editorial .gm-shot {
+    position: absolute;
+    inset: 0;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+    z-index: 1;
+  }
+  .gm-editorial .gm-shot-intro {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    max-width: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    pointer-events: none;
+  }
+  .gm-editorial .gm-shot-panel {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    max-width: none;
+  }
+  .gm-editorial .gm-shot-frame {
+    position: absolute;
+    inset: 0;
+    aspect-ratio: auto;
+    border: 0;
+  }
+  .gm-editorial .gm-shot-media {
+    top: -6%;
+    bottom: -6%;
+    height: 112%;
+  }
+  .gm-editorial .gm-shot-scrim {
+    display: block;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 44%;
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(
+      180deg,
+      rgba(22, 20, 18, 0) 0%,
+      rgba(22, 20, 18, 0.36) 55%,
+      rgba(22, 20, 18, 0.66) 100%
+    );
+  }
+  .gm-editorial .gm-shot-caption {
+    position: absolute;
+    left: 50%;
+    bottom: clamp(40px, 9vh, 88px);
+    transform: translateX(-50%);
+    z-index: 2;
+    margin: 0;
+    width: min(720px, 92%);
+  }
+  /* D4「席へ向かう」— 紙芝居の結末ページ: CTA を全画面の一場面として
+     据える(pin はしない — 結末で操作を拘束しない)。dinner・motion可のみ */
+  .gm-editorial .gm-board-cta {
+    min-height: 88svh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
 }
