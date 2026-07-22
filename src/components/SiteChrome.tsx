@@ -28,7 +28,8 @@ export default function SiteChrome({
     <>
       <ScrollProgress />
       <header className="gm-detail-header">
-        <Link href="/" className="gm-detail-home" aria-label="トップへ戻る">
+        {/* WCAG 2.5.3: accessible nameは可視テキストを包含し先頭に置く(音声操作の「愚問」発話と一致させる) */}
+        <Link href="/" className="gm-detail-home" aria-label="愚問 中国料理 GUMON トップへ戻る">
           <span className="gm-arrow-back" aria-hidden="true">
             ←
           </span>

@@ -2,65 +2,36 @@
 
 import { useRef } from "react";
 import type { MenuSection } from "@/lib/menu";
-import { gsap, useGSAP, ScrollTrigger } from "@/lib/gsap-setup";
-import { splitText, type SplitTextResult } from "@/lib/split-text";
+import { gsap, useGSAP } from "@/lib/gsap-setup";
 import { GUMON_MOTION } from "@/lib/motion-tokens";
 
-// 料理・飲み物 詳細ページのヒーロー。titleJp を文字マスクでせり上げ、
+// 料理・飲み物 詳細ページのヒーロー。titleJp(LCP要素)は即時描画し、
 // 通過中は背景(壁テクスチャ)と前景で速度差を付けて奥行きを出す。
 export default function MenuHero({ category }: { category: MenuSection }) {
   const sectionRef = useRef<HTMLElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
-  const splitRef = useRef<SplitTextResult | null>(null);
 
   useGSAP(
-    (_context, contextSafe) => {
+    () => {
       const section = sectionRef.current;
-      const title = titleRef.current;
-      if (!section || !title || !contextSafe) return;
+      if (!section) return;
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-      // Web フォント確定前に分割すると文字幅がズレるため、確定までは伏せておく
-      gsap.set(title, { autoAlpha: 0 });
-
-      // StrictMode の二重マウントでは fonts.ready の .then が「破棄済み effect の分」
-      // まで発火する。stale 実行を許すと 2 本目の from() が「1 本目が隠した状態」を
-      // 着地点として捕捉し、リード等が不可視のまま固まる。フラグで無効化する。
-      let cancelled = false;
-
-      const run = contextSafe(() => {
-        if (cancelled || !titleRef.current || !sectionRef.current) return;
-
-        splitRef.current = splitText(titleRef.current, { type: "chars" });
-        gsap.set(titleRef.current, { autoAlpha: 1 });
-
-        const tl = gsap.timeline({
-          defaults: { ease: GUMON_MOTION.easeEmphasis },
-        });
-        tl.from(
-          splitRef.current.chars,
-          {
-            yPercent: 115,
-            duration: GUMON_MOTION.durationLong,
-            stagger: 0.045,
-          },
-          0.1,
-        );
-        tl.from(
-          gsap.utils.toArray<HTMLElement>("[data-hero-fade]", sectionRef.current),
-          {
-            autoAlpha: 0,
-            y: 18,
-            duration: GUMON_MOTION.duration,
-            stagger: GUMON_MOTION.stagger,
-          },
-          0.5,
-        );
-
-        // 分割で行高が確定した後、後続トリガーの位置を再計算
-        ScrollTrigger.refresh();
-      });
-      document.fonts.ready.then(run);
+      // タイトル(h1)= LCP要素はアニメ対象外で初回描画から可視 — MOT-7(LCP要素への
+      // 入場アニメ禁止)。従来の「fonts.ready まで autoAlpha:0 で伏せて文字せり上げ」は
+      // LCP を約3秒へ遅延させていた(perf-measurement-001)。入場演出は副次要素
+      // ([data-hero-fade] = eyebrow/リード/cue)のみに残す。
+      gsap.from(
+        gsap.utils.toArray<HTMLElement>("[data-hero-fade]", section),
+        {
+          autoAlpha: 0,
+          y: 18,
+          duration: GUMON_MOTION.duration,
+          stagger: GUMON_MOTION.stagger,
+          ease: GUMON_MOTION.easeEmphasis,
+          delay: 0.2,
+        },
+      );
 
       // ヒーロー通過中の視差(デスクトップのみ)。scrub 連動は等速が原則
       const mm = gsap.matchMedia();
@@ -75,11 +46,6 @@ export default function MenuHero({ category }: { category: MenuSection }) {
         gsap.to(".gm-chero-inner", { yPercent: -10, ease: "none", scrollTrigger: { ...st } });
       });
 
-      return () => {
-        cancelled = true;
-        splitRef.current?.revert();
-        splitRef.current = null;
-      };
     },
     { scope: sectionRef },
   );

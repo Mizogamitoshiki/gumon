@@ -686,16 +686,20 @@ export default function GumonScroll() {
       document.fonts.ready.then(() => ScrollTrigger.refresh());
     }
 
-    // intro: hero rises once on load (on the parent, so it doesn't fight the
-    // scrubbed masked spans). Reverted (not just killed) in cleanup: an
-    // orphaned from() leaves opacity:0 inline and the StrictMode re-run then
-    // captures that poisoned value, pinning the logo invisible
-    const intro = gsap.from(heroLogo, {
+    // intro: secondary hero lines (直下の.mask=中国料理/GUMON/キャッチ) rise once
+    // on load. h1「愚問」= LCP要素は対象外で初回描画から可視 — MOT-7(LCP要素への
+    // 入場アニメ禁止)。全体フェードがLCPを3.2sへ遅延させていた(perf-measurement-001)。
+    // 外側.maskへのopacity/yのため、内側spanを使うスクラブ演出とは衝突しない。
+    // Reverted (not just killed) in cleanup: an orphaned from() leaves opacity:0
+    // inline and the StrictMode re-run then captures that poisoned value,
+    // pinning the lines invisible
+    const intro = gsap.from(qaIn(heroLogo, ":scope > .mask"), {
       opacity: 0,
       y: 24,
       duration: 1.5,
       ease: E,
       delay: 0.15,
+      stagger: 0.08,
     });
 
     /* ---- progress bar + header hide/show ---- */
