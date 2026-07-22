@@ -170,6 +170,55 @@ body {
   }
 }
 
+/* ---- モバイル限定: TOP ページ各シーンの文字可読性スクリム(2026-07-22) ----
+   スマホ実機だと料理写真の上に文字が乗って読みにくいため、シネマティックな
+   スクロール演出は一切止めずに、各 [data-scene] の文字背後へ放射状の暗みを
+   足して常に読める状態にする。中心を濃く・外周を薄くして料理写真は端で
+   透けさせ、没入感は保つ。z-index:-1 でシーン自身の文字より下・料理背景層
+   (z1)より上に入る。861px 以上(PC)・詳細ページ(.gm-chero 等の別構造)には
+   一切影響しない(セレクタを .gm-scroll-root 配下に限定) */
+@media (max-width: 860px) {
+  .gm-scroll-root [data-scene]::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: radial-gradient(
+      135% 82% at 50% 50%,
+      rgba(20, 19, 17, 0.62) 0%,
+      rgba(20, 19, 17, 0.44) 52%,
+      rgba(20, 19, 17, 0.16) 100%
+    );
+  }
+}
+
+/* ---- モバイル狭幅(≤520px): TOP お品書きプレビューの行の窮屈さ・パネル
+   見切れを解消(2026-07-22)。長い品名(例「季節の宴会コース(飲み放題付き)」)や
+   文言価格(例「ご予算に応じて」)が横に詰まって折り返し崩れするため、価格を
+   品名の下へ右寄せで落とす(点線リーダーは省く)。パネル横幅もビューポート内へ。
+   セレクタは .gm-menu 配下に限定 = TOP プレビュー専用。詳細ページ(.gm-board)の
+   行レイアウトには一切影響しない */
+@media (max-width: 520px) {
+  .gm-scroll-root .gm-menu {
+    width: min(660px, 90vw);
+  }
+  .gm-scroll-root .gm-menu::before {
+    inset: -22px -16px;
+  }
+  .gm-scroll-root .gm-menu .gm-menu-line {
+    flex-wrap: wrap;
+  }
+  .gm-scroll-root .gm-menu .gm-menu-dots {
+    display: none;
+  }
+  .gm-scroll-root .gm-menu .gm-menu-price {
+    flex: 1 0 100%;
+    margin-top: 2px;
+    text-align: right;
+  }
+}
+
 /* responsive nav / hamburger */
 .gm-nav {
   display: none;
