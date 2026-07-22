@@ -45,6 +45,18 @@ function renderNote(text: string) {
   );
 }
 
+// 場面句(dinner「今夜を、選ぶ。」の文法を全ページへ統一・2026-07-22)。
+// 文言は各ページの既存語彙から最小で充てる: LUNCH は dinner 句の昼転写、
+// COURSE は承認済み Concept 案A「一卓の相談から、夜を整える。」由来、
+// DRINK は既存リード「一皿に、寄り添う一杯を。」由来。締め句は全ページ共通
+const SCENE_CUES: Record<string, string> = {
+  LUNCH: "昼を、選ぶ。",
+  DINNER: "今夜を、選ぶ。",
+  COURSE: "夜を、整える。",
+  DRINK: "一杯を、選ぶ。",
+};
+const CTA_CUE = "席を、決める。";
+
 function matches(item: MenuItem, q: string): boolean {
   const t = q.trim().toLowerCase();
   if (!t) return true;
@@ -58,9 +70,11 @@ function matches(item: MenuItem, q: string): boolean {
 // パレットに翻訳したもの: 額縁+コーナーマーク、リボン見出し、点線価格、
 // コースは紙(アイボリー)カード、締めの一枚、注記、電話 CTA。
 // 検索(全カテゴリ横断)と「おすすめのみ」絞り込みに対応。
-// quiet(Phase 17・現状 dinner のみ): Reveal を fade-quiet 基準(8px・短め・
-// power1.out)へ弱化する(読む区間は演出最弱 — CDE 6.4)。未指定ページは
-// 従来値のまま一切変わらない。構造・DOM・機能は quiet でも不変。
+// 2026-07-22 ユーザー指示「全て夜のお品書きの構成に統一(ランチ・コースも、
+// もちろんドリンクも)」: quiet(dinner)で確立した場面句+活気の登場+儀式的
+// CTA の構成を、4 variant 共通の唯一の振付とした(値は dinner の quiet と
+// 同一)。variant フラグはページ構造(ギャラリー有無・notes リンク・/contact
+// 導線)の分岐として残る。未指定(既定)分岐は従来値のまま保全。
 export default function MenuBoard({
   category,
   quiet = false,
@@ -69,24 +83,21 @@ export default function MenuBoard({
   calm = false,
 }: {
   category: MenuSection;
+  // quiet(dinner): editorial ステージの下でボードを受ける。振付の原器
   quiet?: boolean;
-  // brisk(Phase 19B・lunch): 「迷わず選ぶ」ための軽快な登場。quiet(dinner の
-  // 活気)より移動を小さく・連鎖を速く。既定/quiet 分岐には触れない
+  // brisk(lunch)/consult(course)/calm(drink): ギャラリーなしページの印。
+  // 2026-07-22 統一後、ボードの振付は quiet と共通。consult のみ notes 内
+  // 電話番号の tel リンクと /contact 導線が付く(機能差であり演出差ではない)
   brisk?: boolean;
-  // consult(Phase 20B・course): 「相談できる」静けさ。全 Reveal を
-  // fade-quiet(8px)まで弱化し、notes 内電話番号の tel リンクと /contact
-  // 導線を足す。既定/quiet/brisk 分岐には触れない
   consult?: boolean;
-  // calm(Finalization Sprint Stage B・drink): 「一杯の余韻」の静けさ。
-  // 演出強度は brisk 以下・consult 以上の範囲に収める指示のため、下限＝
-  // consult と同じ fade-quiet 基準を採用(Motion Has Meaningの理由記録を
-  // 簡潔にするため新規の強度値は作らない)。notes/tel リンク/Contact導線は
-  // 対象外(DRINKS に notes フィールドがなく追加事実にあたるため作らない)
   calm?: boolean;
 }) {
   const rootRef = useRef<HTMLElement>(null);
   const isCourse = category.titleEn === "COURSE";
   const others = BOARD_LINKS.filter((l) => l.titleEn !== category.titleEn);
+  // 夜のお品書き(dinner)の構成に全ページ統一(2026-07-22)。場面句・活気の
+  // 登場・儀式的 CTA を共通で使う。既定(variant なし)は従来のまま
+  const lively = quiet || brisk || consult || calm;
 
   const [query, setQuery] = useState("");
   const [recoOnly, setRecoOnly] = useState(false);
@@ -121,22 +132,18 @@ export default function MenuBoard({
       // 静的な縦構成(演出なし)のためデスクトップのみ構築する。既定は従来
       // どおり全幅で構築
       mm.add(
-        quiet || brisk || consult || calm
+        lively
           ? "(min-width: 861px) and (prefers-reduced-motion: no-preference)"
           : "(prefers-reduced-motion: no-preference)",
         () => {
         const root = rootRef.current;
         if (!root) return;
 
-        // quiet 時の弱化値(fade-quiet)。既定は従来値そのまま
-        const rise = quiet ? GUMON_SCENE_MOTION.fadeQuiet.y : null;
-        const dur = quiet ? GUMON_SCENE_MOTION.fadeQuiet.duration : null;
-        const ez = quiet ? GUMON_SCENE_MOTION.fadeQuiet.ease : null;
-
-        if (quiet) {
-          // 活気の登場(dinner・2026-07-11): 額縁が一枚の札のように下から
-          // 躍り上がり、章句→頭書き→道具→(この後リボン→品々)と波状に続く。
-          // riseLine(速く出て柔らかく着地)で「賑わい」を、順序で「品」を保つ
+        if (lively) {
+          // 活気の登場(dinner 発祥・2026-07-22 に全ページ統一): 額縁が
+          // 一枚の札のように下から躍り上がり、場面句→頭書き→道具→(この後
+          // リボン→品々)と波状に続く。riseLine(速く出て柔らかく着地)で
+          // 「賑わい」を、順序で「品」を保つ。値は dinner の quiet と同一
           const SM = GUMON_SCENE_MOTION.riseLine;
           const enter = gsap.timeline({
             defaults: { ease: SM.ease },
@@ -176,64 +183,6 @@ export default function MenuBoard({
             { autoAlpha: 0, y: 16, duration: SM.duration, stagger: 0.08 },
             0.46
           );
-        } else if (brisk) {
-          // 軽快の登場(lunch・19B): 活気(quiet)より小さく・速く。額縁が
-          // すっと持ち上がり、頭書き→見出しマスク→道具が短い波で続く。
-          // トリガー位置は既定と同じ帯(top 78%) — 早出しはしない
-          const SM = GUMON_SCENE_MOTION.riseLine;
-          const enter = gsap.timeline({
-            defaults: { ease: SM.ease },
-            scrollTrigger: { trigger: root, start: "top 78%", once: true },
-          });
-          enter.from(
-            ".gm-board-frame",
-            { autoAlpha: 0, y: 28, scale: 0.985, duration: 0.8 },
-            0
-          );
-          enter.from(
-            gsap.utils.toArray<HTMLElement>(
-              ".gm-board-head > :not(.gm-board-title)",
-              root
-            ),
-            { autoAlpha: 0, y: 14, duration: SM.duration, stagger: 0.07 },
-            0.16
-          );
-          // 見出しは行マスクのせり上がり一本(頭書きフェードから除外済み)
-          enter.from(
-            ".gm-board-title .mask > span",
-            {
-              yPercent: 115,
-              duration: GUMON_MOTION.durationLong,
-              ease: GUMON_MOTION.easeEmphasis,
-            },
-            0.18
-          );
-          enter.from(
-            gsap.utils.toArray<HTMLElement>(".gm-board-tools > *", root),
-            { autoAlpha: 0, y: 12, duration: SM.duration, stagger: 0.07 },
-            0.3
-          );
-        } else if (consult || calm) {
-          // 相談の静けさ(course・20B)/余韻の静けさ(drink・Sprint-B):
-          // 読む区間は演出最弱 — 額縁は fade-quiet(8px)でそっと現すだけ。
-          // 急がせる連鎖は組まない。calm は「Lunch以下・Course以上」の
-          // 演出強度指示をCourseと同値(下限)に固定することで満たす —
-          // Motion Has Meaningの理由記録を簡潔にするため値は共有する。
-          // 見出しマスクだけは全ページ共通の文法として既定値のまま維持
-          const FQ = GUMON_SCENE_MOTION.fadeQuiet;
-          gsap.from(".gm-board-frame", {
-            autoAlpha: 0,
-            y: FQ.y,
-            duration: FQ.duration,
-            ease: FQ.ease,
-            scrollTrigger: { trigger: root, start: "top 78%", once: true },
-          });
-          gsap.from(".gm-board-title .mask > span", {
-            yPercent: 115,
-            duration: GUMON_MOTION.durationLong,
-            ease: GUMON_MOTION.easeEmphasis,
-            scrollTrigger: { trigger: root, start: "top 74%", once: true },
-          });
         } else {
           // 既定(他ページ): 従来どおり静かに現す — 値・順序とも不変
           gsap.from(".gm-board-frame", {
@@ -258,44 +207,27 @@ export default function MenuBoard({
             defaults: { ease: GUMON_MOTION.ease },
             scrollTrigger: { trigger: sec, start: "top 84%", once: true },
           });
-          // quiet(dinner)の活気: リボンは帯らしく左から差し込み、品々は
-          // わずかな縮みを伴って次々と躍り上がる(連鎖のテンポも速める)。
-          // brisk(lunch)の軽快: 同じ構造をさらに小さく・速く(迷わず選ぶ)。
-          // consult(course)/calm(drink)の静けさ: 差し込まず、8px の
-          // fade-quiet でそっと置くだけ(読む・相談する/余韻のページに
-          // 勢いは要らない)
+          // 活気の連鎖(dinner 発祥・全ページ統一): リボンは帯らしく左から
+          // 差し込み、品々(行・紙カード)はわずかな縮みを伴って次々と
+          // 躍り上がる。既定は従来値のまま
           tl.from(
             sec.querySelector(".gm-board-ribbon"),
-            quiet
+            lively
               ? {
                   autoAlpha: 0,
                   x: -24,
                   duration: GUMON_SCENE_MOTION.riseLine.duration,
                   ease: GUMON_SCENE_MOTION.riseLine.ease,
                 }
-              : brisk
-                ? {
-                    autoAlpha: 0,
-                    x: -16,
-                    duration: GUMON_SCENE_MOTION.riseLine.duration,
-                    ease: GUMON_SCENE_MOTION.riseLine.ease,
-                  }
-                : consult || calm
-                  ? {
-                      autoAlpha: 0,
-                      y: GUMON_SCENE_MOTION.fadeQuiet.y,
-                      duration: GUMON_SCENE_MOTION.fadeQuiet.duration,
-                      ease: GUMON_SCENE_MOTION.fadeQuiet.ease,
-                    }
-                  : {
-                      autoAlpha: 0,
-                      y: 16,
-                      duration: GUMON_MOTION.duration,
-                    }
+              : {
+                  autoAlpha: 0,
+                  y: 16,
+                  duration: GUMON_MOTION.duration,
+                }
           );
           tl.from(
             sec.querySelectorAll(".gm-board-row, .gm-board-card"),
-            quiet
+            lively
               ? {
                   autoAlpha: 0,
                   y: 24,
@@ -304,98 +236,38 @@ export default function MenuBoard({
                   ease: GUMON_SCENE_MOTION.riseLine.ease,
                   stagger: 0.055,
                 }
-              : brisk
-                ? {
-                    autoAlpha: 0,
-                    y: 18,
-                    duration: GUMON_SCENE_MOTION.riseLine.duration,
-                    ease: GUMON_SCENE_MOTION.riseLine.ease,
-                    stagger: 0.045,
-                  }
-                : consult || calm
-                  ? {
-                      autoAlpha: 0,
-                      y: GUMON_SCENE_MOTION.fadeQuiet.y,
-                      duration: GUMON_SCENE_MOTION.fadeQuiet.duration,
-                      ease: GUMON_SCENE_MOTION.fadeQuiet.ease,
-                      stagger: 0.08,
-                    }
-                  : {
-                      autoAlpha: 0,
-                      y: 20,
-                      duration: GUMON_MOTION.duration,
-                      stagger: 0.07,
-                    },
-            // quiet: リボンが差し込んだ勢いのまま品々が続く(半拍→1/4拍)。
-            // brisk: さらに間を詰める。consult/calm: 既定と同じ間(急がせない)
-            quiet ? 0.22 : brisk ? 0.18 : 0.15,
+              : {
+                  autoAlpha: 0,
+                  y: 20,
+                  duration: GUMON_MOTION.duration,
+                  stagger: 0.07,
+                },
+            // 統一(lively): リボンが差し込んだ勢いのまま品々が続く(半拍→
+            // 1/4拍)。既定: 従来の間のまま
+            lively ? 0.22 : 0.15,
           );
         }
-        // 締めの料理写真: clip-path 展開 + 1.06 → 等倍。
-        // consult/calm は展開の見せ場も作らず fade-quiet で静かに(最弱で統一)
+        // 締めの料理写真: clip-path 展開 + 1.06 → 等倍。全ページ共通の
+        // 画像文法(2026-07-22: consult/calm の fade-quiet 例外を撤去し、
+        // 他ページと同じ展開の見せ場に統一)
         gsap.utils
           .toArray<HTMLElement>(".gm-board-photo", root)
           .forEach((el) => {
-            gsap.from(
-              el,
-              consult || calm
-                ? {
-                    autoAlpha: 0,
-                    y: GUMON_SCENE_MOTION.fadeQuiet.y,
-                    duration: GUMON_SCENE_MOTION.fadeQuiet.duration,
-                    ease: GUMON_SCENE_MOTION.fadeQuiet.ease,
-                    scrollTrigger: { trigger: el, start: "top 84%", once: true },
-                  }
-                : {
-                    clipPath: "inset(12% 8% 12% 8%)",
-                    scale: 1.06,
-                    duration: 1.3,
-                    ease: GUMON_MOTION.easeEmphasis,
-                    scrollTrigger: { trigger: el, start: "top 84%", once: true },
-                  },
-            );
+            gsap.from(el, {
+              clipPath: "inset(12% 8% 12% 8%)",
+              scale: 1.06,
+              duration: 1.3,
+              ease: GUMON_MOTION.easeEmphasis,
+              scrollTrigger: { trigger: el, start: "top 84%", once: true },
+            });
           });
         // 導線 + CTA
-        if (quiet) {
-          // D3→D4: 導線と CTA を分ける。CTA は「席を決める」結末の頁 —
-          // 全画面の場面の中で、一行ずつ儀式のように灯す
-          // (ご予約を承っております → 電話ボタン → 番号 → Web → アクセス)
-          gsap.from(".gm-board-others", {
-            autoAlpha: 0,
-            y: rise ?? 20,
-            duration: dur ?? GUMON_MOTION.duration,
-            ease: ez ?? GUMON_MOTION.ease,
-            scrollTrigger: {
-              trigger: ".gm-board-others",
-              start: "top 88%",
-              once: true,
-            },
-          });
-          const cta = root.querySelector<HTMLElement>(".gm-board-cta");
-          if (cta) {
-            // 電話予約はこのSceneの主行動。遅いスクロールや途中復帰でも
-            // 不可視のまま残らないよう、主ボタンは演出対象に含めない。
-            // 物語性より、常に予約できることを優先する。
-            const ctaSequence = Array.from(cta.children).filter(
-              (child) => !child.classList.contains("gm-tel-btn"),
-            );
-            gsap.from(ctaSequence, {
-              autoAlpha: 0,
-              y: GUMON_SCENE_MOTION.fadeQuiet.y,
-              duration: 0.9,
-              ease: GUMON_SCENE_MOTION.fadeQuiet.ease,
-              stagger: 0.16,
-              scrollTrigger: {
-                trigger: cta,
-                start: "top 75%",
-                once: true,
-              },
-            });
-          }
-        } else if (consult || calm) {
-          // 相談の着地(course・20B)/余韻の着地(drink・Sprint-B): 電話は
-          // 主行動 — quiet と同じく主ボタン(gm-tel-btn)は演出対象から
-          // 外し、常に操作可能を保つ。周辺は fade-quiet で静かに現れるだけ
+        if (lively) {
+          // 結末の頁(dinner D3→D4 発祥・全ページ統一): 導線と CTA を分け、
+          // CTA は「席を決める」結末として一行ずつ儀式のように灯す
+          // (締め句 → ご予約を承っております → 番号 → Web → アクセス)。
+          // 電話予約は主行動 — 遅いスクロールや途中復帰でも不可視のまま
+          // 残らないよう、主ボタン(gm-tel-btn)は演出対象に含めない。
           const FQ = GUMON_SCENE_MOTION.fadeQuiet;
           gsap.from(".gm-board-others", {
             autoAlpha: 0,
@@ -416,10 +288,14 @@ export default function MenuBoard({
             gsap.from(ctaSequence, {
               autoAlpha: 0,
               y: FQ.y,
-              duration: FQ.duration,
+              duration: 0.9,
               ease: FQ.ease,
-              stagger: 0.08,
-              scrollTrigger: { trigger: cta, start: "top 80%", once: true },
+              stagger: 0.16,
+              scrollTrigger: {
+                trigger: cta,
+                start: "top 75%",
+                once: true,
+              },
             });
           }
         } else {
@@ -466,7 +342,11 @@ export default function MenuBoard({
       aria-label={`お品書き ${category.titleJp}`}
     >
       <div className="gm-board-frame gm-board-frame-single">
-        {quiet && <p className="gm-board-scene-cue">今夜を、選ぶ。</p>}
+        {lively && (
+          <p className="gm-board-scene-cue">
+            {SCENE_CUES[category.titleEn] ?? SCENE_CUES.DINNER}
+          </p>
+        )}
         {/* 見出し: MENU */}
         <header className="gm-board-head">
           <p className="gm-detail-eyebrow gm-board-eyebrow">MENU</p>
@@ -660,7 +540,7 @@ export default function MenuBoard({
 
         {/* 電話予約 CTA(朱はここだけ) */}
         <div className="gm-detail-cta gm-board-cta">
-          {quiet && <p className="gm-board-cta-cue">席を、決める。</p>}
+          {lively && <p className="gm-board-cta-cue">{CTA_CUE}</p>}
           <p className="gm-detail-cta-lead">ご予約を承っております。</p>
           <a
             href="tel:0724306038"

@@ -2427,12 +2427,23 @@ body {
   /* D2→D3: 写真を見せ切ったあと、選ぶ時間に入る前の余白 */
   padding-bottom: clamp(110px, 18vh, 200px);
 }
-/* D3→D4: 品書きを読み終えてから結末(CTA)までの短い余白 */
-.gm-editorial .gm-board-cta {
+/* D3→D4: 品書きを読み終えてから結末(CTA)までの短い余白。
+   2026-07-22「夜のお品書きの構成に統一」: 場面句・締め句・CTA余白の
+   スコープを lunch(.gm-brisk)/course(.gm-consult)/drink(.gm-calm)にも拡張 */
+.gm-editorial .gm-board-cta,
+.gm-brisk .gm-board-cta,
+.gm-consult .gm-board-cta,
+.gm-calm .gm-board-cta {
   margin-top: clamp(48px, 8vh, 96px);
 }
 .gm-editorial .gm-board-scene-cue,
-.gm-editorial .gm-board-cta-cue {
+.gm-editorial .gm-board-cta-cue,
+.gm-brisk .gm-board-scene-cue,
+.gm-brisk .gm-board-cta-cue,
+.gm-consult .gm-board-scene-cue,
+.gm-consult .gm-board-cta-cue,
+.gm-calm .gm-board-scene-cue,
+.gm-calm .gm-board-cta-cue {
   margin: 0 0 clamp(18px, 3vh, 30px);
   font-family: var(--font-noto-serif-jp), serif;
   font-size: clamp(18px, 2.1vw, 28px);
@@ -2442,11 +2453,17 @@ body {
   text-indent: 0.16em;
   color: rgba(242, 240, 235, 0.9);
 }
-.gm-editorial .gm-board-scene-cue {
+.gm-editorial .gm-board-scene-cue,
+.gm-brisk .gm-board-scene-cue,
+.gm-consult .gm-board-scene-cue,
+.gm-calm .gm-board-scene-cue {
   padding-bottom: clamp(14px, 2.5vh, 24px);
   border-bottom: 1px solid rgba(242, 240, 235, 0.14);
 }
-.gm-editorial .gm-board-cta-cue {
+.gm-editorial .gm-board-cta-cue,
+.gm-brisk .gm-board-cta-cue,
+.gm-consult .gm-board-cta-cue,
+.gm-calm .gm-board-cta-cue {
   margin-bottom: clamp(24px, 4vh, 42px);
   text-align: center;
 }

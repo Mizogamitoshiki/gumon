@@ -18,15 +18,13 @@ const MENU_PATHS: Record<string, string> = {
 // DishShowcase(pin なし・実写のみ)にし、ボードの Reveal を fade-quiet へ
 // 弱化する。未指定ページは従来の DishGallery(pin 横流し)+ボードのまま —
 // DOM・見た目・Motion は一切変わらない。
-// brisk(Phase 19B・現状 lunch のみ): 「迷わず一皿を選ぶ」ための軽量 Editorial。
-// 実写ゼロのプレースホルダギャラリーを外し、品書きを第2場面として軽快に
-// 現す(pin なし)。dinner(editorial)・既定ページの分岐には触れない
-// consult(Phase 20B・現状 course のみ): 「相談できる」安心を届ける静かな
-// Editorial。プレースホルダギャラリーを外し、紙カード+notes を最弱の
-// fade-quiet で読ませ、電話相談を主役にする(pin なし)。他分岐には触れない
-// calm(Finalization Sprint Stage B・現状 drink のみ): 「一杯の余韻」を
-// 邪魔しない静かな Editorial。実写ゼロのプレースホルダギャラリーを外し、
-// 飲み物一覧を fade-quiet 基準で読ませる(pin なし)。他分岐には触れない
+// brisk(lunch)/consult(course)/calm(drink): 実写ゼロのプレースホルダ
+// ギャラリーを置かないページの印(pin なし)。2026-07-22 ユーザー指示
+// 「全て夜のお品書きの構成に統一」で、ボードの振付・場面句・CTA 余白は
+// 4 variant とも dinner(quiet)と共通になった(MenuBoard 参照)。
+// consult のみ notes 内 tel リンクと /contact 導線が付く(機能差)。
+// dinner だけが gm-stage(写真ステージ)を持つのは、実写素材が
+// 麻婆豆腐 1 枚しかないため(Plan B: 実写ゼロならセクション非表示)
 export default function MenuDetailPage({
   category,
   editorial = false,
