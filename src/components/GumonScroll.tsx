@@ -1844,7 +1844,9 @@ export default function GumonScroll() {
                   <p
                     data-fade
                     style={{
-                      margin: "0 0 28px",
+                      // モバイルの縦圧縮: 固定28pxだと小さい端末でシーンが
+                      // 100dvhに収まらないため vh 連動(PCではほぼ従来値)
+                      margin: "0 0 clamp(14px,3vh,28px)",
                       fontFamily: SERIF,
                       fontSize: "clamp(12px,1.3vw,14px)",
                       fontWeight: 400,
@@ -1856,7 +1858,7 @@ export default function GumonScroll() {
                   </p>
                   <h2
                     style={{
-                      margin: "0 0 30px",
+                      margin: "0 0 clamp(16px,3.2vh,30px)",
                       fontFamily: SERIF,
                       fontSize: "clamp(26px,4vw,52px)",
                       fontWeight: 400,
@@ -1974,7 +1976,9 @@ export default function GumonScroll() {
                 aria-label="愚問"
                 style={{
                   fontFamily: SERIF,
-                  fontSize: "clamp(70px,14vw,168px)",
+                  // 下限70→58: 小型スマホで結末シーンを 100dvh に収めるための
+                  // 縦圧縮(14vw が 70 を超える端末=414px 以上と PC は不変)
+                  fontSize: "clamp(58px,14vw,168px)",
                   fontWeight: 500,
                   letterSpacing: ".1em",
                   textIndent: ".1em",
@@ -2110,7 +2114,13 @@ export default function GumonScroll() {
                   marginTop: "clamp(16px,3vh,26px)",
                   display: "flex",
                   alignItems: "center",
-                  gap: 28,
+                  justifyContent: "center",
+                  // モバイル幅では「アクセスを/見る」のような語中折返しが起きて
+                  // いたため、リンク単位で行を折り返す(ラベル自体は CSS 側で
+                  // nowrap)。PC は 1 行のまま
+                  flexWrap: "wrap",
+                  columnGap: 28,
+                  rowGap: 12,
                 }}
               >
                 <Link href="/access" className="gm-detail-link">
@@ -2129,7 +2139,8 @@ export default function GumonScroll() {
               </div>
               <p
                 style={{
-                  margin: "clamp(40px,7vh,72px) 0 0",
+                  // モバイル縦圧縮: 小さい端末で結末シーンを 100dvh に収める
+                  margin: "clamp(24px,5vh,72px) 0 0",
                   fontSize: 11,
                   letterSpacing: ".24em",
                   color: "rgba(242,240,235,.58)",

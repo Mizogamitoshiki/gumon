@@ -223,6 +223,82 @@ body {
   }
 }
 
+/* ---- モバイル縦圧縮(≤860px)・2026-07-22: TOP 各シーンを 100dvh に収める ----
+   実測で food(お品書きプレビュー ≈675px)と access(≈887px)の内容が小型スマホ
+   (375×667)の画面高を超え、ステージ(overflow:hidden)に切られていたことへの
+   対処。行間・地図比率を圧縮して 1 画面に収める。セレクタは .gm-scroll-root
+   配下限定 = TOP 専用。詳細ページ(.gm-board 等)には一切影響しない */
+@media (max-width: 860px) {
+  .gm-scroll-root .gm-menu {
+    gap: clamp(12px, 1.8vh, 32px);
+  }
+  .gm-scroll-root .gm-menu .gm-menu-row {
+    padding: 6px 0 7px;
+  }
+  .gm-scroll-root .gm-menu .gm-menu-desc {
+    font-size: 11px;
+  }
+  .gm-scroll-root .gm-menu .gm-menu-thumb {
+    width: 38px;
+    height: 38px;
+  }
+  .gm-scroll-root .gm-menu .gm-menu-head {
+    margin-bottom: 6px;
+  }
+  /* アクセスがはみ出す主因は縦長(4/5)の地図 — モバイルは横長へ
+     (インラインstyleの上書きのため important が必要) */
+  .gm-scroll-root [data-map] {
+    aspect-ratio: 3 / 2 !important;
+  }
+  .gm-scroll-root [data-scene="access"] dl {
+    gap: 9px 18px !important;
+    font-size: 13px !important;
+  }
+  /* リンクは語中で折り返さない(「アクセスを/見る」の崩れ対策。
+     行の折返しはリンク単位で行う) */
+  .gm-scroll-root .gm-detail-link {
+    white-space: nowrap;
+  }
+}
+@media (max-width: 520px) {
+  .gm-scroll-root [data-map] {
+    aspect-ratio: 16 / 9 !important;
+  }
+  .gm-scroll-root [data-scene="access"] .gm-access-grid {
+    gap: 24px !important;
+  }
+  /* お品書きプレビューの最終圧縮(小型スマホで 100dvh に収める)。
+     説明文は 1 行省略(全文は各詳細ページで読める) */
+  .gm-scroll-root .gm-menu {
+    gap: 8px;
+  }
+  .gm-scroll-root .gm-menu .gm-menu-row {
+    padding: 4px 0 5px;
+  }
+  .gm-scroll-root .gm-menu .gm-menu-head {
+    margin-bottom: 4px;
+  }
+  .gm-scroll-root .gm-menu .gm-menu-name {
+    font-size: 16px;
+  }
+  .gm-scroll-root .gm-menu .gm-menu-h {
+    font-size: 15px;
+  }
+  .gm-scroll-root .gm-menu .gm-menu-thumb {
+    width: 32px;
+    height: 32px;
+  }
+  .gm-scroll-root .gm-menu .gm-menu-desc {
+    margin-top: 2px;
+    font-size: 10.5px;
+    line-height: 1.35;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
 /* responsive nav / hamburger */
 .gm-nav {
   display: none;
