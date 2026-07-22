@@ -1,0 +1,27 @@
+# AWS Amplify Hosting ビルド仕様(愚問 GUMON / Next.js 14 App Router)
+# 前提:
+#  - 全ルート静的プリレンダー・next/image 不使用・API/middleware なし(静的配信可)
+#  - `npm run build` の prebuild フックで scripts/sync-menu.mjs が Bloom-lCMS から
+#    メニューを取得して src/lib/menu.generated.ts を再生成する
+#  - そのため Amplify コンソールの環境変数に BLOOM_API_URL / BLOOM_API_KEY が
+#    必須(未設定だと prebuild が exit 1 でビルド失敗)。本番URL用に
+#    NEXT_PUBLIC_SITE_URL も設定する(未設定時は vercel.app にフォールバック)
+#  - CMS でメニューを更新したら再ビルドが必要(Amplify の Incoming Webhook を
+#    Bloom-lCMS の Webhook に登録して自動再ビルドにするのが望ましい)
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - npm ci
+    build:
+      commands:
+        - npm run build
+  artifacts:
+    baseDirectory: .next
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - .next/cache/**/*
+      - node_modules/**/*
