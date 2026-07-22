@@ -10,6 +10,10 @@ html,
 body {
   margin: 0;
   padding: 0;
+  /* iOS で背景レイヤー(inset:-10%)のはみ出しによる横ブレを html 側からも抑止。
+     clip はスクロールコンテナを作らないため sticky/Lenis の挙動を変えない
+     (body 側の既存 overflow-x:hidden はそのまま) */
+  overflow-x: clip;
 }
 
 body {

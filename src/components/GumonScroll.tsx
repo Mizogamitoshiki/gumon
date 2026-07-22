@@ -1101,8 +1101,12 @@ export default function GumonScroll() {
           style={{
             position: "sticky",
             top: 0,
-            height: "100svh",
-            minHeight: "100svh",
+            // dvh(動的ビューポート高さ)= 常に現在の表示領域と一致。従来の svh は
+            // アドレスバーが隠れた時に viewport より短くなり、ステージ下に隙間が
+            // 生まれて「フッターの先までスクロールできる」バグの原因だった。
+            // dvh なら隙間ゼロで終端が固定される。PC では dvh=vh で無変更
+            height: "100dvh",
+            minHeight: "100dvh",
             overflow: "hidden",
             background:
               "radial-gradient(125% 90% at 50% 32%,#1c1b19 0%,#1c1b19 66%)",
