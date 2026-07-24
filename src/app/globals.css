@@ -31,6 +31,26 @@ body {
   color: #1c1b19;
 }
 
+/* ---- ページ間トランジション(2026-07-24・template.tsx) ----
+   クライアント遷移時のみ .gm-page-enter が付き、暗転からの静かな浮上で
+   ルート間を接続する。初回ロードには付かない(LCP保護)。opacity のみ
+   (transform は fixed 要素の containing block になるため使わない) */
+@media (prefers-reduced-motion: no-preference) {
+  .gm-page-enter {
+    animation: gmPageEnter 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+}
+@keyframes gmPageEnter {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* 触感レイヤーはファイル末尾(既存 transition 短縮形より後勝ちにするため) */
+
 @keyframes guCue {
   0%,
   100% {
@@ -2694,4 +2714,50 @@ body {
     align-items: center;
     justify-content: center;
   }
+}
+
+/* ---- 触感レイヤー(2026-07-24): タップ/クリックの押下フィードバック ----
+   hover は実装済みだが、タッチ端末では押した瞬間に何も返らなかった。
+   :active で「指に返る」感触を足す(iOS 標準のグレー光は消して自前の
+   フィードバックに置き換える)。移動を伴うものは reduced-motion で無効。
+   ※このブロックは意図的にファイル末尾: 前方の transition 短縮形
+   (.gm-back-btn / .gm-reserve-outline / .gm-board-filter)を上書きして
+   transform の戻りを滑らかにするため */
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .gm-back-btn,
+  .gm-reserve-outline,
+  .gm-board-filter {
+    transition-property: background, border-color, color, transform;
+    transition-duration: 0.45s;
+    transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  /* 朱ボタン: 押下で一段沈む(戻りは既存の 0.5s トランジションで柔らかく) */
+  .gm-tel-btn:active {
+    transform: translateY(1px) scale(0.99);
+    transition-duration: 0.12s;
+  }
+  .gm-back-btn:active,
+  .gm-reserve-outline:active {
+    transform: scale(0.985);
+    transition-duration: 0.12s;
+  }
+  .gm-board-filter:active {
+    transform: scale(0.97);
+    transition-duration: 0.12s;
+  }
+  /* 「詳細はこちら →」系: 押下で矢印が一歩前へ(hover と同じ言語) */
+  .gm-detail-link:active .gm-arrow {
+    transform: translateX(4px);
+  }
+}
+.gm-back-btn:active {
+  border-color: rgba(242, 240, 235, 0.7);
+}
+/* モバイル全画面メニューのリンク: 押下で石の色に(遅延付き transition の
+   対象外プロパティなので即時に返る) */
+.gm-mobile-link:active {
+  color: #b9b2a6;
 }
