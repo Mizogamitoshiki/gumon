@@ -2200,6 +2200,11 @@ body {
 }
 .gm-board-search {
   flex: 1 1 240px;
+  /* iOS WebKit: type=search の固有サイズで label が親より膨らみ、額縁を
+     突き破る実機報告(2026-07-24)への封じ。flex item の最小幅を 0 に落とし、
+     どんな環境でも親幅を超えられない上限を敷く */
+  min-width: 0;
+  max-width: 100%;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -2222,6 +2227,13 @@ body {
 .gm-board-search input {
   flex: 1;
   min-width: 0;
+  /* width:0 + flex-grow で「flex が配った幅」だけになる(iOS が search input の
+     固有サイズ(placeholder幅等)で膨らむのを決定的に封じる) */
+  width: 0;
+  /* searchfield の固有 appearance を無効化(固有サイズ計算ごと止める。
+     副作用: WebKit 系の×クリアボタンが消えるが、装飾は元々自前) */
+  -webkit-appearance: none;
+  appearance: none;
   height: 100%;
   background: none;
   border: none;
