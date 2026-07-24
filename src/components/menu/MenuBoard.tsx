@@ -12,8 +12,6 @@ import { gsap, useGSAP } from "@/lib/gsap-setup";
 import { GUMON_MOTION, GUMON_SCENE_MOTION } from "@/lib/motion-tokens";
 import { HOTPEPPER_URL } from "@/lib/site";
 
-const SERIF = "var(--font-noto-serif-jp), serif";
-
 // 他カテゴリへの導線(表示中カテゴリは除外して出す)
 const BOARD_LINKS = [
   { titleEn: "LUNCH", href: "/menu/lunch", label: "昼のお品書き" },
@@ -542,20 +540,8 @@ export default function MenuBoard({
         <div className="gm-detail-cta gm-board-cta">
           {lively && <p className="gm-board-cta-cue">{CTA_CUE}</p>}
           <p className="gm-detail-cta-lead">ご予約を承っております。</p>
-          <a
-            href="tel:0724306038"
-            className="gm-tel-btn"
-            style={{
-              display: "inline-block",
-              textDecoration: "none",
-              background: "#b23a2e",
-              color: "#f2f0eb",
-              fontFamily: SERIF,
-              fontSize: 15,
-              letterSpacing: ".16em",
-              padding: "15px 46px",
-            }}
-          >
+          {/* 見た目は .gm-tel-btn(globals.css)が唯一の出典 — 全画面で同一寸法 */}
+          <a href="tel:0724306038" className="gm-tel-btn">
             電話で予約する
           </a>
           <a href="tel:0724306038" className="gm-detail-cta-tel">

@@ -62,6 +62,23 @@ body {
   min-height: 160px;
 }
 
+/* ---- 和文組版の仕上げ(2026-07-25) ----
+   1) text-wrap:pretty — 最終行に 1 文字だけ落ちる「孤立文字」を避ける
+      (例: 「…ありがたい方法で / す。」)。未対応ブラウザは従来の折返し
+   2) word-break:auto-phrase — 日本語を文節で折り返す(読点・助詞の切れ目)。
+      未対応環境では無視されるだけの純粋な上乗せ
+   どちらも progressive enhancement で、崩れる副作用はない */
+.gm-cta-web-note,
+.gm-detail-cta-lead,
+.gm-menu-desc,
+.gm-board-desc,
+.gm-menu-note,
+.gm-chero-lead,
+.gm-board-empty {
+  text-wrap: pretty;
+  word-break: auto-phrase;
+}
+
 /* ---- TOP 画面固定ステージの高さ(2026-07-24 互換対応) ----
    dvh は Chrome108未満/Safari15.4未満/旧Samsung Internet で無効になり、
    インライン指定のみだと高さが崩壊してステージが真っ暗になる(iOS sticky
@@ -178,7 +195,29 @@ body {
   transition-delay: calc(var(--i) * 60ms);
 }
 /* 朱の電話ボタン: hover で炭火が灯るようなグロー(色は変えない=朱の純度を守る) */
+/* ---- 主 CTA(朱)と副ボタン(枠)の正準定義(2026-07-25) ----
+   従来は各コンポーネントのインライン style に散らばり、同じ役割のボタンが
+   14px/13-36px と 15px/15-46px の 2 寸法で併存していた(並べると高さも幅も
+   揃わない)。ここを唯一の出典にして全画面で寸分違わず同じにする。
+   - line-height を固定して「朱 48px / 枠 48px」を決定的に一致させる
+   - letter-spacing を入れた分だけ text-indent で右端の余りを打ち消す
+     (= 光学的中央。これが無いと中央揃えの文字が左へズレて見える)
+   - 角丸 2px は検索欄・額縁と同じ値(直角の孤立をなくす) */
 .gm-tel-btn {
+  display: inline-block;
+  padding: 15px 46px;
+  background: #b23a2e;
+  color: #f2f0eb;
+  font-family: var(--font-noto-serif-jp), serif;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: 0.18em;
+  text-indent: 0.18em;
+  text-align: center;
+  text-decoration: none;
+  border: 0;
+  border-radius: 2px;
   transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1),
     box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1),
     transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
@@ -193,8 +232,28 @@ body {
     transform: none;
   }
 }
+/* 副ボタン(枠線): 朱と横に並ぶため、外形の高さを 1px も違わせない。
+   content 18px + padding 14×2 + border 1×2 = 48px = 朱ボタンと同一 */
 .gm-back-btn {
-  transition: border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-block;
+  padding: 14px 32px;
+  background: none;
+  color: #f2f0eb;
+  font-family: var(--font-noto-serif-jp), serif;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: 0.18em;
+  text-indent: 0.18em;
+  text-align: center;
+  text-decoration: none;
+  border: 1px solid rgba(242, 240, 235, 0.28);
+  border-radius: 2px;
+  transition: border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    background 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.gm-back-btn:hover {
+  background: rgba(242, 240, 235, 0.04);
 }
 .gm-back-btn:hover {
   border-color: rgba(242, 240, 235, 0.55);
@@ -875,6 +934,9 @@ body {
   font-size: 12px;
   font-weight: 400;
   letter-spacing: 0.28em;
+  /* 字間を空けた分だけ右端に余りが出る。中央揃えだと文字列が左へズレて
+     見えるため、同量の text-indent で打ち消す(光学的中央・2026-07-25) */
+  text-indent: 0.28em;
   text-transform: uppercase;
   color: #b9b2a6;
 }
@@ -929,6 +991,7 @@ body {
   font-size: 14px;
   font-weight: 300;
   letter-spacing: 0.12em;
+  text-indent: 0.12em; /* 光学的中央(上記と同じ理由) */
   color: rgba(242, 240, 235, 0.68);
 }
 .gm-detail-cta-tel {
@@ -2253,14 +2316,17 @@ body {
 .gm-board-filter {
   flex: 0 0 auto;
   height: 46px;
-  padding: 0 20px;
+  padding: 0 22px;
   cursor: pointer;
   background: transparent;
   border: 1px solid rgba(185, 178, 166, 0.4);
-  border-radius: 999px;
+  /* 隣の検索欄が角丸 2px の長方形なのにここだけ完全な丸ピルで、額縁基調の
+     画面から浮いていた。同じ角に揃える(2026-07-25) */
+  border-radius: 2px;
   font-family: var(--font-noto-sans-jp), sans-serif;
   font-size: 12.5px;
   letter-spacing: 0.1em;
+  text-indent: 0.1em; /* 光学的中央 */
   color: rgba(242, 240, 235, 0.78);
   transition: background 0.4s cubic-bezier(0.16, 1, 0.3, 1),
     border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),

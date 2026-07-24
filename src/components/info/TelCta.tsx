@@ -5,7 +5,6 @@ import { HOTPEPPER_URL } from "@/lib/site";
 // [data-info-row] のスクロールリビールに乗る(Server Component 可)。
 // Web 予約(ホットペッパー)は手数料が店の負担になるため、常にセカンダリ扱い +
 // 「お電話がいちばんありがたい」の一文でオーナーの意向を UI に汲む。
-const SERIF = "var(--font-noto-serif-jp), serif";
 
 export default function TelCta({
   lead = "ご予約を承っております。",
@@ -21,20 +20,8 @@ export default function TelCta({
   return (
     <div className="gm-detail-cta" data-info-row>
       <p className="gm-detail-cta-lead">{lead}</p>
-      <a
-        href="tel:0724306038"
-        className="gm-tel-btn"
-        style={{
-          display: "inline-block",
-          textDecoration: "none",
-          background: "#b23a2e",
-          color: "#f2f0eb",
-          fontFamily: SERIF,
-          fontSize: 15,
-          letterSpacing: ".16em",
-          padding: "15px 46px",
-        }}
-      >
+      {/* 見た目は .gm-tel-btn(globals.css)が唯一の出典 — 全画面で同一寸法 */}
+      <a href="tel:0724306038" className="gm-tel-btn">
         {label}
       </a>
       <a href="tel:0724306038" className="gm-detail-cta-tel">

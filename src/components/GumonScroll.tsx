@@ -1457,37 +1457,13 @@ export default function GumonScroll() {
                     justifyContent: "center",
                   }}
                 >
-                  <a
-                    href="tel:0724306038"
-                    className="gm-tel-btn"
-                    style={{
-                      display: "inline-block",
-                      textDecoration: "none",
-                      background: "#b23a2e",
-                      color: "#f2f0eb",
-                      fontFamily: SERIF,
-                      fontSize: 14,
-                      letterSpacing: ".16em",
-                      padding: "13px 36px",
-                    }}
-                  >
+                  {/* 見た目は .gm-tel-btn / .gm-back-btn(globals.css)が唯一の
+                      出典。従来ここだけ 14px/13-36px の別寸法で、他画面の
+                      15px/15-46px と揃っていなかった */}
+                  <a href="tel:0724306038" className="gm-tel-btn">
                     電話で予約する
                   </a>
-                  <Link
-                    href="/menu/dinner"
-                    className="gm-back-btn"
-                    style={{
-                      display: "inline-block",
-                      textDecoration: "none",
-                      background: "none",
-                      border: "1px solid rgba(242,240,235,.28)",
-                      color: "#f2f0eb",
-                      fontFamily: SERIF,
-                      fontSize: 14,
-                      letterSpacing: ".16em",
-                      padding: "12px 30px",
-                    }}
-                  >
+                  <Link href="/menu/dinner" className="gm-back-btn">
                     お品書きを見る
                   </Link>
                 </div>
@@ -2104,34 +2080,14 @@ export default function GumonScroll() {
                   justifyContent: "center",
                 }}
               >
-                <a
-                  href="tel:0724306038"
-                  className="gm-tel-btn"
-                  style={{
-                    textDecoration: "none",
-                    background: "#b23a2e",
-                    color: "#f2f0eb",
-                    fontFamily: SERIF,
-                    fontSize: 15,
-                    letterSpacing: ".16em",
-                    padding: "15px 46px",
-                  }}
-                >
+                {/* 見た目は .gm-tel-btn / .gm-back-btn(globals.css)が唯一の出典 */}
+                <a href="tel:0724306038" className="gm-tel-btn">
                   電話で予約する
                 </a>
                 <button
                   data-go="0"
                   className="gm-back-btn"
-                  style={{
-                    cursor: "pointer",
-                    background: "none",
-                    border: "1px solid rgba(242,240,235,.28)",
-                    color: "#f2f0eb",
-                    fontFamily: SERIF,
-                    fontSize: 15,
-                    letterSpacing: ".16em",
-                    padding: "14px 32px",
-                  }}
+                  style={{ cursor: "pointer" }}
                 >
                   最初に戻る
                 </button>
