@@ -19,7 +19,13 @@ body {
 body {
   background: #1c1b19;
   color: #f2f0eb;
+  /* 横はみ出し抑止。hidden は iOS WebKit で body をスクロールコンテナ化し、
+     TOP の画面固定ステージ(position:sticky)を無効化してしまう(実機報告
+     2026-07-24: ステージが固定されず上へ流れ、スクロールすると真っ暗になる)。
+     clip はスクロールコンテナを作らないため sticky と共存できる。
+     1 行目の hidden は clip 未対応の旧ブラウザ向けフォールバック */
   overflow-x: hidden;
+  overflow-x: clip;
   -webkit-font-smoothing: antialiased;
   font-family: var(--font-noto-sans-jp), "Noto Sans JP", sans-serif;
   font-weight: 300;
