@@ -117,6 +117,18 @@ export default function GumonScroll() {
       // S2(問いの帳)も一行のみ — 通常コンテンツとして読める高さに抑える
       const questionStatic = q('[data-scene="question"]');
       if (questionStatic) questionStatic.style.minHeight = "56vh";
+      // モバイルの RM: 各シーンを 100vh で埋めると内容の少ないシーンに大きな
+      // 空白が生まれ、最終シーン(reserve)では © GUMON の後に「フッターの先の
+      // 何もない領域」が残ってスクロールできてしまう(実機報告 2026-07-24 —
+      // iOS「視差効果を減らす」ON の端末はこの静的版が表示される)。
+      // 自然高さ+一定の縦余白で締め、ページ終端を © 直後に揃える。
+      // デスクトップの RM は従来どおり 100vh(QA 済みの見え方を維持)
+      if (window.matchMedia("(max-width: 860px)").matches) {
+        qa("[data-scene]").forEach((el) => {
+          el.style.minHeight = "auto";
+          el.style.padding = "72px 24px";
+        });
+      }
       // S4 の章句はフィルム(動画)専用の演出 — 静的表示では /about が同じ
       // 言葉(素材に問う/火に問う/時間に問う)を担うため出さない
       const filmWordsEl = q("[data-filmwords]");

@@ -13,7 +13,8 @@ export const TEL_LINK = "tel:0724306038";
 // SNS・外部予約。実 URL が届き次第ここだけ差し替える(TODO)。
 // ※ホットペッパーは成約手数料が発生するため、UI 上は電話予約を常に主役にし、
 //   Web 予約はセカンダリ+「お電話がいちばんありがたい」の一文を添える方針
-export const INSTAGRAM_URL = "https://www.instagram.com/"; // TODO: 公式アカウント URL へ差し替え
+// 公式アカウント(オーナー提供 2026-07-24。共有トークン igsh は外した正規URL)
+export const INSTAGRAM_URL = "https://www.instagram.com/gumon_kaizuka/";
 // 実店舗ページ(オーナー提供 2026-07-22)
 export const HOTPEPPER_URL = "https://www.hotpepper.jp/strJ003850704/";
 
@@ -34,13 +35,14 @@ export const HOURS = {
 };
 
 // schema.org Restaurant(ローカルSEOの中核)。
-// 座標・公式SNS等は未確認のため載せない(実在性の原則)
+// 座標は未確認のため載せない(実在性の原則)。Instagram は公式確認済み(2026-07-24)
 export const RESTAURANT_JSONLD = {
   "@context": "https://schema.org",
   "@type": "Restaurant",
   name: SITE_NAME,
   alternateName: "愚問",
   url: SITE_URL,
+  sameAs: [INSTAGRAM_URL],
   image: `${SITE_URL}/dishes.webp`,
   telephone: "+81-72-430-6038",
   servesCuisine: "中華料理",
