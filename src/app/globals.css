@@ -55,6 +55,25 @@ body {
   }
 }
 
+/* アクセス地図: aspect-ratio 未対応の旧ブラウザ(Safari<15等)では比率が
+   無効になり高さ 0 で地図が消えるため、最低高さの床を敷く(モダン環境では
+   比率計算の高さが常にこの床を上回るため見た目に影響しない) */
+[data-map] {
+  min-height: 160px;
+}
+
+/* ---- TOP 画面固定ステージの高さ(2026-07-24 互換対応) ----
+   dvh は Chrome108未満/Safari15.4未満/旧Samsung Internet で無効になり、
+   インライン指定のみだと高さが崩壊してステージが真っ暗になる(iOS sticky
+   事故と同型)。CSS のカスケードで vh → dvh の順に宣言し、未対応環境は
+   vh(アドレスバー分の誤差はあるが表示は成立)へ確実にフォールバックさせる */
+.gm-stage-vp {
+  height: 100vh;
+  height: 100dvh;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
 /* 触感レイヤーはファイル末尾(既存 transition 短縮形より後勝ちにするため) */
 
 @keyframes guCue {
@@ -840,6 +859,8 @@ body {
 .gm-detail-main {
   background: #1c1b19;
   color: #f2f0eb;
+  /* 1行目は svh 未対応ブラウザ(Chrome<108等)向けフォールバック */
+  min-height: 100vh;
   min-height: 100svh;
   padding: clamp(104px, 13vh, 150px) clamp(20px, 5vw, 32px)
     clamp(64px, 10vh, 110px);
@@ -1806,6 +1827,8 @@ body {
 /* ---- hero ---- */
 .gm-chero {
   position: relative;
+  /* 1行目は svh 未対応ブラウザ向けフォールバック */
+  min-height: 100vh;
   min-height: 100svh;
   display: grid;
   place-items: center;
@@ -2636,6 +2659,9 @@ body {
      層順: hero(z3・不透明の幕) > intro(z2・gm-shot 内) > frame(z1) */
   .gm-editorial .gm-stage {
     position: relative;
+    /* 1行目は svh 未対応ブラウザ向けフォールバック(未対応だと height が
+       無効=ステージ崩壊で真っ暗になるため必須) */
+    height: 100vh;
     height: 100svh;
     overflow: hidden;
     margin-bottom: clamp(48px, 8vh, 96px); /* ステージ解放→品書きへすぐ流す */
@@ -2714,6 +2740,7 @@ body {
   /* D4「席へ向かう」— 紙芝居の結末ページ: CTA を全画面の一場面として
      据える(pin はしない — 結末で操作を拘束しない)。dinner・motion可のみ */
   .gm-editorial .gm-board-cta {
+    min-height: 88vh; /* svh 未対応ブラウザ向けフォールバック */
     min-height: 88svh;
     display: flex;
     flex-direction: column;

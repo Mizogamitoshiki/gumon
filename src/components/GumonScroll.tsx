@@ -1151,15 +1151,15 @@ export default function GumonScroll() {
       <div ref={scrollRootRef} className="gm-scroll-root">
         <div
           ref={stageRef}
+          // 高さは .gm-stage-vp(globals.css)で指定: vh → dvh のカスケードで
+          // dvh 未対応ブラウザ(Chrome<108・旧Samsung Internet 等)でも高さが
+          // 崩壊しない。dvh はアドレスバー伸縮に追従し、終端の「フッターの
+          // 先までスクロールできる」隙間を防ぐ(インライン style では複数宣言の
+          // フォールバックが書けないためクラスへ移設・2026-07-24)
+          className="gm-stage-vp"
           style={{
             position: "sticky",
             top: 0,
-            // dvh(動的ビューポート高さ)= 常に現在の表示領域と一致。従来の svh は
-            // アドレスバーが隠れた時に viewport より短くなり、ステージ下に隙間が
-            // 生まれて「フッターの先までスクロールできる」バグの原因だった。
-            // dvh なら隙間ゼロで終端が固定される。PC では dvh=vh で無変更
-            height: "100dvh",
-            minHeight: "100dvh",
             overflow: "hidden",
             background:
               "radial-gradient(125% 90% at 50% 32%,#1c1b19 0%,#1c1b19 66%)",
@@ -1332,7 +1332,7 @@ export default function GumonScroll() {
                 left: 0,
                 right: 0,
                 zIndex: 3,
-                height: "clamp(36px,6svh,64px)",
+                height: "clamp(36px,6vh,64px)",
                 background: "#161412",
                 transform: "scaleY(0)",
                 transformOrigin: "center top",
@@ -1349,7 +1349,7 @@ export default function GumonScroll() {
                 left: 0,
                 right: 0,
                 zIndex: 3,
-                height: "clamp(36px,6svh,64px)",
+                height: "clamp(36px,6vh,64px)",
                 background: "#161412",
                 transform: "scaleY(0)",
                 transformOrigin: "center bottom",
@@ -1627,8 +1627,8 @@ export default function GumonScroll() {
                 flexDirection: "column",
                 alignItems: "center",
                 justifyContent: "flex-end",
-                gap: "clamp(10px,1.6svh,16px)",
-                paddingBottom: "clamp(96px,18svh,170px)",
+                gap: "clamp(10px,1.6vh,16px)",
+                paddingBottom: "clamp(96px,18vh,170px)",
                 textAlign: "center",
                 pointerEvents: "none",
                 opacity: 0,
