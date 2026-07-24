@@ -8,10 +8,14 @@ import PullQuote from "@/components/info/PullQuote";
 import TelCta from "@/components/info/TelCta";
 import BreadcrumbJsonLd from "@/components/BreadcrumbJsonLd";
 
+// 職種名はCMS由来のため、メタデータも実際の募集内容から組み立てる
+// (「調理スタッフ ／ キッチン」→「調理スタッフ」)。0件時はページ自体が404
+const ROLE_NAMES =
+  RECRUIT_POSITIONS.map((p) => p.title.split(" ／ ")[0]).join("・") || "スタッフ";
+
 export const metadata: Metadata = {
-  title: "採用 — 調理・接客スタッフ募集",
-  description:
-    "貝塚の中国料理 愚問の採用情報。調理スタッフ・接客スタッフを募集しています。未経験のご相談も歓迎。応募は072-430-6038(採用の件、とお伝えください)。",
+  title: `採用 — ${ROLE_NAMES}募集`,
+  description: `貝塚の中国料理 愚問の採用情報。${ROLE_NAMES}を募集しています。未経験のご相談も歓迎。応募は072-430-6038(採用の件、とお伝えください)。`,
   alternates: { canonical: "/recruit" },
 };
 
