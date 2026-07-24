@@ -8,6 +8,7 @@ import Link from "next/link";
 import FoodNavDropdown from "./FoodNavDropdown";
 import InstagramLink from "./InstagramLink";
 import { CATS, DRINK_ITEMS, FOOD_CATEGORIES } from "@/lib/menu";
+import { IS_RECRUITING } from "@/lib/recruit";
 import { GUMON_SCENE_MOTION } from "@/lib/motion-tokens";
 import { HOTPEPPER_URL } from "@/lib/site";
 import { useMobileNavA11y } from "@/lib/use-mobile-nav";
@@ -879,9 +880,11 @@ export default function GumonScroll() {
             summaryClassName="gm-nav-link gm-nav-summary"
             summaryStyle={NAV_LINK_STYLE}
           />
-          <Link href="/recruit" className="gm-nav-link" style={NAV_LINK_STYLE}>
-            採用
-          </Link>
+          {IS_RECRUITING && (
+            <Link href="/recruit" className="gm-nav-link" style={NAV_LINK_STYLE}>
+              採用
+            </Link>
+          )}
         </nav>
 
         {/* CENTER wordmark lockup — gridColumn 明示必須: モバイルで左 nav が
@@ -1068,7 +1071,7 @@ export default function GumonScroll() {
             { href: "/menu/drink", label: "飲み物" },
             { href: "/access", label: "アクセス" },
             { href: "/contact", label: "お問い合わせ" },
-            { href: "/recruit", label: "採用" },
+            ...(IS_RECRUITING ? [{ href: "/recruit", label: "採用" }] : []),
           ] as { href: string; label: string }[]
         ).map((l, i) => (
           <Link

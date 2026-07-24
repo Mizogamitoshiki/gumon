@@ -11,3 +11,4 @@ next-env.d.ts
 *.bak
 /project/_originals
 /src/lib/menu.generated.ts
+/src/lib/recruit.generated.ts

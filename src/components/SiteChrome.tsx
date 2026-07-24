@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { FOOD_CATEGORIES } from "@/lib/menu";
+import { IS_RECRUITING } from "@/lib/recruit";
 import { SmoothScroll } from "@/components/smooth-scroll";
 import DetailNav from "@/components/DetailNav";
 import DetailMobileNav from "@/components/DetailMobileNav";
@@ -7,11 +8,11 @@ import ScrollProgress from "@/components/ScrollProgress";
 import InstagramLink from "@/components/InstagramLink";
 
 // 店舗案内系のページ(/about /access /contact /recruit)へのリンク。
-// ヘッダー(デスクトップ)とフッターの両方で使う
+// ヘッダー(デスクトップ)とフッターの両方で使う。採用は募集中のときだけ載せる
 const INFO_LINKS = [
   { href: "/about", label: "愚問とは" },
   { href: "/access", label: "アクセス" },
-  { href: "/recruit", label: "採用" },
+  ...(IS_RECRUITING ? [{ href: "/recruit", label: "採用" }] : []),
   { href: "/contact", label: "お問い合わせ" },
 ] as const;
 

@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/lib/site";
+import { IS_RECRUITING } from "@/lib/recruit";
 
 // 集客の主目的(ランチ・ディナー)を priority に反映
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -23,6 +24,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     page("/access", 0.8),
     page("/about", 0.6),
     page("/contact", 0.6),
-    page("/recruit", 0.4),
+    ...(IS_RECRUITING ? [page("/recruit", 0.4)] : []),
   ];
 }

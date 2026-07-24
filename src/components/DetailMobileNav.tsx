@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { FOOD_CATEGORIES } from "@/lib/menu";
+import { IS_RECRUITING } from "@/lib/recruit";
 import { useMobileNavA11y } from "@/lib/use-mobile-nav";
 
 const SERIF = "var(--font-noto-serif-jp), serif";
@@ -28,7 +29,7 @@ const LINKS: { href: string; label: string }[] = [
   { href: "/menu/drink", label: "飲み物" },
   { href: "/access", label: "アクセス" },
   { href: "/contact", label: "お問い合わせ" },
-  { href: "/recruit", label: "採用" },
+  ...(IS_RECRUITING ? [{ href: "/recruit", label: "採用" }] : []),
 ];
 
 /**

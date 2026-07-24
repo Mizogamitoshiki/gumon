@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { IS_RECRUITING, RECRUIT_POSITIONS } from "@/lib/recruit";
 import MenuHero from "@/components/menu/MenuHero";
 import InfoSection from "@/components/info/InfoSection";
 import FaqList, { type FaqItem } from "@/components/info/FaqList";
@@ -20,16 +22,8 @@ const HERO = {
   items: [],
 };
 
-const POSITIONS = [
-  {
-    title: "調理スタッフ ／ キッチン",
-    text: "仕込みから火場まで。中国料理の経験の長さは問いません。素材と火に問い続けられる人と働きたいと考えています。",
-  },
-  {
-    title: "接客スタッフ ／ ホール",
-    text: "お迎えからお見送りまで、店の呼吸をつくる仕事です。料理の言葉はすこしずつ覚えていけば大丈夫です。",
-  },
-] as const;
+// 募集職種はCMS(Bloom-lCMS `recruit` API)管理。ビルド時に同期される
+const POSITIONS = RECRUIT_POSITIONS;
 
 const VALUES = [
   {
@@ -62,6 +56,8 @@ const FAQ: FaqItem[] = [
 ];
 
 export default function Page() {
+  // 募集職種が0件=現在募集していない。ページごと存在させない(ナビからも消える)
+  if (!IS_RECRUITING) notFound();
   return (
     <main className="gm-cine-main">
       <BreadcrumbJsonLd trail={[{ name: "採用", path: "/recruit" }]} />

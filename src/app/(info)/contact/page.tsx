@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { IS_RECRUITING } from "@/lib/recruit";
 import MenuHero from "@/components/menu/MenuHero";
 import InfoSection from "@/components/info/InfoSection";
 import FaqList, { type FaqItem } from "@/components/info/FaqList";
@@ -166,21 +167,23 @@ export default function Page() {
                 <p className="gm-access-card-text">{t.text}</p>
               </article>
             ))}
-            <article className="gm-access-card" data-info-row>
-              <h3 className="gm-access-card-title">
-                <span className="gm-access-ic">{ICONS.compass}</span>
-                採用について
-              </h3>
-              <p className="gm-access-card-text">
-                一緒に働く仲間を探しています。詳しくは採用ページをご覧ください。
-              </p>
-              <Link href="/recruit" className="gm-detail-link">
-                採用ページへ
-                <span className="gm-arrow" aria-hidden="true">
-                  →
-                </span>
-              </Link>
-            </article>
+            {IS_RECRUITING && (
+              <article className="gm-access-card" data-info-row>
+                <h3 className="gm-access-card-title">
+                  <span className="gm-access-ic">{ICONS.compass}</span>
+                  採用について
+                </h3>
+                <p className="gm-access-card-text">
+                  一緒に働く仲間を探しています。詳しくは採用ページをご覧ください。
+                </p>
+                <Link href="/recruit" className="gm-detail-link">
+                  採用ページへ
+                  <span className="gm-arrow" aria-hidden="true">
+                    →
+                  </span>
+                </Link>
+              </article>
+            )}
           </div>
         </InfoSection>
 

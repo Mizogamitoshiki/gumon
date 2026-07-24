@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import FoodNavDropdown from "@/components/FoodNavDropdown";
+import { IS_RECRUITING } from "@/lib/recruit";
 
 // 詳細ページヘッダーのナビ。現在地に aria-current を立て、
 // 下線(gm-nav-link と同じ言語)で「いまどこにいるか」を示す
@@ -10,7 +11,7 @@ const LINKS_LEFT = [{ href: "/about", label: "愚問とは" }] as const;
 const LINKS_RIGHT = [
   { href: "/menu/drink", label: "飲み物" },
   { href: "/access", label: "アクセス" },
-  { href: "/recruit", label: "採用" },
+  ...(IS_RECRUITING ? [{ href: "/recruit", label: "採用" }] : []),
   { href: "/contact", label: "お問い合わせ" },
 ] as const;
 
