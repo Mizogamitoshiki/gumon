@@ -605,6 +605,43 @@ export default function GumonScroll() {
       animation: tl,
     });
 
+    /* ---- スマホ特有の動き: velocity breathing(2026-07-24) ----
+       フリックの勢いに背景メディアがわずかに遅れて追従し、指を離すと
+       柔らかく原位置へ整う(親指の速度が奥行きに変換される、タッチ専用の
+       質感)。対象はタイムラインが transform を触らない「内側」のメディア
+       のみ(コンテナ側の scale/yPercent/opacity と競合しない)。コンテナは
+       inset:-10% ののりしろを持つため ±12px の移動で縁は露出しない。
+       transform のみ・power3.out で減速・reduced-motion はこの分岐に
+       到達しない(上で return 済み)。デスクトップには掛けない */
+    let vbCleanup: (() => void) | null = null;
+    if (lite) {
+      const vbTargets = [
+        q("[data-foodhero] img"),
+        q("[data-film] video"),
+        q("[data-hero-ambient] video"),
+      ].filter((el): el is HTMLElement => !!el);
+      const vbSetters = vbTargets.map((el) =>
+        gsap.quickTo(el, "y", { duration: 0.7, ease: "power3.out" }),
+      );
+      const vbTrigger = ScrollTrigger.create({
+        trigger: scrollRootRef.current,
+        start: "top top",
+        end: "bottom bottom",
+        onUpdate(self) {
+          // 下フリック(正の速度)で背景が一拍遅れて沈む=奥行き。±12px 上限
+          const y = gsap.utils.clamp(-12, 12, self.getVelocity() / 280);
+          vbSetters.forEach((set) => set(y));
+        },
+      });
+      // スクロールが静止したら必ず原位置へ(残留オフセットを残さない)
+      const vbSettle = () => vbSetters.forEach((set) => set(0));
+      ScrollTrigger.addEventListener("scrollEnd", vbSettle);
+      vbCleanup = () => {
+        ScrollTrigger.removeEventListener("scrollEnd", vbSettle);
+        vbTrigger.kill();
+      };
+    }
+
     /* ---- cuisine film: lerp currentTime toward the scrubbed playhead.
        The 0.16 lerp adds cinematic weight on top of ScrollTrigger's scrub
        smoothing; the threshold + !seeking guard avoids piling up seeks.
@@ -789,6 +826,7 @@ export default function GumonScroll() {
       if (video) video.removeEventListener("loadedmetadata", onFilmMeta);
       gsap.ticker.remove(filmTick);
       gsap.ticker.remove(tickerFn);
+      vbCleanup?.();
       intro.revert();
       st.kill();
       tl.kill();
