@@ -212,8 +212,10 @@ body {
   font-size: 15px;
   font-weight: 400;
   line-height: 1.2;
-  letter-spacing: 0.18em;
-  text-indent: 0.18em;
+  /* 字間は design-system/gumon/MASTER.md の確定仕様 0.16em に従う。
+     同量の text-indent は右端の余りを打ち消す光学補正(値の変更ではない) */
+  letter-spacing: 0.16em;
+  text-indent: 0.16em;
   text-align: center;
   text-decoration: none;
   border: 0;
@@ -243,8 +245,8 @@ body {
   font-size: 15px;
   font-weight: 400;
   line-height: 1.2;
-  letter-spacing: 0.18em;
-  text-indent: 0.18em;
+  letter-spacing: 0.16em; /* MASTER.md 準拠(朱ボタンと同値) */
+  text-indent: 0.16em;
   text-align: center;
   text-decoration: none;
   border: 1px solid rgba(242, 240, 235, 0.28);
@@ -2308,7 +2310,9 @@ body {
   color: #f2f0eb;
 }
 .gm-board-search input::placeholder {
-  color: rgba(242, 240, 235, 0.4);
+  /* 0.4 は地(#1c1b19)に対し 3.49:1 で WCAG AA(4.5:1)未達だった。
+     0.55 で 5.40:1 を確保(入力文字 0.92=12.9:1 とは十分に差が残る) */
+  color: rgba(242, 240, 235, 0.55);
 }
 .gm-board-search input::-webkit-search-cancel-button {
   filter: grayscale(1) brightness(2);
@@ -2871,4 +2875,18 @@ html {
    対象外プロパティなので即時に返る) */
 .gm-mobile-link:active {
   color: #b9b2a6;
+}
+
+/* ---- 無限アニメーションの reduced-motion 尊重(2026-07-25 ui-ux-pro-max 監査) ----
+   スクロール誘導の縦線は guCue で無限に明滅する。TOP は JS の reduce 分岐で
+   [data-cue] ごと非表示にしていたが、詳細ページの .gm-chero-cue-line は
+   純 CSS アニメーションのため「動きを減らす」設定でも動き続けていた
+   (CLAUDE.md の reduced-motion 尊重規定・WCAG 2.3.3 に抵触)。
+   設定 ON では明滅を止め、線は静止した状態で残す(誘導の意味は保つ) */
+@media (prefers-reduced-motion: reduce) {
+  .gm-chero-cue-line,
+  [data-cue] span {
+    animation: none !important;
+    opacity: 0.5;
+  }
 }

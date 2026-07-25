@@ -56,15 +56,46 @@
 
 ### CTA（電話予約のみ朱を使用）
 
+実装の唯一の出典は `src/app/globals.css` の `.gm-tel-btn` / `.gm-back-btn`。
+**各コンポーネントのインライン style で寸法を再定義してはならない**
+（2026-07-25 まで 4 箇所に散在し 14px/13-36px と 15px/15-46px が併存していた）。
+
 ```css
 .gm-tel-btn {
   background: #b23a2e;
   color: #f2f0eb;
   font-family: var(--font-noto-serif-jp), serif;
+  font-size: 15px;
+  line-height: 1.2;          /* 外形 48px を決定的に固定 */
   letter-spacing: 0.16em;
+  text-indent: 0.16em;       /* 光学的中央（下記ルール） */
   padding: 15px 46px;
+  border-radius: 2px;        /* 検索欄・額縁と同じ角 */
 }
 ```
+
+副ボタン `.gm-back-btn` は朱と横に並ぶため **外形 48px を一致**させる
+（content 18px + padding 14×2 + border 1×2）。
+
+### 光学的中央（letter-spacing を入れた要素の必須ルール）
+
+`letter-spacing` は最終文字の**後ろにも**余白を作るため、中央揃えだと文字列が
+左へズレて見える。**字間を入れたら同量の `text-indent` で必ず打ち消す。**
+
+```css
+letter-spacing: 0.28em;
+text-indent: 0.28em; /* 必ず同量 */
+```
+
+適用済み: `.gm-tel-btn` / `.gm-back-btn` / `.gm-detail-eyebrow` /
+`.gm-detail-cta-lead` / `.gm-board-filter`。
+※ `inline-flex`（`.gm-detail-link` 等）には `text-indent` が効かないため対象外。
+
+### コントラスト下限（WCAG AA）
+
+地 `#1c1b19` に対し **本文 4.5:1 以上**。アイボリー `#f2f0eb` は
+不透明度 **0.55 以上**で 5.40:1 を満たす（0.4 は 3.49:1 で不足）。
+プレースホルダも本文扱い。朱ボタン上の白文字は 5.21:1。
 
 ### 予約ピル（ヘッダー）: ストーン線 → ホバーでストーン地に反転
 
