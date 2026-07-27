@@ -2973,3 +2973,50 @@ html {
   opacity: 0.88;
   max-width: 68ch;
 }
+
+/* ---- 営業のご案内(アクセスページ・CMSの営業カレンダーから) ---------------- */
+.gm-bizcal {
+  margin: 0 0 26px;
+  border: 1px solid rgba(242, 240, 235, 0.16);
+  background: rgba(242, 240, 235, 0.04);
+  padding: 16px clamp(16px, 3vw, 22px);
+}
+
+.gm-bizcal-today {
+  margin: 0;
+  font-size: 14px;
+  letter-spacing: 0.03em;
+  line-height: 1.7;
+}
+
+/* 本日休業は朱で強調(来店前に最も知りたい情報) */
+.gm-bizcal-today.closed {
+  color: #e0705f;
+  font-weight: 600;
+}
+
+.gm-bizcal-list {
+  margin: 12px 0 0;
+  padding: 12px 0 0;
+  border-top: 1px solid rgba(242, 240, 235, 0.12);
+  list-style: none;
+  display: grid;
+  gap: 8px;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.gm-bizcal-list li {
+  display: flex;
+  gap: 12px;
+  align-items: baseline;
+}
+
+.gm-bizcal-date {
+  flex: 0 0 auto;
+  min-width: 4.5em;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.85;
+}
+
+.gm-bizcal-note { opacity: 0.7; margin-left: 0.4em; }

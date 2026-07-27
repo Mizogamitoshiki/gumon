@@ -3,6 +3,7 @@ import MenuHero from "@/components/menu/MenuHero";
 import InfoSection from "@/components/info/InfoSection";
 import TelCta from "@/components/info/TelCta";
 import BreadcrumbJsonLd from "@/components/BreadcrumbJsonLd";
+import BusinessCalendar from "@/components/BusinessCalendar";
 
 export const metadata: Metadata = {
   title: "アクセス — 貝塚駅 東出口より徒歩10分",
@@ -91,6 +92,8 @@ export default function Page() {
 
       <div className="gm-info-body gm-info-body-wide">
         <InfoSection eyebrow="INFORMATION" title="店舗情報">
+          {/* 本日の営業状態と直近の休業・時間変更(CMSの営業カレンダーから) */}
+          <BusinessCalendar />
           <dl className="gm-access-table">
             {INFO_ROWS.map((r) => (
               <div key={r.label} className="gm-access-tr" data-info-row>
