@@ -12,6 +12,7 @@ import InstagramLink from "@/components/InstagramLink";
 const INFO_LINKS = [
   { href: "/about", label: "愚問とは" },
   { href: "/access", label: "アクセス" },
+  { href: "/calendar", label: "営業カレンダー" },
   ...(IS_RECRUITING ? [{ href: "/recruit", label: "採用" }] : []),
   { href: "/contact", label: "お問い合わせ" },
 ] as const;

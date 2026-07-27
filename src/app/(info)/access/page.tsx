@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import MenuHero from "@/components/menu/MenuHero";
 import InfoSection from "@/components/info/InfoSection";
 import TelCta from "@/components/info/TelCta";
@@ -94,6 +95,15 @@ export default function Page() {
         <InfoSection eyebrow="INFORMATION" title="店舗情報">
           {/* 本日の営業状態と直近の休業・時間変更(CMSの営業カレンダーから) */}
           <BusinessCalendar />
+          {/* 月単位で見たい人向けにカレンダー本体(/calendar)へ渡す */}
+          <p className="gm-access-callink" data-info-row>
+            <Link href="/calendar" className="gm-detail-link">
+              月ごとの営業カレンダーを見る
+              <span className="gm-arrow" aria-hidden="true">
+                →
+              </span>
+            </Link>
+          </p>
           <dl className="gm-access-table">
             {INFO_ROWS.map((r) => (
               <div key={r.label} className="gm-access-tr" data-info-row>

@@ -22,6 +22,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     page("/menu/course", 0.8),
     page("/menu/drink", 0.7),
     page("/access", 0.8),
+    page("/calendar", 0.7, "weekly"), // 臨時休業の更新があるため weekly
     page("/about", 0.6),
     page("/contact", 0.6),
     ...(IS_RECRUITING ? [page("/recruit", 0.4)] : []),

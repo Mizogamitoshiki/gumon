@@ -28,6 +28,7 @@ const LINKS: { href: string; label: string }[] = [
   ...FOOD_CATEGORIES.map((c) => ({ href: `/menu/${c.slug}`, label: c.titleJp })),
   { href: "/menu/drink", label: "飲み物" },
   { href: "/access", label: "アクセス" },
+  { href: "/calendar", label: "営業カレンダー" },
   { href: "/contact", label: "お問い合わせ" },
   ...(IS_RECRUITING ? [{ href: "/recruit", label: "採用" }] : []),
 ];

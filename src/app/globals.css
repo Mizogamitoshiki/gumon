@@ -3020,3 +3020,238 @@ html {
 }
 
 .gm-bizcal-note { opacity: 0.7; margin-left: 0.4em; }
+
+/* ---- 営業カレンダー(/calendar・2026-07-27) ----
+   定休日なし(年中無休)の店なので、既定は「全日=通常営業」。CMS に登録された
+   例外日だけを記号で示す。ブランド規定により朱(#b23a2e)は電話CTA専用のため、
+   休業日にも朱は使わない — ストーンの濃淡と「休/昼/夜/時」の文字で示す
+   (WCAG: 色だけに情報を持たせない)。 */
+
+/* 視覚的には隠すが読み上げには残す(記号の意味を補う) */
+.gm-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.gm-cal-lead {
+  margin: 0 0 clamp(24px, 4vh, 36px);
+  font-size: 14.5px;
+  line-height: 2;
+  color: rgba(242, 240, 235, 0.82);
+  text-wrap: pretty;
+  word-break: auto-phrase;
+}
+.gm-cal-lead strong {
+  font-family: var(--font-noto-serif-jp), serif;
+  font-weight: 400;
+  color: #f2f0eb;
+}
+
+.gm-cal {
+  margin: 0 0 clamp(28px, 4.5vh, 44px);
+}
+.gm-cal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: clamp(14px, 2.4vh, 20px);
+}
+.gm-cal-month {
+  margin: 0;
+  font-family: var(--font-noto-serif-jp), serif;
+  font-size: clamp(19px, 2.4vw, 24px);
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-indent: 0.12em; /* 光学的中央 */
+  color: #f2f0eb;
+}
+/* 月送り: タップ領域 44px 以上を確保 */
+.gm-cal-nav {
+  flex: 0 0 auto;
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  background: transparent;
+  border: 1px solid rgba(242, 240, 235, 0.18);
+  border-radius: 2px;
+  color: rgba(242, 240, 235, 0.88);
+  font-size: 15px;
+  transition: border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    background 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.gm-cal-nav:hover {
+  border-color: rgba(242, 240, 235, 0.42);
+  background: rgba(242, 240, 235, 0.04);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .gm-cal-nav:active {
+    transform: scale(0.96);
+    transition-duration: 0.12s;
+  }
+}
+
+.gm-cal-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+.gm-cal-caption {
+  /* 表の意味は見出し・凡例で示しているため視覚的には隠す(読み上げには残す) */
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+.gm-cal-wd {
+  padding: 0 0 10px;
+  font-family: var(--font-noto-sans-jp), sans-serif;
+  font-size: 11.5px;
+  font-weight: 400;
+  letter-spacing: 0.16em;
+  text-indent: 0.16em;
+  color: #b9b2a6;
+}
+.gm-cal-cell {
+  position: relative;
+  height: clamp(46px, 9.5vw, 58px);
+  vertical-align: top;
+  padding: 6px 0 0;
+  text-align: center;
+  border-top: 1px solid rgba(242, 240, 235, 0.08);
+}
+.gm-cal-num {
+  display: block;
+  font-family: var(--font-noto-serif-jp), serif;
+  font-size: 14.5px;
+  font-weight: 300;
+  line-height: 1.1;
+  color: rgba(242, 240, 235, 0.88);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.gm-cal-mark {
+  display: block;
+  margin-top: 3px;
+  min-height: 1em;
+  font-family: var(--font-noto-serif-jp), serif;
+  font-size: 11.5px;
+  line-height: 1;
+  color: #b9b2a6;
+}
+/* 例外のある日: 地を一段起こして「通常と違う」ことを面でも示す */
+.gm-cal-cell.has-ex {
+  background: rgba(242, 240, 235, 0.05);
+}
+/* 休業日: 数字を落として休みらしく見せる(朱は使わない=ブランド規定) */
+.gm-cal-cell.is-closed .gm-cal-num {
+  color: rgba(242, 240, 235, 0.42);
+}
+.gm-cal-cell.is-closed .gm-cal-mark {
+  color: #f2f0eb;
+}
+/* 本日: ストーンの下線で現在地を示す */
+.gm-cal-cell.is-today {
+  box-shadow: inset 0 -2px 0 #b9b2a6;
+}
+.gm-cal-cell.is-today .gm-cal-num {
+  color: #f2f0eb;
+}
+
+.gm-cal-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  margin: clamp(16px, 2.6vh, 22px) 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 12px;
+  color: rgba(242, 240, 235, 0.72);
+}
+.gm-cal-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.gm-cal-legend-mark {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  font-family: var(--font-noto-serif-jp), serif;
+  font-size: 11.5px;
+  color: #f2f0eb;
+  background: rgba(242, 240, 235, 0.05);
+  border: 1px solid rgba(242, 240, 235, 0.14);
+  border-radius: 2px;
+}
+.gm-cal-legend-plain {
+  color: rgba(242, 240, 235, 0.6);
+}
+
+.gm-cal-notes {
+  margin: clamp(18px, 3vh, 26px) 0 0;
+  padding: clamp(14px, 2.4vh, 20px) 0 0;
+  border-top: 1px solid rgba(242, 240, 235, 0.1);
+  list-style: none;
+  font-size: 13.5px;
+  line-height: 1.9;
+  color: rgba(242, 240, 235, 0.82);
+}
+.gm-cal-notes li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+}
+.gm-cal-notes-date {
+  flex: 0 0 auto;
+  min-width: 5.5em;
+  font-family: var(--font-noto-serif-jp), serif;
+  color: #f2f0eb;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.gm-cal-hours {
+  margin: 0 0 clamp(18px, 3vh, 26px);
+  display: grid;
+  gap: 10px 0;
+  font-size: 14px;
+}
+.gm-cal-hours > div {
+  display: flex;
+  gap: 18px;
+  align-items: baseline;
+}
+.gm-cal-hours dt {
+  flex: 0 0 auto;
+  min-width: 4.5em;
+  font-family: var(--font-noto-serif-jp), serif;
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  text-indent: 0.2em;
+  color: #b9b2a6;
+}
+.gm-cal-hours dd {
+  margin: 0;
+  font-weight: 300;
+  color: rgba(242, 240, 235, 0.86);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.gm-cal-lo {
+  color: rgba(242, 240, 235, 0.6);
+  font-size: 12.5px;
+}
+/* アクセスページ → 営業カレンダー本体への導線 */
+.gm-access-callink {
+  margin: clamp(4px, 1vh, 10px) 0 clamp(18px, 3vh, 28px);
+}

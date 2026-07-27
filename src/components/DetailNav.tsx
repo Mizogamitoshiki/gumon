@@ -11,6 +11,7 @@ const LINKS_LEFT = [{ href: "/about", label: "愚問とは" }] as const;
 const LINKS_RIGHT = [
   { href: "/menu/drink", label: "飲み物" },
   { href: "/access", label: "アクセス" },
+  { href: "/calendar", label: "営業カレンダー" },
   ...(IS_RECRUITING ? [{ href: "/recruit", label: "採用" }] : []),
   { href: "/contact", label: "お問い合わせ" },
 ] as const;

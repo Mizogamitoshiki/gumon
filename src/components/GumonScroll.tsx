@@ -1109,6 +1109,7 @@ export default function GumonScroll() {
             })),
             { href: "/menu/drink", label: "飲み物" },
             { href: "/access", label: "アクセス" },
+            { href: "/calendar", label: "営業カレンダー" },
             { href: "/contact", label: "お問い合わせ" },
             ...(IS_RECRUITING ? [{ href: "/recruit", label: "採用" }] : []),
           ] as { href: string; label: string }[]
