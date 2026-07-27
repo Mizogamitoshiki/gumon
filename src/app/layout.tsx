@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { SITE_URL, RESTAURANT_JSONLD } from "@/lib/site";
+import NoticeBar from "@/components/NoticeBar";
 import "./globals.css";
 
 export const viewport: Viewport = {
@@ -72,6 +73,9 @@ export default function RootLayout({
   return (
     <html lang="ja" className={`${notoSansJP.variable} ${notoSerifJP.variable}`}>
       <body>
+        {/* 臨時休業などのお知らせ。全ページの最上部に出す(トップから来ても
+            検索でメニューページに直接来ても必ず目に入るように) */}
+        <NoticeBar />
         {children}
         {/* schema.org Restaurant — ローカル検索(マップ・リッチリザルト)向け */}
         <script

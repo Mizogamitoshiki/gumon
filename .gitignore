@@ -12,3 +12,4 @@ next-env.d.ts
 /project/_originals
 /src/lib/menu.generated.ts
 /src/lib/recruit.generated.ts
+/src/lib/notice.generated.ts

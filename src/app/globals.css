@@ -837,7 +837,7 @@ body {
 /* ---- detail page chrome (menu/layout) ---- */
 .gm-detail-header {
   position: fixed;
-  top: 0;
+  top: var(--gm-notice-h, 0px);
   left: 0;
   right: 0;
   z-index: 300;
@@ -1279,7 +1279,7 @@ body {
    ============================================================ */
 .gm-progress-rail {
   position: fixed;
-  top: 0;
+  top: var(--gm-notice-h, 0px);
   left: 0;
   right: 0;
   height: 1px;
@@ -2889,4 +2889,87 @@ html {
     animation: none !important;
     opacity: 0.5;
   }
+}
+
+/* ---- お知らせ帯(臨時休業など・全ページ最上部) ---------------------------- */
+/* 閲覧時に掲載期間を判定して描画される(NoticeBar)。ページ本体の上に積む */
+.gm-notice-wrap {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 500;
+}
+
+.gm-notice {
+  border-bottom: 1px solid rgba(242, 240, 235, 0.14);
+  background: #221f1c;
+  color: #f2f0eb;
+}
+
+/* 臨時休業など見落とされたくないものは朱の縦帯で示す(色だけに頼らず記号も出す) */
+.gm-notice-alert {
+  background: #2a1c1a;
+  box-shadow: inset 3px 0 0 #b23a2e;
+}
+
+.gm-notice-head {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px clamp(16px, 4vw, 40px);
+  min-height: 44px;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.gm-notice-head-static { cursor: default; }
+
+.gm-notice-mark {
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  background: rgba(242, 240, 235, 0.18);
+  color: #f2f0eb;
+}
+
+.gm-notice-alert .gm-notice-mark {
+  background: #b23a2e;
+  color: #f2f0eb;
+}
+
+.gm-notice-title {
+  flex: 1;
+  min-width: 0;
+  font-size: clamp(13px, 3.4vw, 14px);
+  letter-spacing: 0.02em;
+  line-height: 1.5;
+}
+
+.gm-notice-more {
+  flex: 0 0 auto;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  opacity: 0.72;
+  text-decoration: underline;
+}
+
+.gm-notice-body {
+  margin: 0;
+  padding: 0 clamp(16px, 4vw, 40px) 14px;
+  font-size: 13px;
+  line-height: 1.85;
+  opacity: 0.88;
+  max-width: 68ch;
 }

@@ -860,7 +860,8 @@ export default function GumonScroll() {
       <div
         style={{
           position: "fixed",
-          top: 0,
+          // お知らせ帯の高さぶん下げる(NoticeBarが--gm-notice-hを設定する)
+          top: "var(--gm-notice-h, 0px)",
           left: 0,
           right: 0,
           height: 1,
@@ -886,7 +887,7 @@ export default function GumonScroll() {
         className="gm-header"
         style={{
           position: "fixed",
-          top: 0,
+          top: "var(--gm-notice-h, 0px)",
           left: 0,
           right: 0,
           zIndex: 300,
