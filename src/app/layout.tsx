@@ -2,7 +2,12 @@ import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { SITE_URL, RESTAURANT_JSONLD } from "@/lib/site";
 import NoticeBar from "@/components/NoticeBar";
+import PageTransition from "@/components/PageTransition";
 import "./globals.css";
+
+// オープニング演出の出し分けを描画前に確定する(FOUC防止)。
+// 繰り返し訪問(同一タブ)と reduced-motion では即座に隠す。
+const openingInit = `try{var d=document.documentElement;if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches){d.setAttribute('data-gm-reduced','1');}else if(sessionStorage.getItem('gm-opened')){d.setAttribute('data-gm-opened','1');}else{sessionStorage.setItem('gm-opened','1');}}catch(e){}`;
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -72,7 +77,25 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ja" className={`${notoSansJP.variable} ${notoSerifJP.variable}`}>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: openingInit }} />
+      </head>
       <body>
+        {/* オープニング(初回のみ・石壁に屋号→暖簾が開いて本体へ)。
+            繰り返し訪問と reduced-motion は上の openingInit が即座に隠す */}
+        <div className="gm-opening" aria-hidden="true">
+          <div className="gm-opening-half left" />
+          <div className="gm-opening-half right" />
+          <div className="gm-opening-center">
+            <div className="gm-opening-mark">愚問</div>
+            <div className="gm-opening-bar">
+              <span />
+            </div>
+            <div className="gm-opening-sub">中国料理 GUMON</div>
+          </div>
+        </div>
+        {/* ページ遷移の演出(石壁ワイプ)。soft-nav 時のみ・reduced-motionは無効 */}
+        <PageTransition />
         {/* 臨時休業などのお知らせ。全ページの最上部に出す(トップから来ても
             検索でメニューページに直接来ても必ず目に入るように) */}
         <NoticeBar />

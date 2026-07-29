@@ -3255,3 +3255,278 @@ html {
 .gm-access-callink {
   margin: clamp(4px, 1vh, 10px) 0 clamp(18px, 3vh, 28px);
 }
+
+/* ======================================================================
+   ページ遷移 & オープニング演出
+   デザイン提案「愚問 ページングアニメーション」を実サイトの配色
+   (墨 #1c1b19 / 生成り #f2f0eb / 朱 #b23a2e)に合わせて実装。
+   easeInOutCubic ≈ cubic-bezier(.65,0,.35,1) / easeOut ≈ (.22,1,.36,1)
+   ====================================================================== */
+
+:root {
+  --gm-ink: #0e0d0b;
+  --gm-cream: #f2f0eb;
+  --gm-shu: #b23a2e;      /* 朱 */
+  --gm-shu-hot: #e0705f;  /* 朱(熱) */
+  --gm-gold: #c9a24b;     /* 金 差し色 */
+  --gm-cover-dur: 420ms;
+  --gm-uncover-dur: 480ms;
+}
+
+/* 石壁テクスチャ(提案のWALLを墨基調へ) */
+.gm-stone {
+  background-color: #0b0b0a;
+  background-image:
+    radial-gradient(130% 95% at 50% 28%, rgba(48,44,38,0.95) 0%, rgba(22,20,17,0.92) 52%, rgba(8,7,6,1) 100%),
+    repeating-linear-gradient(37deg, rgba(255,255,255,0.018) 0 1px, rgba(0,0,0,0) 1px 3px),
+    repeating-linear-gradient(-51deg, rgba(0,0,0,0.05) 0 1px, rgba(0,0,0,0) 1px 4px);
+}
+
+/* ---- 遷移オーバーレイ(全ページ最前面) ---- */
+.gm-tr {
+  position: fixed;
+  inset: 0;
+  z-index: 9800;
+  overflow: hidden;
+  pointer-events: auto; /* 遷移中の誤操作を防ぐ */
+}
+
+/* 案A 石壁ワイプ ─ 石の板が左から右へ一拭。両縁が朱に灯る */
+.gm-tr-a {
+  position: absolute;
+  inset: 0;
+  background-color: #0b0b0a;
+  background-image:
+    radial-gradient(130% 95% at 50% 28%, rgba(48,44,38,0.95) 0%, rgba(22,20,17,0.92) 52%, rgba(8,7,6,1) 100%),
+    repeating-linear-gradient(37deg, rgba(255,255,255,0.018) 0 1px, rgba(0,0,0,0) 1px 3px);
+  transform: translateX(-101%);
+  will-change: transform;
+}
+.gm-tr-a::before,
+.gm-tr-a::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg, rgba(178,58,46,0.1), var(--gm-shu-hot) 22%, var(--gm-gold) 52%, var(--gm-shu-hot) 78%, rgba(178,58,46,0.1));
+  box-shadow: 0 0 26px var(--gm-shu-hot);
+}
+.gm-tr-a::before { left: -1.5px; }
+.gm-tr-a::after { right: -1.5px; }
+
+.gm-tr[data-phase="cover"] .gm-tr-a {
+  animation: gm-a-cover var(--gm-cover-dur) cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+.gm-tr[data-phase="uncover"] .gm-tr-a {
+  animation: gm-a-uncover var(--gm-uncover-dur) cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+@keyframes gm-a-cover { from { transform: translateX(-101%); } to { transform: translateX(0); } }
+@keyframes gm-a-uncover { from { transform: translateX(0); } to { transform: translateX(101%); } }
+
+/* 案B 朱線スライス ─ 3段に断ち、時差で入れ替え。接ぎ目が朱に灯る */
+.gm-tr-band {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: calc(100% / 3 + 1px);
+  top: calc(var(--i) * 100% / 3);
+  background-color: #0b0b0a;
+  background-image: radial-gradient(120% 180% at 50% 40%, rgba(46,42,36,0.95), rgba(12,11,9,1));
+  transform: translateX(101%);
+  will-change: transform;
+}
+.gm-tr-band::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(0,0,0,0), var(--gm-shu-hot), var(--gm-shu), rgba(0,0,0,0));
+  box-shadow: 0 0 18px var(--gm-shu);
+}
+.gm-tr[data-kind="B"] .gm-tr-band { transform: translateX(101%); }
+.gm-tr[data-kind="B"][data-phase="cover"] .gm-tr-band {
+  animation: gm-b-cover var(--gm-cover-dur) cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: calc(var(--i) * 70ms);
+}
+.gm-tr[data-kind="B"][data-phase="uncover"] .gm-tr-band {
+  animation: gm-b-uncover var(--gm-uncover-dur) cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: calc(var(--i) * 70ms);
+}
+@keyframes gm-b-cover { from { transform: translateX(101%); } to { transform: translateX(0); } }
+@keyframes gm-b-uncover { from { transform: translateX(0); } to { transform: translateX(-101%); } }
+
+/* 案C 暖簾めくり ─ 朱の布が上から落ち、めくれる。中央に愚/問 */
+.gm-tr-strip {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  left: calc(var(--i) * 100% / 6);
+  width: calc(100% / 6 + 0.4%);
+  transform: translateY(-101%);
+  will-change: transform;
+  background: linear-gradient(180deg, #2b0509 0%, #5c0d12 26%, #47080d 100%);
+  box-shadow: inset -1px 0 0 rgba(0,0,0,0.55), inset 1px 0 0 rgba(255,255,255,0.05);
+}
+.gm-tr-strip::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(90deg, rgba(0,0,0,0.16) 0 2px, rgba(255,255,255,0.02) 2px 5px);
+}
+.gm-tr-strip::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--gm-shu), var(--gm-gold), var(--gm-shu));
+  opacity: 0.85;
+}
+.gm-tr-glyph {
+  position: absolute;
+  top: 38%;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-family: var(--font-noto-serif-jp), serif;
+  font-size: clamp(30px, 5vw, 54px);
+  color: rgba(242, 240, 235, 0.55);
+  letter-spacing: 6px;
+}
+.gm-tr[data-kind="C"][data-phase="cover"] .gm-tr-strip {
+  animation: gm-c-cover var(--gm-cover-dur) cubic-bezier(0.65, 0, 0.35, 1) forwards;
+  animation-delay: calc(var(--i) * 40ms);
+}
+.gm-tr[data-kind="C"][data-phase="uncover"] .gm-tr-strip {
+  animation: gm-c-uncover var(--gm-uncover-dur) cubic-bezier(0.65, 0, 0.35, 1) forwards;
+  animation-delay: calc(var(--i) * 40ms);
+}
+@keyframes gm-c-cover { from { transform: translateY(-101%); } to { transform: translateY(0); } }
+@keyframes gm-c-uncover { from { transform: translateY(0); } to { transform: translateY(101%); } }
+
+/* ---- オープニング(初回のみ・SSR描画。石壁に屋号→暖簾が開く) ---- */
+/* 繰り返し訪問・reduced-motion は head の初期化スクリプトが即座に隠す */
+html[data-gm-opened] .gm-opening,
+html[data-gm-reduced] .gm-opening {
+  display: none !important;
+}
+
+.gm-opening {
+  position: fixed;
+  inset: 0;
+  z-index: 9900;
+  overflow: hidden;
+  animation: gm-op-hide 0s linear 2.3s forwards; /* 終了後は不活性化 */
+}
+@keyframes gm-op-hide { to { visibility: hidden; pointer-events: none; } }
+
+/* 左右の石の半幕。1.5s で外側へ引かれ、下の本体が現れる */
+.gm-opening-half {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50.5%;
+  background-color: #0b0b0a;
+  background-image:
+    radial-gradient(130% 95% at 50% 28%, rgba(48,44,38,0.95) 0%, rgba(22,20,17,0.92) 52%, rgba(8,7,6,1) 100%),
+    repeating-linear-gradient(37deg, rgba(255,255,255,0.018) 0 1px, rgba(0,0,0,0) 1px 3px);
+  will-change: transform;
+}
+.gm-opening-half.left { left: 0; animation: gm-op-left 0.8s cubic-bezier(0.65, 0, 0.35, 1) 1.5s forwards; }
+.gm-opening-half.right { right: 0; animation: gm-op-right 0.8s cubic-bezier(0.65, 0, 0.35, 1) 1.5s forwards; }
+.gm-opening-half.left::after,
+.gm-opening-half.right::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  opacity: 0;
+  background: linear-gradient(180deg, rgba(178,58,46,0.1), var(--gm-shu-hot) 25%, var(--gm-gold) 52%, var(--gm-shu-hot) 75%, rgba(178,58,46,0.1));
+  box-shadow: 0 0 30px var(--gm-shu-hot);
+  animation: gm-op-edge 0.8s ease 1.5s forwards;
+}
+.gm-opening-half.left::after { right: -1.5px; }
+.gm-opening-half.right::after { left: -1.5px; }
+@keyframes gm-op-left { to { transform: translateX(-100%); } }
+@keyframes gm-op-right { to { transform: translateX(100%); } }
+@keyframes gm-op-edge { 0% { opacity: 0; } 20% { opacity: 1; } 100% { opacity: 0; } }
+
+/* 中央: 屋号 → ローディングバー。開幕とともにフェード */
+.gm-opening-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(20px, 4vh, 40px);
+  animation: gm-op-center-out 0.5s ease 1.45s forwards;
+}
+@keyframes gm-op-center-out { to { opacity: 0; } }
+
+.gm-opening-mark {
+  font-family: var(--font-noto-serif-jp), serif;
+  font-size: clamp(64px, 16vw, 132px);
+  letter-spacing: clamp(8px, 2vw, 18px);
+  color: var(--gm-cream);
+  line-height: 1;
+  opacity: 0;
+  position: relative;
+  text-shadow: 0 0 46px rgba(178, 58, 46, 0.55), 0 6px 0 rgba(0, 0, 0, 0.6);
+  animation: gm-op-mark 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.1s forwards;
+}
+@keyframes gm-op-mark {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); filter: brightness(0.6); }
+  to { opacity: 1; transform: none; filter: brightness(1); }
+}
+/* 屋号を横切る光の筆致 */
+.gm-opening-mark::after {
+  content: "";
+  position: absolute;
+  top: -20%;
+  bottom: -20%;
+  left: -30%;
+  width: 40%;
+  background: linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(224,112,95,0.45) 45%, rgba(224,112,95,0.9) 52%, rgba(0,0,0,0) 100%);
+  filter: blur(14px);
+  transform: skewX(-9deg);
+  animation: gm-op-sweep 0.9s ease 0.25s forwards;
+}
+@keyframes gm-op-sweep { from { left: -40%; } to { left: 120%; } }
+
+.gm-opening-bar {
+  position: relative;
+  width: min(320px, 60vw);
+  height: 1px;
+  background: rgba(242, 240, 235, 0.14);
+}
+.gm-opening-bar > span {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 1px;
+  width: 0;
+  background: linear-gradient(90deg, #5c0d12, var(--gm-shu-hot), var(--gm-gold));
+  box-shadow: 0 0 12px var(--gm-shu);
+  animation: gm-op-load 0.9s cubic-bezier(0.65, 0, 0.35, 1) 0.35s forwards;
+}
+@keyframes gm-op-load { to { width: 100%; } }
+
+.gm-opening-sub {
+  font-family: var(--font-noto-sans-jp), sans-serif;
+  font-size: clamp(9px, 2.4vw, 11px);
+  letter-spacing: 6px;
+  color: rgba(242, 240, 235, 0.5);
+  opacity: 0;
+  animation: gm-op-sub 0.6s ease 0.4s forwards;
+}
+@keyframes gm-op-sub { to { opacity: 1; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .gm-tr { display: none !important; }
+}
