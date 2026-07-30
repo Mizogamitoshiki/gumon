@@ -124,6 +124,25 @@ export default function MenuPaper({
           if (items.length)
             tl.from(items, { autoAlpha: 0, y: 18, duration: D, stagger: 0.09 }, 0.18);
         });
+        /* 看板の一皿（おすすめ料理）の写真リビール。
+           2026-07-30: 紙お品書き刷新(5c7322d)で DishShowcase が削除され、
+           看板の品も他の行と同じ fade-up になっていた。ユーザー要望により
+           「おすすめの料理のスクロールアニメーション」を復元する。
+           値は削除された DishShowcase の演出言語を踏襲(clip-path inset
+           24%/18% からの展開 + scale 1.08→等倍)。ただし当時の全画面 pin
+           ステージは紙一枚の意匠と衝突するため持ち込まず、紙面の中で
+           窓が開くリビールに翻訳している。
+           親の [data-anim-item] は fade-up 対象なので、写真自身の transform と
+           競合しない(親=位置/不透明度、子=clip-path/scale) */
+        root.querySelectorAll<HTMLElement>(".gm-paper-feature-img").forEach((img) => {
+          gsap.from(img, {
+            clipPath: "inset(24% 18% 24% 18%)",
+            scale: 1.08,
+            duration: 1.3,
+            ease: GUMON_MOTION.easeEmphasis,
+            scrollTrigger: { trigger: img, start: "top 86%", once: true },
+          });
+        });
         // 脚注・他ページ導線
         gsap.from(".gm-paper-foot > *", {
           autoAlpha: 0,
@@ -156,6 +175,11 @@ export default function MenuPaper({
           });
         }
       });
+
+      /* 視差(DishShowcase の ±6% 縦パララックス)は復元しない:
+         現在の看板写真は 84〜128px のサムネイルで、±6% は約 8px の移動になり
+         枠から飛び出して隙間・重なりを生む。写真を大きく据える設計に戻すなら
+         そのときに併せて復活させる(判断を要するため今回は入れない) */
       return () => mm.revert();
     },
     { scope: rootRef },
