@@ -3530,3 +3530,337 @@ html[data-gm-reduced] .gm-opening {
 @media (prefers-reduced-motion: reduce) {
   .gm-tr { display: none !important; }
 }
+
+/* ============================================================
+   紙のお品書き（MenuPaper / /menu/*・2026-07-30）
+   デザイン提案『お品書き Menu』の翻訳。暗い面の上に生成りの紙面を一枚。
+   二重罫線・頭書き（愚問／御品書）・点線の品書き・朱の予約 CTA。
+   色は既存 gumon-hp の生 hex 運用に合わせる（墨 #1c1b19 / 生成り #f2f0eb /
+   朱は gm-tel-btn 側が唯一の出所）。演出は MenuPaper の GSAP（fade-up）。
+   ============================================================ */
+.gm-paper-page {
+  min-height: 100vh;
+  background: #1c1b19;
+  color: #f2f0eb;
+  padding: clamp(48px, 9vh, 104px) clamp(16px, 4vw, 32px) clamp(64px, 11vh, 120px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.gm-paper-eyebrow {
+  margin: 0 0 14px;
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+  text-transform: uppercase;
+  color: #b9b2a6;
+  text-align: center;
+}
+.gm-paper-h1 {
+  margin: 0 0 clamp(32px, 6vh, 56px);
+  font-family: var(--font-noto-serif-jp), "Noto Serif JP", serif;
+  font-size: clamp(26px, 4vw, 38px);
+  font-weight: 500;
+  letter-spacing: 0.26em;
+  text-indent: 0.26em;
+  text-align: center;
+}
+
+/* 紙面（二重罫線の枠） */
+.gm-paper {
+  width: min(860px, 100%);
+  background: #f2f0eb;
+  color: #1c1b19;
+  border-radius: 2px;
+  box-shadow: 0 40px 90px -40px rgba(0, 0, 0, 0.85);
+  padding: 10px;
+}
+.gm-paper-frame {
+  border: 1px solid rgba(28, 27, 25, 0.4);
+  padding: 2px;
+}
+.gm-paper-inner {
+  border: 1px solid rgba(28, 27, 25, 0.18);
+  padding: clamp(28px, 6vw, 72px) clamp(18px, 5.5vw, 80px) clamp(32px, 6vw, 72px);
+}
+
+/* 紙の頭書き */
+.gm-paper-head {
+  text-align: center;
+  margin-bottom: clamp(32px, 6vh, 56px);
+}
+.gm-paper-head-en {
+  margin: 0 0 12px;
+  font-size: 10.5px;
+  letter-spacing: 0.32em;
+  text-indent: 0.32em;
+  text-transform: uppercase;
+  color: rgba(28, 27, 25, 0.55);
+}
+.gm-paper-brand {
+  margin: 0 0 6px;
+  font-family: var(--font-noto-serif-jp), "Noto Serif JP", serif;
+  font-size: clamp(30px, 4.5vw, 44px);
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+}
+.gm-paper-brand-sub {
+  margin: 0;
+  font-size: 11.5px;
+  letter-spacing: 0.24em;
+  text-indent: 0.24em;
+  color: rgba(28, 27, 25, 0.65);
+}
+.gm-paper-head-rule {
+  display: block;
+  width: min(280px, 60%);
+  height: 1px;
+  margin: 22px auto 0;
+  background: linear-gradient(90deg, transparent, rgba(28, 27, 25, 0.5), transparent);
+}
+
+/* 章見出し（リボン） */
+.gm-paper-ribbon {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 0 0 6px;
+}
+.gm-paper-ribbon-rule {
+  flex: 1;
+  height: 1px;
+  background: rgba(28, 27, 25, 0.25);
+}
+.gm-paper-ribbon-jp {
+  font-family: var(--font-noto-serif-jp), "Noto Serif JP", serif;
+  font-size: clamp(19px, 2.2vw, 23px);
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-indent: 0.22em;
+  white-space: nowrap;
+}
+.gm-paper-sub {
+  margin: 0 0 6px;
+  text-align: center;
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+  text-transform: uppercase;
+  color: rgba(28, 27, 25, 0.5);
+}
+.gm-paper-lead {
+  margin: 0 0 clamp(22px, 3.5vh, 32px);
+  text-align: center;
+  font-size: clamp(12px, 1.4vw, 13.5px);
+  line-height: 1.9;
+  color: rgba(28, 27, 25, 0.6);
+}
+.gm-paper-sub + .gm-paper-feature,
+.gm-paper-sub + .gm-paper-rows,
+.gm-paper-sub + .gm-paper-cards {
+  margin-top: clamp(22px, 3.5vh, 32px);
+}
+
+/* 看板の一皿（実写つき） */
+.gm-paper-feature {
+  display: flex;
+  gap: clamp(16px, 3vw, 26px);
+  align-items: center;
+  padding: clamp(14px, 2.4vw, 22px);
+  border: 1px solid rgba(28, 27, 25, 0.3);
+  background: rgba(28, 27, 25, 0.03);
+  margin-bottom: clamp(20px, 3.2vh, 30px);
+}
+.gm-paper-feature-img {
+  width: clamp(84px, 14vw, 128px);
+  height: clamp(84px, 14vw, 128px);
+  object-fit: cover;
+  flex: 0 0 auto;
+  border: 1px solid rgba(28, 27, 25, 0.25);
+}
+.gm-paper-feature-body {
+  flex: 1;
+  min-width: 0;
+}
+
+/* 品書き本体（行） */
+.gm-paper-rows {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(18px, 3vh, 26px);
+}
+.gm-paper-rows-2col {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: clamp(16px, 2.6vh, 24px) clamp(24px, 4vw, 44px);
+}
+.gm-paper-line {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.gm-paper-name {
+  font-family: var(--font-noto-serif-jp), "Noto Serif JP", serif;
+  font-size: clamp(16px, 1.9vw, 19px);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+}
+.gm-paper-name-lg {
+  font-size: clamp(17px, 2.1vw, 21px);
+  font-weight: 600;
+}
+.gm-paper-dots {
+  flex: 1;
+  min-width: 24px;
+  border-bottom: 1px dotted rgba(28, 27, 25, 0.4);
+  transform: translateY(-4px);
+}
+.gm-paper-price {
+  font-family: var(--font-noto-serif-jp), "Noto Serif JP", serif;
+  font-size: clamp(14px, 1.6vw, 16.5px);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.gm-paper-desc {
+  margin: 6px 0 0;
+  font-size: clamp(11.5px, 1.3vw, 13px);
+  line-height: 1.9;
+  letter-spacing: 0.02em;
+  color: rgba(28, 27, 25, 0.68);
+  text-wrap: pretty;
+  word-break: auto-phrase;
+}
+
+/* バッジ（生成り紙の上：墨で描く） */
+.gm-paper-tag {
+  margin-left: 10px;
+  font-family: var(--font-noto-sans-jp), sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  padding: 2px 7px;
+  border: 1px solid rgba(28, 27, 25, 0.35);
+  color: rgba(28, 27, 25, 0.65);
+  vertical-align: 3px;
+  white-space: nowrap;
+}
+.gm-paper-spicy {
+  margin-left: 8px;
+  font-family: var(--font-noto-sans-jp), sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: rgba(28, 27, 25, 0.6);
+  vertical-align: 2px;
+  white-space: nowrap;
+}
+
+/* コース（中央寄せの枠カード） */
+.gm-paper-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: clamp(14px, 2.4vw, 20px);
+}
+.gm-paper-card {
+  border: 1px solid rgba(28, 27, 25, 0.3);
+  padding: clamp(18px, 3vw, 26px);
+  text-align: center;
+}
+.gm-paper-card-name {
+  margin: 0 0 8px;
+  font-family: var(--font-noto-serif-jp), "Noto Serif JP", serif;
+  font-size: clamp(15.5px, 1.8vw, 18px);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+.gm-paper-card-price {
+  margin: 0 0 12px;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-indent: 0.16em;
+  color: rgba(28, 27, 25, 0.6);
+}
+.gm-paper-card-desc {
+  margin: 0;
+  font-size: clamp(11.5px, 1.3vw, 13px);
+  line-height: 1.9;
+  color: rgba(28, 27, 25, 0.68);
+  text-wrap: pretty;
+  word-break: auto-phrase;
+}
+
+/* カテゴリ別のご案内・脚注 */
+.gm-paper-notes {
+  margin-top: clamp(18px, 3vh, 26px);
+}
+.gm-paper-note {
+  margin: 0 0 4px;
+  font-size: 11.5px;
+  line-height: 1.9;
+  letter-spacing: 0.02em;
+  color: rgba(28, 27, 25, 0.55);
+  text-wrap: pretty;
+  word-break: auto-phrase;
+}
+.gm-paper-note:last-child {
+  margin-bottom: 0;
+}
+.gm-paper-contact-hint {
+  margin: clamp(14px, 2.4vh, 20px) 0 0;
+}
+/* 生成り紙の上のリンクは墨で（gm-detail-link は暗い面用の生成り色のため上書き） */
+.gm-paper-contact-hint .gm-detail-link {
+  color: rgba(28, 27, 25, 0.8);
+}
+.gm-paper-contact-hint .gm-detail-link .gm-arrow {
+  color: rgba(28, 27, 25, 0.8);
+}
+
+.gm-paper-foot {
+  margin-top: clamp(36px, 6.5vh, 60px);
+  padding-top: clamp(18px, 3vh, 26px);
+  border-top: 1px solid rgba(28, 27, 25, 0.2);
+  text-align: center;
+}
+.gm-paper-sign {
+  margin: 20px 0 0;
+  font-family: var(--font-noto-serif-jp), "Noto Serif JP", serif;
+  font-size: 12px;
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+  color: rgba(28, 27, 25, 0.7);
+}
+
+/* 他カテゴリへの導線（暗い面・紙の下） */
+.gm-paper-others {
+  width: min(860px, 100%);
+  margin-top: clamp(40px, 7vh, 72px);
+  text-align: center;
+}
+.gm-paper-others-head {
+  margin: 0 0 14px;
+}
+.gm-paper-others-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14px clamp(20px, 4vw, 40px);
+}
+
+/* 予約 CTA（朱は gm-tel-btn） */
+.gm-paper-cta {
+  margin-top: clamp(40px, 7vh, 72px);
+  text-align: center;
+}
+
+@media (max-width: 560px) {
+  .gm-paper-feature {
+    flex-direction: column;
+    text-align: center;
+  }
+  .gm-paper-feature .gm-paper-line {
+    justify-content: center;
+  }
+}

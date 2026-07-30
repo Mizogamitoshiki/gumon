@@ -11,7 +11,5 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
-  // editorial: Phase 17 — dinner のみ縦型 Editorial variant(看板の品=DishShowcase・
-  // ボード fade-quiet 弱化)。他メニューページは従来のまま
-  return <MenuDetailPage category={getFoodCategory("dinner")!} editorial />;
+  return <MenuDetailPage category={getFoodCategory("dinner")!} />;
 }
