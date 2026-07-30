@@ -3864,3 +3864,172 @@ html[data-gm-reduced] .gm-opening {
     justify-content: center;
   }
 }
+
+/* ---- 看板の一皿の見せ場(DishStage・2026-07-30) ----
+   既定(モバイル / reduced-motion / JS無効)は「静的な大判カード」。
+   デスクトップ(861px+ かつ motion可)だけ全画面の紙芝居ステージになる。
+   紙お品書き(生成り)の直前に置く暗い面なので、明→暗→明のリズムを作る。 */
+.gm-stage2 {
+  position: relative;
+  margin: 0 auto clamp(28px, 5vh, 52px);
+  width: min(1040px, calc(100% - clamp(24px, 6vw, 64px)));
+}
+.gm-stage2-vp {
+  position: relative;
+}
+/* 題字: 既定では写真の上に置く小さな頭書き */
+.gm-stage2-intro {
+  margin: 0 0 clamp(12px, 2vh, 18px);
+  text-align: center;
+}
+.gm-stage2-en {
+  margin: 0 0 8px;
+  font-family: var(--font-noto-sans-jp), sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.32em;
+  text-indent: 0.32em; /* 光学的中央 */
+  color: #b9b2a6;
+}
+.gm-stage2-title {
+  margin: 0;
+  font-family: var(--font-noto-serif-jp), serif;
+  font-size: clamp(20px, 3vw, 30px);
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  text-indent: 0.2em;
+  color: #f2f0eb;
+}
+.gm-stage2-frame {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  min-height: 200px; /* aspect-ratio 未対応環境の床 */
+  background: #161412;
+  border: 1px solid rgba(242, 240, 235, 0.1);
+}
+.gm-stage2-media {
+  position: absolute;
+  inset: -8%; /* 視差(±6%)の「のりしろ」。縁を露出させない */
+  width: 116%;
+  height: 116%;
+  object-fit: cover;
+}
+.gm-stage2-scrim {
+  display: none;
+}
+.gm-stage2-caption {
+  margin: clamp(14px, 2.4vh, 20px) auto 0;
+  max-width: 46ch;
+  text-align: center;
+}
+.gm-stage2-name {
+  margin: 0;
+  font-family: var(--font-noto-serif-jp), serif;
+  font-size: clamp(20px, 2.8vw, 30px);
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  color: #f2f0eb;
+}
+.gm-stage2-spicy {
+  display: inline-block;
+  margin-left: 10px;
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  color: rgba(185, 178, 166, 0.9);
+  vertical-align: middle;
+  transform: translateY(-3px);
+}
+.gm-stage2-price {
+  margin: 8px 0 0;
+  font-family: var(--font-noto-serif-jp), serif;
+  font-size: 14px;
+  font-weight: 300;
+  letter-spacing: 0.06em;
+  color: rgba(242, 240, 235, 0.86);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.gm-stage2-desc {
+  margin: 10px 0 0;
+  font-size: 13px;
+  font-weight: 300;
+  line-height: 1.95;
+  color: rgba(242, 240, 235, 0.74);
+  text-wrap: pretty;
+  word-break: auto-phrase;
+}
+
+/* ---- デスクトップ: 全画面の紙芝居ステージ ---- */
+@media (min-width: 861px) and (prefers-reduced-motion: no-preference) {
+  .gm-stage2 {
+    width: 100%;
+    margin: 0 0 clamp(40px, 7vh, 90px);
+  }
+  /* pin される 1 画面。vh → dvh のカスケード(dvh 未対応でも崩れない) */
+  .gm-stage2-vp {
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+  }
+  /* 題字は画面中央の幕として据える(退場すると窓が開く) */
+  .gm-stage2-intro {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+  }
+  .gm-stage2-title {
+    font-size: clamp(34px, 5vw, 64px);
+  }
+  /* 窓 = 全画面。clip-path で開き、scale 1.08 → 等倍で寄りが引く */
+  .gm-stage2-frame {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    aspect-ratio: auto;
+    border: 0;
+    will-change: clip-path, transform, opacity;
+  }
+  .gm-stage2-media {
+    will-change: transform;
+  }
+  /* キャプションの可読を守る下部スクリム */
+  .gm-stage2-scrim {
+    display: block;
+    position: absolute;
+    inset: auto 0 0;
+    height: 58%;
+    z-index: 2;
+    pointer-events: none;
+    background: linear-gradient(
+      180deg,
+      rgba(22, 20, 18, 0) 0%,
+      rgba(22, 20, 18, 0.72) 78%,
+      rgba(22, 20, 18, 0.88) 100%
+    );
+  }
+  .gm-stage2-caption {
+    position: absolute;
+    left: 50%;
+    bottom: clamp(56px, 11vh, 128px);
+    transform: translateX(-50%);
+    z-index: 4;
+    width: min(720px, 84vw);
+    max-width: none;
+    margin: 0;
+  }
+  .gm-stage2-name {
+    font-size: clamp(26px, 3.4vw, 44px);
+  }
+  .gm-stage2-price {
+    font-size: 15px;
+  }
+  .gm-stage2-desc {
+    font-size: 14px;
+  }
+}

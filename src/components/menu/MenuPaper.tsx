@@ -4,6 +4,7 @@ import { useRef } from "react";
 import Link from "next/link";
 import type { MenuItem, MenuSection } from "@/lib/menu";
 import { gsap, useGSAP } from "@/lib/gsap-setup";
+import DishStage from "./DishStage";
 import { GUMON_MOTION } from "@/lib/motion-tokens";
 import { HOTPEPPER_URL } from "@/lib/site";
 
@@ -124,25 +125,6 @@ export default function MenuPaper({
           if (items.length)
             tl.from(items, { autoAlpha: 0, y: 18, duration: D, stagger: 0.09 }, 0.18);
         });
-        /* 看板の一皿（おすすめ料理）の写真リビール。
-           2026-07-30: 紙お品書き刷新(5c7322d)で DishShowcase が削除され、
-           看板の品も他の行と同じ fade-up になっていた。ユーザー要望により
-           「おすすめの料理のスクロールアニメーション」を復元する。
-           値は削除された DishShowcase の演出言語を踏襲(clip-path inset
-           24%/18% からの展開 + scale 1.08→等倍)。ただし当時の全画面 pin
-           ステージは紙一枚の意匠と衝突するため持ち込まず、紙面の中で
-           窓が開くリビールに翻訳している。
-           親の [data-anim-item] は fade-up 対象なので、写真自身の transform と
-           競合しない(親=位置/不透明度、子=clip-path/scale) */
-        root.querySelectorAll<HTMLElement>(".gm-paper-feature-img").forEach((img) => {
-          gsap.from(img, {
-            clipPath: "inset(24% 18% 24% 18%)",
-            scale: 1.08,
-            duration: 1.3,
-            ease: GUMON_MOTION.easeEmphasis,
-            scrollTrigger: { trigger: img, start: "top 86%", once: true },
-          });
-        });
         // 脚注・他ページ導線
         gsap.from(".gm-paper-foot > *", {
           autoAlpha: 0,
@@ -176,10 +158,8 @@ export default function MenuPaper({
         }
       });
 
-      /* 視差(DishShowcase の ±6% 縦パララックス)は復元しない:
-         現在の看板写真は 84〜128px のサムネイルで、±6% は約 8px の移動になり
-         枠から飛び出して隙間・重なりを生む。写真を大きく据える設計に戻すなら
-         そのときに併せて復活させる(判断を要するため今回は入れない) */
+      /* 看板の一皿の見せ場(全画面ステージ・写真の視差込み)は DishStage が担う。
+         紙面側のサムネイルには視差を掛けない(84〜138px では枠から飛び出す) */
       return () => mm.revert();
     },
     { scope: rootRef },
@@ -189,6 +169,13 @@ export default function MenuPaper({
     <main ref={rootRef} className="gm-paper-page">
       <p className="gm-paper-eyebrow">GUMON — CHINESE CUISINE</p>
       <h1 className="gm-paper-h1">{category.titleJp}</h1>
+
+      {/* 看板の一皿の見せ場（実写がある品のみ＝現状は夜の麻婆豆腐）。
+          デスクトップでは全画面の紙芝居ステージ、モバイル/RM では
+          静的な大判カードとして同じ情報が読める（DishStage 内で分岐） */}
+      {featured.map((item) => (
+        <DishStage key={item.name} item={item} />
+      ))}
 
       {/* 紙のお品書き（二重罫線の枠） */}
       <div className="gm-paper">
@@ -211,34 +198,8 @@ export default function MenuPaper({
               <p className="gm-paper-sub">{category.titleEn}</p>
               {category.lead && <p className="gm-paper-lead">{category.lead}</p>}
 
-              {/* 看板の一皿（実写＋signature。現状は夜の麻婆豆腐） */}
-              {featured.map((item) => (
-                <article key={item.name} className="gm-paper-feature" data-anim-item>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={item.img}
-                    alt={item.name}
-                    className="gm-paper-feature-img"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                  <div className="gm-paper-feature-body">
-                    <div className="gm-paper-line">
-                      <span className="gm-paper-name gm-paper-name-lg">
-                        {item.name}
-                        <Badges item={item} />
-                      </span>
-                      <span className="gm-paper-dots" aria-hidden="true" />
-                      <span className="gm-paper-price">{item.price}</span>
-                    </div>
-                    {item.desc && (
-                      <p className="gm-paper-desc" style={{ whiteSpace: "pre-line" }}>
-                        {item.desc}
-                      </p>
-                    )}
-                  </div>
-                </article>
-              ))}
+              {/* 看板の一皿は上の DishStage で見せているため一覧では重複させない
+                  （Restraint。品名・価格・説明はステージ側に全て出る） */}
 
               {/* 品書き本体 */}
               {isCourse ? (
