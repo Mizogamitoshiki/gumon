@@ -73,9 +73,11 @@ export default function MenuPaper({
   const rootRef = useRef<HTMLElement>(null);
   const isCourse = category.titleEn === "COURSE";
   const isDrink = category.titleEn === "DRINK";
-  // 看板カード（実写＋signature がある品。現状は夜の麻婆豆腐のみ）を先頭に
+  // 看板カード（実写＋signature がある品）を先頭の見せ場（DishStage）に
   const featured = category.items.filter((i) => i.signature && i.img);
-  const rest = category.items.filter((i) => !(i.signature && i.img));
+  // 一覧は全品を載せる。見せ場に出した品も品書きから抜かない
+  // （お品書きは価格表でもあり、品と値段が一覧で揃っていることを優先する）
+  const rows = category.items;
   const others = BOARD_LINKS.filter((l) => l.titleEn !== category.titleEn);
 
   useGSAP(
@@ -198,13 +200,13 @@ export default function MenuPaper({
               <p className="gm-paper-sub">{category.titleEn}</p>
               {category.lead && <p className="gm-paper-lead">{category.lead}</p>}
 
-              {/* 看板の一皿は上の DishStage で見せているため一覧では重複させない
-                  （Restraint。品名・価格・説明はステージ側に全て出る） */}
+              {/* 看板の一皿は上の DishStage で大きく見せたうえで、
+                  この一覧にも同じ行を載せる（品と値段を一枚で見渡せるように） */}
 
               {/* 品書き本体 */}
               {isCourse ? (
                 <div className="gm-paper-cards">
-                  {rest.map((item) => (
+                  {rows.map((item) => (
                     <article key={item.name} className="gm-paper-card" data-anim-item>
                       <p className="gm-paper-card-name">{item.name}</p>
                       <p className="gm-paper-card-price">{item.price}</p>
@@ -214,7 +216,7 @@ export default function MenuPaper({
                 </div>
               ) : (
                 <div className={`gm-paper-rows${isDrink ? " gm-paper-rows-2col" : ""}`}>
-                  {rest.map((item) => (
+                  {rows.map((item) => (
                     <Row key={item.name} item={item} />
                   ))}
                 </div>
