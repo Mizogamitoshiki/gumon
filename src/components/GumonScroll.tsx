@@ -167,9 +167,6 @@ export default function GumonScroll() {
       // (the <video> never gets a src in this branch, so nothing downloads)
       const filmEl = q("[data-film]");
       if (filmEl) filmEl.style.display = "none";
-      // hero のアンビエント映像も同様に出さない(src 未付与のまま)
-      const ambientEl = q("[data-hero-ambient]");
-      if (ambientEl) ambientEl.style.display = "none";
       // match the animated scrim level so static text contrast holds; fixed
       // for the same reason as the backdrop above
       const darkenEl = q("[data-darken]");
@@ -215,10 +212,6 @@ export default function GumonScroll() {
 
     /* ---- element refs ---- */
     const foodhero = q("[data-foodhero]");
-    const heroAmbient = q("[data-hero-ambient]");
-    const heroAmbientVideo = root.querySelector<HTMLVideoElement>(
-      "[data-hero-ambient-video]"
-    );
     const film = q("[data-film]");
     const barTop = q("[data-bar-top]");
     const barBot = q("[data-bar-bot]");
@@ -263,15 +256,11 @@ export default function GumonScroll() {
     // carved 愚問 sits left/right of the centered title; the dark center gap
     // frames the hero text rather than duplicating it.
     gsap.set(foodhero, { opacity: 1, scale: 1.12, yPercent: -4, transformOrigin: "50% 50%" });
-    // cuisine film: starts masked-in and slightly zoomed; the reveal opens the
-    // clip-path and the zoom relaxes monotonically (1.12 -> 1.01, no reversals)
-    gsap.set(film, {
-      opacity: 0,
-      scale: 1.12,
-      yPercent: -2,
-      clipPath: "inset(12% 9% 12% 9%)",
-      transformOrigin: "50% 50%",
-    });
+    // cinematic master film: TOP 全編の背景。スクロール位置=再生ヘッド。
+    // 装填(armMedia)まで透明で、下の壁アートが初期描画を担う。装填時に
+    // 一度だけフェードインし、以降タイムラインは opacity を触らない
+    // (transform も動かさない — カメラワークは映像自身が持っている)
+    gsap.set(film, { opacity: 0 });
     gsap.set(barTop, { scaleY: 0, transformOrigin: "center top" });
     gsap.set(barBot, { scaleY: 0, transformOrigin: "center bottom" });
     gsap.set(darken, { opacity: 0.5 });
@@ -322,7 +311,7 @@ export default function GumonScroll() {
       heroExit: 0.3,
       question: 0.85, // S2 問いの帳 — 一行の立ち上がり(記憶層2)
       questionGhost: 2.4, // S2 残像化。T.question+0.9(立ち上がり完了)からここまでが hold-quiet(≈0.65unit)
-      ambientOut: 3.1, // アンビエント退場tweenの完了点(= questionGhost + 0.7)。onScroll の pause 判定もここを見る
+      ambientOut: 3.1, // (歴史的値: 旧アンビエント退場点。相対間隔の基準として保持)
       about: 2.65, // ここから下は S2 挿入で一律 +1.5(相対間隔は G2 合格時と同一)
       aboutOut: 3.8,
       dim: 3.9, // 幕間の減光(フィルムを迎える暗転)
@@ -363,10 +352,6 @@ export default function GumonScroll() {
         { yPercent: -110, duration: 0.7, ease: "power2.in", stagger: 0.05 },
         T.heroExit
       );
-      // hero のアンビエント映像(台所の気配)は S2 の残像化まで残す —
-      // 「台所の気配の中で問いが立つ」(experience-plan 5章 S1→S2 受け渡し)。
-      // 退場完了 = T.questionGhost + 0.7 = T.ambientOut(onScroll の pause 判定と一致)
-      tl.to(heroAmbient, { opacity: 0, duration: 0.7, ease: "power2.in" }, T.questionGhost);
     };
 
     // S2 問いの帳(記憶層2) — 一行だけが立ち、hold-quiet で読む時間を置いて
@@ -392,29 +377,15 @@ export default function GumonScroll() {
       tl.to(foodhero, { scale: 1.04, yPercent: 4, ease: "none", duration: 15.5 }, 0);
     };
 
-    // S4 火の返事 — scroll-scrubbed CUISINE FILM(シグネチャームーブ・単独章)。
-    // scroll が再生ヘッド(filmScrub.p -> currentTime)、clip-path で「台所の窓が
-    // 開く」、ズームは 1.12 -> 1.01 へ単調、レターボックスが閉じる。章句(三つの
-    // 問い)は T.film/T.rest 相対で積み上がり、章の終わりに揃って退場して S5 へ。
-    // すべて opacity/transform/clip-path のみ
+    // シネマティック・マスターフィルム — TOP 全編のスクロールスクラブ。
+    // scroll が再生ヘッド(filmScrub.p -> currentTime)。10 ショットの料理の旅が
+    // hero(海老と酒瓶)から reserve(琥珀の酒瓶)までページ全体に同期する。
+    // S4「火の返事」はレターボックスと章句(三つの問い)で章として残る
     const buildFilmScene = () => {
-      tl.to(film, { opacity: 1, duration: 0.9, ease: "power1.inOut" }, T.film);
-      tl.to(film, { clipPath: "inset(0% 0% 0% 0%)", duration: 1.4 }, T.film);
-      tl.to(film, { scale: 1.05, yPercent: 0, duration: 1.4 }, T.film);
-      tl.to(foodhero, { opacity: 0, duration: 1.0, ease: "power1.in" }, T.film + 0.1);
-      // slow linear drift for the rest of the take (still monotonic zoom-out).
-      // ends ≈T.menuRest+1.0 — フィルムが壁へ溶け終わる点(buildMenuRestGap)と一致
-      tl.to(
-        film,
-        { scale: 1.01, yPercent: 1.5, ease: "none", duration: 7.6 },
-        T.film + 1.4
-      );
+      // スクロール位置 = 再生ヘッド: タイムライン全長にわたる単一の線形トゥイーン。
+      // 終端は T.drift(≒全長) — 残りは映像末尾のホールドフレームが reserve を支える
+      tl.to(filmScrub, { p: 1, ease: "none", duration: T.drift }, 0);
       tl.to([barTop, barBot], { scaleY: 1, duration: 0.9, stagger: 0.06 }, T.film + 0.1);
-      // scroll position IS the playhead. The take spends its main travel
-      // (p 0 -> .85) inside S4, then crawls to 1 behind S5/S6 — the dish is
-      // handed over mid-change, never shown "finished" (完成皿は見せきらない)
-      tl.to(filmScrub, { p: 0.85, ease: "none", duration: T.rest - T.film }, T.film);
-      tl.to(filmScrub, { p: 1, ease: "none", duration: T.breath - T.rest }, T.rest);
 
       // 章句 —「火に問う」は麻婆豆腐の寄り(v≈2.8s)に重なる配時(qa-baseline.md)
       const wordIn = [T.film + 0.35, T.film + 1.05, T.film + 1.75];
@@ -461,14 +432,10 @@ export default function GumonScroll() {
       tl.to(restScene, { autoAlpha: 0, duration: 0.4 }, T.food - 0.25);
     };
 
-    // S6→S7 hold-quiet — 品書きが引かれた直後の無情報の間。間の「内容」は
-    // フィルム→壁の受け渡しそのもの — バーが開き、静止した一皿の映像が
-    // 呼吸する壁に溶けて、S7 は静かな壁の上に置かれる
-    // (experience-plan 5章 B6「溶ける(間をおいて)」・7章 S7=静けさ区間)
+    // S6→S7 hold-quiet — 品書きが引かれた直後の無情報の間。バーだけが開き、
+    // フィルム(全編背景)は続く — 御膳の引きのショットが静かに流れている
     const buildMenuRestGap = () => {
       tl.to([barTop, barBot], { scaleY: 0, duration: 0.6, ease: "power2.in" }, T.menuRest);
-      tl.to(film, { opacity: 0, duration: 0.9, ease: "power1.in" }, T.menuRest + 0.1);
-      tl.to(foodhero, { opacity: 1, duration: 0.9, ease: "power1.inOut" }, T.menuRest + 0.05);
     };
 
     // S3 台所の姿勢(about) + 減光の呼吸: フィルム章(S4)は明るく(0.34)、
@@ -618,7 +585,6 @@ export default function GumonScroll() {
       const vbTargets = [
         q("[data-foodhero] img"),
         q("[data-film] video"),
-        q("[data-hero-ambient] video"),
       ].filter((el): el is HTMLElement => !!el);
       const vbSetters = vbTargets.map((el) =>
         gsap.quickTo(el, "y", { duration: 0.7, ease: "power3.out" }),
@@ -658,13 +624,13 @@ export default function GumonScroll() {
     };
     if (video) video.addEventListener("loadedmetadata", onFilmMeta);
 
-    /* ---- media arming(Stage 12 LCP対策): 動画2本(同一URL・キャッシュ共有)と
-       film poster の装填は「最初のユーザー操作」まで遅らせる。
-       - Lighthouse で LCP 要素が不可視の film poster(339KB)になっており、
-         初期クリティカルパスに mp4 1.1MB + poster が乗っていた(qa-report)
-       - 実ユーザーの操作(pointermove/touch/スクロール)は数百ms以内に起きる
-         ため、アンビエントの立ち上がり体感はマウント時装填とほぼ同等
-       - フィルム章は全行程の約22%地点なので装填猶予は十分
+    /* ---- media arming(Stage 12 LCP対策): マスターフィルムと poster の装填は
+       「最初のユーザー操作」まで遅らせる。
+       - マウント時装填に戻すと不可視 poster が LCP 要素になり劣化する(qa-report)
+       - 実ユーザーの操作(pointermove/touch/スクロール)は数百ms以内に起きるため
+         壁アート→フィルムの受け渡しはほぼ即時に見える
+       - ファイルは +faststart / -g 8 なので先頭から漸進ダウンロードで
+         スクラブに追従できる(全編待ちしない)
        - reduced-motion は上の分岐で return 済み(元々非ダウンロード) ---- */
     let mediaArmed = false;
     const armMedia = () => {
@@ -672,22 +638,17 @@ export default function GumonScroll() {
       mediaArmed = true;
       removeArmListeners();
       if (video) {
-        video.poster = "/dishes-poster.webp";
-        video.src = "/cuisine-cinematic-opt.mp4";
+        // モバイルは 9:16 の軽量版(解像度・容量を落とした縦構図)を装填
+        video.poster = lite
+          ? "/gumon-cinematic-poster-mobile.webp"
+          : "/gumon-cinematic-poster.webp";
+        video.src = lite
+          ? "/gumon-cinematic-mobile.mp4"
+          : "/gumon-cinematic-master.mp4";
         video.load();
         if (video.readyState >= 1) onFilmMeta();
-      }
-      // hero アンビエント: 同一ファイルの通常ループ再生(キャッシュ共有)。
-      // 自動再生が拒否されても致命ではない(静かな壁のまま)
-      if (heroAmbientVideo) {
-        heroAmbientVideo.src = "/cuisine-cinematic-opt.mp4";
-        heroAmbientVideo.play().catch(() => {});
-        gsap.to(heroAmbient, {
-          opacity: 0.16,
-          duration: 2.2,
-          ease: "power2.out",
-          delay: 0.5,
-        });
+        // 壁アート → フィルムへの一度きりの受け渡し(以降 opacity は不変)
+        gsap.to(film, { opacity: 1, duration: 1.2, ease: "power2.out", delay: 0.1 });
       }
     };
     const ARM_EVENTS = ["pointermove", "pointerdown", "touchstart", "keydown"];
@@ -753,25 +714,9 @@ export default function GumonScroll() {
     });
 
     /* ---- progress bar + header hide/show ---- */
-    let ambientPaused = false;
     function onScroll() {
       const vh = window.innerHeight || 1;
       const y = window.scrollY || lenis.scroll || 0;
-      // hero を通過したらアンビエント映像を止める(電池・デコード節約)。戻れば再開
-      if (heroAmbientVideo) {
-        // S2(問いの帳)までアンビエントが残るため、pause 判定は固定スクロール
-        // 距離ではなくマスタータイムライン時間で行う(PC/モバイルの vh/unit 差に
-        // 依存せず、常に同じ Scene 位置 = アンビエント退場完了点 T.ambientOut に
-        // 連動)。戻れば再開する挙動は従来どおり。リスナー追加なし(既存 onScroll 内)
-        const past = tl.time() > T.ambientOut;
-        if (past && !ambientPaused) {
-          heroAmbientVideo.pause();
-          ambientPaused = true;
-        } else if (!past && ambientPaused) {
-          heroAmbientVideo.play().catch(() => {});
-          ambientPaused = false;
-        }
-      }
       const prog = progRef.current;
       if (prog) {
         const max = document.documentElement.scrollHeight - vh || 1;
@@ -848,7 +793,7 @@ export default function GumonScroll() {
           .gm-scroll-root > div{position:static !important;height:auto !important;min-height:0 !important;overflow:visible !important}
           [data-velocity]{position:static !important;inset:auto !important}
           [data-scene]{position:relative !important;inset:auto !important;opacity:1 !important;visibility:visible !important;min-height:0 !important;padding-top:48px !important;padding-bottom:48px !important}
-          [data-foodhero],[data-film],[data-dishes],[data-hero-ambient],[data-filmwords],[data-bar-top],[data-bar-bot],[data-cue],[data-darken]{display:none !important}
+          [data-foodhero],[data-film],[data-dishes],[data-filmwords],[data-bar-top],[data-bar-bot],[data-cue],[data-darken]{display:none !important}
           .mask > span{transform:none !important}
         `}</style>
       </noscript>
@@ -1212,39 +1157,6 @@ export default function GumonScroll() {
               </picture>
             </div>
 
-            {/* hero ambient film — ファーストビューに湯気と炎の気配を敷く。
-                低不透明度のループ再生(scrub とは独立)。src は motion 分岐での
-                み付与(reduced-motion では一切ダウンロードさせない)。ファイルは
-                スクラブ用と同一 URL のためキャッシュ 1 回で済む */}
-            <div
-              data-hero-ambient
-              aria-hidden="true"
-              style={{
-                position: "absolute",
-                inset: "-10%",
-                zIndex: 1,
-                opacity: 0,
-                pointerEvents: "none",
-                willChange: "opacity",
-              }}
-            >
-              <video
-                data-hero-ambient-video
-                muted
-                loop
-                playsInline
-                preload="none"
-                style={{
-                  position: "absolute",
-                  inset: 0,
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                  filter: "saturate(1.05) brightness(0.9)",
-                }}
-              />
-            </div>
-
             {/* dishes spread — REDUCED-MOTION-ONLY static stand-in for the
                 cuisine film (the scrubbed video took over the 料理/飲み物
                 crossfade). No src in JSX: the reduce branch assigns it from
@@ -1277,9 +1189,9 @@ export default function GumonScroll() {
                 }}
               />
             </div>
-            {/* cuisine film — scroll-scrubbed video (currentTime follows the
-                scroll playhead). Revealed by clip-path mask + monotonic
-                zoom-out across the 料理 beat; hidden for reduced motion
+            {/* cinematic master film — TOP 全編を貫くスクロールスクラブ動画
+                (currentTime がスクロール再生ヘッドに追従)。10ショットの料理の
+                旅が hero〜reserve に同期する。hidden for reduced motion
                 (dishes.png serves as the static stand-in there). src/poster
                 are assigned in the effect's motion branch only, so the SSR
                 HTML triggers no download for reduced-motion visitors */}
