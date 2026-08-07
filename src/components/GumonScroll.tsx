@@ -864,6 +864,10 @@ export default function GumonScroll() {
             summaryClassName="gm-nav-link gm-nav-summary"
             summaryStyle={NAV_LINK_STYLE}
           />
+          {/* 飲み物は料理の隣に置く(料理→一杯の流れ) */}
+          <Link href="/menu/drink" className="gm-nav-link" style={NAV_LINK_STYLE}>
+            飲み物
+          </Link>
           {IS_RECRUITING && (
             <Link href="/recruit" className="gm-nav-link" style={NAV_LINK_STYLE}>
               採用
@@ -930,9 +934,6 @@ export default function GumonScroll() {
             gap: "clamp(22px,1.8vw,32px)",
           }}
         >
-          <Link href="/menu/drink" className="gm-nav-link" style={NAV_LINK_STYLE}>
-            飲み物
-          </Link>
           <Link href="/access" className="gm-nav-link" style={NAV_LINK_STYLE}>
             アクセス
           </Link>
