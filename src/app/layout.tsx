@@ -7,7 +7,9 @@ import "./globals.css";
 
 // オープニング演出の出し分けを描画前に確定する(FOUC防止)。
 // 繰り返し訪問(同一タブ)と reduced-motion では即座に隠す。
-const openingInit = `try{var d=document.documentElement;if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches){d.setAttribute('data-gm-reduced','1');}else if(sessionStorage.getItem('gm-opened')){d.setAttribute('data-gm-opened','1');}else{sessionStorage.setItem('gm-opened','1');}}catch(e){}`;
+// TOP(パス "/")では石壁オープニングを出さない — 動画イントロ(GumonIntro)が
+// 初回演出を担い、セッションフラグ 'gm-opened' もイントロ側が管理する
+const openingInit = `try{var d=document.documentElement;if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches){d.setAttribute('data-gm-reduced','1');}else if(sessionStorage.getItem('gm-opened')||location.pathname==='/'){d.setAttribute('data-gm-opened','1');}else{sessionStorage.setItem('gm-opened','1');}}catch(e){}`;
 
 export const viewport: Viewport = {
   width: "device-width",

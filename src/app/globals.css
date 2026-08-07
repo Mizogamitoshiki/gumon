@@ -4033,3 +4033,51 @@ html[data-gm-reduced] .gm-opening {
     font-size: 14px;
   }
 }
+
+/* ============================================================
+   TOP 初期表示イントロ(GumonIntro) — 料理フィルム → ロゴ「愚問」
+   z-index はページ遷移ワイプ(9800)より上・石壁オープニング(9900)より下。
+   石壁は TOP では openingInit(layout)が data-gm-opened で抑止する
+   ============================================================ */
+.gm-intro {
+  position: fixed;
+  inset: 0;
+  z-index: 9890;
+  background: #1c1b19;
+}
+.gm-intro-media {
+  position: absolute;
+  inset: 0;
+}
+/* ロゴ合成面。文字は必ず実テキスト(映像内で文字を生成しない) */
+.gm-intro-logo {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  column-gap: 0.16em; /* 指定 letter-spacing 0.16em 相当(2文字間) */
+  opacity: 0; /* JS(GSAP)が点灯する */
+  font-family: var(--font-noto-serif-jp), serif;
+  font-weight: 500;
+  font-size: clamp(72px, 9vw, 152px);
+  line-height: 1;
+  color: #f2f0eb;
+  pointer-events: none;
+}
+@media (max-width: 860px) {
+  .gm-intro-logo {
+    font-size: clamp(56px, 18vw, 92px);
+  }
+}
+/* 行マスク: overflow hidden の窓から下→上へせり上がる */
+.gm-intro-mask {
+  display: inline-block;
+  overflow: hidden;
+  padding: 0.1em 0.02em;
+}
+.gm-intro-mask > span {
+  display: inline-block;
+  opacity: 0;
+  will-change: transform, opacity, filter;
+}

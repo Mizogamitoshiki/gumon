@@ -1,5 +1,11 @@
+import GumonIntro from "@/components/GumonIntro";
 import GumonScroll from "@/components/GumonScroll";
 
 export default function Home() {
-  return <GumonScroll />;
+  return (
+    <>
+      <GumonIntro />
+      <GumonScroll />
+    </>
+  );
 }
