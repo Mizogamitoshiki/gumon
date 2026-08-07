@@ -1,6 +1,7 @@
 import type { MenuSection } from "@/lib/menu";
 import MenuPaper from "./MenuPaper";
 import BreadcrumbJsonLd from "@/components/BreadcrumbJsonLd";
+import MenuJsonLd from "@/components/MenuJsonLd";
 
 const MENU_PATHS: Record<string, string> = {
   LUNCH: "/menu/lunch",
@@ -23,6 +24,10 @@ export default function MenuDetailPage({ category }: { category: MenuSection }) 
             path: MENU_PATHS[category.titleEn] ?? "/menu/dinner",
           },
         ]}
+      />
+      <MenuJsonLd
+        category={category}
+        path={MENU_PATHS[category.titleEn] ?? "/menu/dinner"}
       />
       <MenuPaper category={category} consult={category.titleEn === "COURSE"} />
     </>

@@ -1,10 +1,12 @@
 // サイト共通の実在情報(SEO・構造化データ・sitemap が参照する単一の出典)。
 // 出典: gumon.owst.jp(公式・2026-07-03取得)
 
-// 本番ドメイン確定後は Vercel 等の環境変数 NEXT_PUBLIC_SITE_URL を設定すること。
+// カスタムドメイン確定後は Amplify の環境変数 NEXT_PUBLIC_SITE_URL を設定すること。
 // 未設定の間、canonical / OG / sitemap の絶対 URL はこのフォールバックになる。
+// (旧フォールバック gumon-hp.vercel.app は本番と別ドメインを正規URLとして
+//  宣言してしまいインデックスを阻害していた — 2026-08-07 修正)
 export const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://gumon-hp.vercel.app";
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://main.d3ufd59bktw31h.amplifyapp.com";
 
 export const SITE_NAME = "中国料理 愚問（GUMON）";
 export const TEL_DISPLAY = "072-430-6038";
@@ -40,14 +42,29 @@ export const RESTAURANT_JSONLD = {
   "@context": "https://schema.org",
   "@type": "Restaurant",
   name: SITE_NAME,
-  alternateName: "愚問",
+  alternateName: ["愚問", "GUMON", "ぐもん"],
+  description:
+    "問いを重ね、一皿に答える。大阪・泉州エリア(貝塚市)の中国料理店。看板の麻婆豆腐をはじめ、ランチ・ディナー・飲み放題付き宴会コースを提供。南海本線・水間鉄道 貝塚駅 東出口より徒歩約10分。",
   url: SITE_URL,
-  sameAs: [INSTAGRAM_URL],
+  sameAs: [INSTAGRAM_URL, HOTPEPPER_URL],
   image: `${SITE_URL}/dishes.webp`,
   telephone: "+81-72-430-6038",
-  servesCuisine: "中華料理",
+  servesCuisine: ["中華料理", "四川料理", "点心"],
   priceRange: "¥1,000-¥4,000",
   acceptsReservations: "True",
+  // 商圏の目安(泉州エリア) — ローカル検索・AI回答の地域文脈用
+  areaServed: [
+    "貝塚市",
+    "岸和田市",
+    "泉佐野市",
+    "熊取町",
+    "泉南市",
+    "和泉市",
+    "泉大津市",
+    "忠岡町",
+  ],
+  hasMap:
+    "https://maps.google.com/maps?q=%E5%A4%A7%E9%98%AA%E5%BA%9C%E8%B2%9D%E5%A1%9A%E5%B8%82%E5%8A%A0%E7%A5%9E1-4-26",
   address: {
     "@type": "PostalAddress",
     addressCountry: ADDRESS.postalCountry,
