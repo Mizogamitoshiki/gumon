@@ -10,7 +10,8 @@ export type MenuItem = {
   name: string;
   price: string;
   desc?: string;
-  signature?: boolean; // 看板の品
+  // CMS のスキーマ側にある印。UI ではバッジ表示していない(文言を出さない方針)
+  signature?: boolean;
   recommended?: boolean; // おすすめ(公式サイト掲載品=店が推す品。人気No.1等の実績主張はしない)
   spicy?: 1 | 2 | 3; // 辛さ(料理の性質としての事実表示。1=控えめ 2=中辛 3=辛口)
   img?: string;

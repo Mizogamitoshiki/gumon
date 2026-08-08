@@ -44,7 +44,7 @@ export const RESTAURANT_JSONLD = {
   name: SITE_NAME,
   alternateName: ["愚問", "GUMON", "ぐもん"],
   description:
-    "問いを重ね、一皿に答える。大阪・泉州エリア(貝塚市)の中国料理店。看板の麻婆豆腐をはじめ、ランチ・ディナー・飲み放題付き宴会コースを提供。南海本線・水間鉄道 貝塚駅 東出口より徒歩約10分。",
+    "問いを重ね、一皿に答える。大阪・泉州エリア(貝塚市)の中国料理店。麻婆豆腐や酢豚、点心をはじめ、ランチ・ディナー・飲み放題付き宴会コースを提供。南海本線・水間鉄道 貝塚駅 東出口より徒歩約10分。",
   url: SITE_URL,
   sameAs: [INSTAGRAM_URL, HOTPEPPER_URL],
   image: `${SITE_URL}/dishes.webp`,

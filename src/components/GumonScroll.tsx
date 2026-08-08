@@ -1635,12 +1635,7 @@ export default function GumonScroll() {
                               style={{ backgroundImage: `url(${d.img})` }}
                             />
                           )}
-                          <span className="gm-menu-name">
-                            {d.name}
-                            {d.signature && (
-                              <span className="gm-menu-sig">看板</span>
-                            )}
-                          </span>
+                          <span className="gm-menu-name">{d.name}</span>
                           <span className="gm-menu-dots" aria-hidden="true" />
                           <span className="gm-menu-price">{d.price}</span>
                         </div>

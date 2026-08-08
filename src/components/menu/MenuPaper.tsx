@@ -4,7 +4,7 @@ import { useRef } from "react";
 import Link from "next/link";
 import type { MenuItem, MenuSection } from "@/lib/menu";
 import { gsap, useGSAP } from "@/lib/gsap-setup";
-import DishStage from "./DishStage";
+import TableStage from "./TableStage";
 import { GUMON_MOTION } from "@/lib/motion-tokens";
 import { HOTPEPPER_URL } from "@/lib/site";
 
@@ -14,7 +14,7 @@ import { HOTPEPPER_URL } from "@/lib/site";
 // 記載内容は CMS 由来（category）のまま。1 ページ＝1 カテゴリ。
 //
 // レイアウトはカテゴリで 3 通り:
-//   - list : 昼/夜（品名 … 点線 … 価格 ＋ 説明）。夜は img+signature を看板カードで先頭に
+//   - list : 昼/夜（品名 … 点線 … 価格 ＋ 説明）。夜は食卓の見せ場を先頭に置く
 //   - card : コース（中央寄せの枠カード）
 //   - drink: 飲み物（2 段組。それ以外は list と同じ行）
 //
@@ -30,7 +30,6 @@ const BOARD_LINKS = [
 function Badges({ item }: { item: MenuItem }) {
   return (
     <>
-      {item.signature && <span className="gm-paper-tag">看板の品</span>}
       {item.recommended && <span className="gm-paper-tag">おすすめ</span>}
       {item.spicy && (
         <span className="gm-paper-spicy" aria-label={`辛さレベル${item.spicy}`}>
@@ -73,10 +72,7 @@ export default function MenuPaper({
   const rootRef = useRef<HTMLElement>(null);
   const isCourse = category.titleEn === "COURSE";
   const isDrink = category.titleEn === "DRINK";
-  // 看板カード（実写＋signature がある品）を先頭の見せ場（DishStage）に
-  const featured = category.items.filter((i) => i.signature && i.img);
-  // 一覧は全品を載せる。見せ場に出した品も品書きから抜かない
-  // （お品書きは価格表でもあり、品と値段が一覧で揃っていることを優先する）
+  const isDinner = category.titleEn === "DINNER";
   const rows = category.items;
   const others = BOARD_LINKS.filter((l) => l.titleEn !== category.titleEn);
 
@@ -160,7 +156,7 @@ export default function MenuPaper({
         }
       });
 
-      /* 看板の一皿の見せ場(全画面ステージ・写真の視差込み)は DishStage が担う。
+      /* 食卓の見せ場(全画面ステージ・写真の視差込み)は TableStage が担う。
          紙面側のサムネイルには視差を掛けない(84〜138px では枠から飛び出す) */
       return () => mm.revert();
     },
@@ -172,12 +168,16 @@ export default function MenuPaper({
       <p className="gm-paper-eyebrow">GUMON — CHINESE CUISINE</p>
       <h1 className="gm-paper-h1">{category.titleJp}</h1>
 
-      {/* 看板の一皿の見せ場（実写がある品のみ＝現状は夜の麻婆豆腐）。
-          デスクトップでは全画面の紙芝居ステージ、モバイル/RM では
-          静的な大判カードとして同じ情報が読める（DishStage 内で分岐） */}
-      {featured.map((item) => (
-        <DishStage key={item.name} item={item} />
-      ))}
+      {/* 夜だけの見せ場（一卓を写した実写）。デスクトップでは全画面の紙芝居
+          ステージ、モバイル/RM では静的な大判写真になる（TableStage 内で分岐） */}
+      {isDinner && (
+        <TableStage
+          src="/dinner-table.webp"
+          alt="麻婆豆腐を中心に、点心や炒飯などを並べた愚問の夜の食卓"
+          eyebrow="DINNER"
+          title="夜の食卓"
+        />
+      )}
 
       {/* 紙のお品書き（二重罫線の枠） */}
       <div className="gm-paper">
@@ -199,9 +199,6 @@ export default function MenuPaper({
               </h2>
               <p className="gm-paper-sub">{category.titleEn}</p>
               {category.lead && <p className="gm-paper-lead">{category.lead}</p>}
-
-              {/* 看板の一皿は上の DishStage で大きく見せたうえで、
-                  この一覧にも同じ行を載せる（品と値段を一枚で見渡せるように） */}
 
               {/* 品書き本体 */}
               {isCourse ? (
