@@ -122,6 +122,49 @@ export const DRINK_GROUPS: DrinkGroup[] = [
   },
 ];
 
+// 飲み物ページの「おすすめ」写真(店内で撮影した実写)。
+// 銘柄名は写真に写っているものだけを書き、価格や在庫は書かない
+// (棚の中身は日々変わるため。価格の出典はあくまで上の品書き=CMS)。
+export type DrinkPhoto = {
+  src: string;
+  alt: string; // 読み上げ用。何が写っているかを述べる
+  title: string;
+  note: string;
+};
+
+export const DRINK_PHOTOS: DrinkPhoto[] = [
+  {
+    src: "/drink-gin.webp",
+    alt: "カウンターに並んだ11本のクラフトジン。国産の瀬戸内・桜尾・KOMASA から、ヘンドリックス、ノルデス、マルフィまで",
+    title: "クラフトジン",
+    note: "カウンター後ろから、お好みの一本を。",
+  },
+  {
+    src: "/drink-tsingtao.webp",
+    alt: "冷えた青島ビールの瓶と、その後ろに置かれた青島ビールのケース",
+    title: "青島ビール",
+    note: "中国料理には、やはりこの一本。",
+  },
+  {
+    src: "/drink-shochu.webp",
+    alt: "若潮酒造(鹿児島・志布志)の焼酎3本。樽熟成焼酎「歩く一日」、Cool Mint Green、WARU WARU ÷ IMO PLAY!",
+    title: "焼酎",
+    note: "定番のほかに、本日のオススメを一本。",
+  },
+  {
+    src: "/drink-liqueur.webp",
+    alt: "イラストのラベルが並ぶ和リキュール3本。中央は MUGY、その両脇に赤と緑のラベルの一本ずつ",
+    title: "和のリキュール",
+    note: "ソーダやお茶で割って、軽やかに。",
+  },
+  {
+    src: "/drink-shelf.webp",
+    alt: "店内の棚。上段にジンが並び、下段に桂花陳酒・ウイスキー・梅酒などが置かれている",
+    title: "棚の一角",
+    note: "ジンから梅酒まで、少しずつ。",
+  },
+];
+
 // 章の定義順に items を束ねる。CMS に品目が 1 つも無い章は落とす(空の見出しを出さない)。
 // どの章にも属さない品目(group 未設定)は最後に「その他」としてまとめ、取りこぼしを防ぐ。
 export const getDrinkGroups = (): { group: DrinkGroup; items: MenuItem[] }[] => {

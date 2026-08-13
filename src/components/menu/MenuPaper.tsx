@@ -6,6 +6,7 @@ import type { MenuItem, MenuSection } from "@/lib/menu";
 import { getDrinkGroups } from "@/lib/menu";
 import { gsap, useGSAP } from "@/lib/gsap-setup";
 import TableStage from "./TableStage";
+import DrinkGallery from "./DrinkGallery";
 import { GUMON_MOTION } from "@/lib/motion-tokens";
 import { HOTPEPPER_URL } from "@/lib/site";
 
@@ -279,6 +280,9 @@ export default function MenuPaper({
           </div>
         </div>
       </div>
+
+      {/* 飲み物だけ: 棚の実写を「おすすめ」として紙面の下に添える */}
+      {isDrink && <DrinkGallery />}
 
       {/* 他カテゴリへの導線 */}
       <nav className="gm-paper-others" aria-label="ほかのお品書き">
