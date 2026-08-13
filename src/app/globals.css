@@ -3682,6 +3682,75 @@ html[data-gm-reduced] .gm-opening {
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: clamp(16px, 2.6vh, 24px) clamp(24px, 4vw, 44px);
 }
+
+/* 飲み物の章立て（ビール／焼酎／…）。
+   段組みは紙のお品書きと同じ2段。章の途中で段をまたがせない（break-inside） */
+.gm-paper-groups {
+  columns: 260px 2;
+  column-gap: clamp(28px, 4.5vw, 52px);
+}
+.gm-paper-group {
+  break-inside: avoid;
+  margin: 0 0 clamp(26px, 4vh, 40px);
+}
+.gm-paper-group:last-child {
+  margin-bottom: 0;
+}
+.gm-paper-group-head {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin: 0 0 clamp(12px, 1.8vh, 16px);
+}
+.gm-paper-group-jp {
+  font-family: var(--font-noto-serif-jp), "Noto Serif JP", serif;
+  font-size: clamp(15px, 1.7vw, 17px);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-indent: 0.16em;
+  white-space: nowrap;
+}
+.gm-paper-group-rule {
+  flex: 1;
+  min-width: 16px;
+  height: 1px;
+  background: rgba(28, 27, 25, 0.22);
+  transform: translateY(-4px);
+}
+.gm-paper-group-en {
+  font-size: 9.5px;
+  letter-spacing: 0.26em;
+  text-indent: 0.26em;
+  color: rgba(28, 27, 25, 0.45);
+  white-space: nowrap;
+}
+.gm-paper-group-note {
+  margin: -6px 0 12px;
+  font-size: clamp(11px, 1.2vw, 12px);
+  line-height: 1.8;
+  color: rgba(28, 27, 25, 0.6);
+}
+.gm-paper-group-rows {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(9px, 1.4vh, 13px);
+}
+.gm-paper-sub + .gm-paper-groups {
+  margin-top: clamp(22px, 3.5vh, 32px);
+}
+/* 章見出しより品名が大きくならないよう、飲み物の行だけ一段落とす */
+.gm-paper-group .gm-paper-name {
+  font-size: clamp(14px, 1.5vw, 15.5px);
+  font-weight: 400;
+  letter-spacing: 0.04em;
+}
+.gm-paper-group .gm-paper-price {
+  font-size: clamp(13px, 1.4vw, 14.5px);
+}
+.gm-paper-group .gm-paper-desc {
+  margin-top: 3px;
+  font-size: clamp(11px, 1.2vw, 12px);
+}
 .gm-paper-line {
   display: flex;
   align-items: baseline;

@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import Link from "next/link";
 import type { MenuItem, MenuSection } from "@/lib/menu";
+import { getDrinkGroups } from "@/lib/menu";
 import { gsap, useGSAP } from "@/lib/gsap-setup";
 import TableStage from "./TableStage";
 import { GUMON_MOTION } from "@/lib/motion-tokens";
@@ -41,9 +42,10 @@ function Badges({ item }: { item: MenuItem }) {
 }
 
 // 品名 … 点線 … 価格 ＋ 説明（昼/夜/飲み物の 1 行）
-function Row({ item }: { item: MenuItem }) {
+// anim=false: 飲み物は章（8 つ）単位で現すため、行そのものは演出対象にしない
+function Row({ item, anim = true }: { item: MenuItem; anim?: boolean }) {
   return (
-    <div className="gm-paper-row" data-anim-item>
+    <div className="gm-paper-row" {...(anim ? { "data-anim-item": "" } : {})}>
       <div className="gm-paper-line">
         <span className="gm-paper-name">
           {item.name}
@@ -74,6 +76,8 @@ export default function MenuPaper({
   const isDrink = category.titleEn === "DRINK";
   const isDinner = category.titleEn === "DINNER";
   const rows = category.items;
+  // 飲み物だけは紙のお品書きどおり章立て（ビール／焼酎／…）で組む
+  const drinkGroups = isDrink ? getDrinkGroups() : [];
   const others = BOARD_LINKS.filter((l) => l.titleEn !== category.titleEn);
 
   useGSAP(
@@ -211,8 +215,27 @@ export default function MenuPaper({
                     </article>
                   ))}
                 </div>
+              ) : isDrink ? (
+                <div className="gm-paper-groups">
+                  {drinkGroups.map(({ group, items }) => (
+                    <section key={group.key} className="gm-paper-group" data-anim-item>
+                      <h3 className="gm-paper-group-head">
+                        <span className="gm-paper-group-jp">{group.titleJp}</span>
+                        <span className="gm-paper-group-rule" aria-hidden="true" />
+                        <span className="gm-paper-group-en">{group.titleEn}</span>
+                      </h3>
+                      {group.note && <p className="gm-paper-group-note">{group.note}</p>}
+                      <div className="gm-paper-group-rows">
+                        {items.map((item) => (
+                          // 緑茶などは「お茶割り」「ソフトドリンク」の両方にあるため章名で一意にする
+                          <Row key={`${group.key}-${item.name}`} item={item} anim={false} />
+                        ))}
+                      </div>
+                    </section>
+                  ))}
+                </div>
               ) : (
-                <div className={`gm-paper-rows${isDrink ? " gm-paper-rows-2col" : ""}`}>
+                <div className="gm-paper-rows">
                   {rows.map((item) => (
                     <Row key={item.name} item={item} />
                   ))}

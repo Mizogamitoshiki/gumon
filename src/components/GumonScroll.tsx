@@ -7,7 +7,7 @@ import Lenis from "lenis";
 import Link from "next/link";
 import FoodNavDropdown from "./FoodNavDropdown";
 import InstagramLink from "./InstagramLink";
-import { CATS, DRINK_ITEMS, FOOD_CATEGORIES } from "@/lib/menu";
+import { CATS, DRINK_GROUPS, FOOD_CATEGORIES } from "@/lib/menu";
 import { IS_RECRUITING } from "@/lib/recruit";
 import { GUMON_SCENE_MOTION } from "@/lib/motion-tokens";
 import { HOTPEPPER_URL } from "@/lib/site";
@@ -1703,39 +1703,41 @@ export default function GumonScroll() {
                     <span data-rise>一皿に、寄り添う一杯を。</span>
                   </span>
                 </h2>
+                {/* 章立て（ビール／焼酎／…）だけを見せ、品目と価格は /menu/drink に置く */}
                 <div
                   style={{
                     display: "grid",
-                    gridTemplateColumns: "repeat(auto-fit,minmax(150px,1fr))",
-                    gap: "clamp(24px,4vw,60px)",
-                    maxWidth: 840,
+                    gridTemplateColumns: "repeat(auto-fit,minmax(148px,1fr))",
+                    gap: "clamp(20px,3vw,34px) clamp(22px,4vw,52px)",
+                    maxWidth: 880,
                     width: "100%",
                   }}
                 >
-                  {DRINK_ITEMS.map((dr) => (
-                    <div key={dr.name} data-fade>
+                  {DRINK_GROUPS.map((g) => (
+                    <div key={g.key} data-fade>
                       <div
                         style={{
                           fontFamily: SERIF,
-                          fontSize: "clamp(19px,2.2vw,26px)",
+                          fontSize: "clamp(17px,1.9vw,22px)",
                           fontWeight: 400,
                           letterSpacing: ".08em",
-                          marginBottom: 12,
+                          marginBottom: 9,
                         }}
                       >
-                        {dr.name}
+                        {g.titleJp}
                       </div>
                       <div
                         style={{
-                          fontSize: 12.5,
+                          fontSize: 12,
                           fontWeight: 300,
-                          lineHeight: 1.9,
+                          lineHeight: 1.8,
                           color: "rgba(242,240,235,.72)",
                           letterSpacing: ".03em",
-                          whiteSpace: "pre-line",
+                          textWrap: "pretty",
+                          wordBreak: "auto-phrase",
                         }}
                       >
-                        {dr.desc}
+                        {g.lead}
                       </div>
                     </div>
                   ))}

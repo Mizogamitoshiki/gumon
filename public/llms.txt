@@ -21,7 +21,7 @@
 - [昼のお品書き（ランチ）](https://main.d3ufd59bktw31h.amplifyapp.com/menu/lunch): ランチの品目と価格
 - [夜のお品書き（ディナー）](https://main.d3ufd59bktw31h.amplifyapp.com/menu/dinner): ディナーの品目と価格
 - [コース・宴会](https://main.d3ufd59bktw31h.amplifyapp.com/menu/course): 飲み放題付き宴会コースの相談
-- [飲み物](https://main.d3ufd59bktw31h.amplifyapp.com/menu/drink): 紹興酒・ワイン・中国茶ほか
+- [飲み物](https://main.d3ufd59bktw31h.amplifyapp.com/menu/drink): ビール・焼酎・チューハイ・お茶割り・ジン・紹興酒ほかの品目と価格
 - [愚問とは](https://main.d3ufd59bktw31h.amplifyapp.com/about): 店名の由来と台所の姿勢
 - [アクセス](https://main.d3ufd59bktw31h.amplifyapp.com/access): 地図・貝塚駅からの道順
 - [営業カレンダー](https://main.d3ufd59bktw31h.amplifyapp.com/calendar): 臨時休業のお知らせ

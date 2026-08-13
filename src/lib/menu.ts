@@ -9,6 +9,8 @@ import { CMS_MENU_ITEMS } from "./menu.generated";
 export type MenuItem = {
   name: string;
   price: string;
+  // 飲み物のみ: 紙のお品書きの章(BEER / SHOCHU / …)。見出しの文言は DRINK_GROUPS 側が出典
+  group?: string;
   desc?: string;
   // CMS のスキーマ側にある印。UI ではバッジ表示していない(文言を出さない方針)
   signature?: boolean;
@@ -79,8 +81,65 @@ export const FOOD_CATEGORIES: FoodCategory[] = [
 export const DRINKS: DrinkCategory = {
   titleEn: "DRINK",
   titleJp: "飲み物",
-  lead: "一皿に、寄り添う一杯を。紹興酒から中国茶まで。",
+  lead: "一皿に、寄り添う一杯を。ビールから紹興酒、お茶割りまで。",
   items: CMS_MENU_ITEMS.drink,
+};
+
+// 飲み物の章立て。品目(items)は CMS 側の `group` で各章に振り分けられ、
+// 見出し・TOP の一行・注記だけをここで静的に持つ(食事の titleJp/lead と同じ扱い)。
+export type DrinkGroup = {
+  key: string; // CMS の group 値
+  titleJp: string;
+  titleEn: string;
+  lead: string; // TOP の飲み物ビートで品名の下に添える一行
+  note?: string; // 章の注記(紙のお品書きに書かれている但し書き)
+};
+
+export const DRINK_GROUPS: DrinkGroup[] = [
+  { key: "BEER", titleJp: "ビール", titleEn: "BEER", lead: "生と瓶、そして青島。" },
+  { key: "SHOCHU", titleJp: "焼酎", titleEn: "SHOCHU", lead: "麦と芋、本日の一本も。" },
+  { key: "WHISKY", titleJp: "ウイスキー", titleEn: "WHISKY", lead: "角と、知多。" },
+  { key: "OTHER", titleJp: "その他", titleEn: "OTHER", lead: "紹興酒、杏露酒、梅酒。" },
+  { key: "SOUR", titleJp: "チューハイ", titleEn: "SOUR", lead: "プレーン、梅、リンゴ酢。" },
+  {
+    key: "TEA-SHOCHU",
+    titleJp: "お茶割り",
+    titleEn: "TEA-SHOCHU",
+    lead: "緑茶、ジャスミン、コーン茶。",
+  },
+  {
+    key: "GIN",
+    titleJp: "ジン",
+    titleEn: "GIN",
+    lead: "日本と世界のクラフトジン。",
+    note: "カウンター後ろからお選びください。",
+  },
+  {
+    key: "SOFTDRINK",
+    titleJp: "ソフトドリンク",
+    titleEn: "SOFT DRINK",
+    lead: "コーラ、オレンジ、お茶各種。",
+  },
+];
+
+// 章の定義順に items を束ねる。CMS に品目が 1 つも無い章は落とす(空の見出しを出さない)。
+// どの章にも属さない品目(group 未設定)は最後に「その他」としてまとめ、取りこぼしを防ぐ。
+export const getDrinkGroups = (): { group: DrinkGroup; items: MenuItem[] }[] => {
+  const items = DRINKS.items;
+  const grouped = DRINK_GROUPS.map((group) => ({
+    group,
+    items: items.filter((it) => it.group === group.key),
+  })).filter((g) => g.items.length > 0);
+
+  const known = new Set(DRINK_GROUPS.map((g) => g.key));
+  const rest = items.filter((it) => !it.group || !known.has(it.group));
+  if (rest.length > 0) {
+    grouped.push({
+      group: { key: "__rest", titleJp: "その他", titleEn: "OTHER", lead: "" },
+      items: rest,
+    });
+  }
+  return grouped;
 };
 
 // Back-compat shims so GumonScroll keeps the same JSX shapes.

@@ -59,6 +59,8 @@ for (const item of contents) {
     entry: {
       name: item.title,
       price: item.price,
+      // 飲み物のみ使用: BEER / SHOCHU / … の章分け(src/lib/menu.ts の DRINK_GROUPS が見出しの出典)
+      ...(item.group ? { group: item.group } : {}),
       ...(item.desc ? { desc: item.desc } : {}),
       ...(item.signature ? { signature: true } : {}),
       ...(item.recommended ? { recommended: true } : {}),
