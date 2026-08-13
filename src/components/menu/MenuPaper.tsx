@@ -6,7 +6,7 @@ import type { MenuItem, MenuSection } from "@/lib/menu";
 import { getDrinkGroups } from "@/lib/menu";
 import { gsap, useGSAP } from "@/lib/gsap-setup";
 import TableStage from "./TableStage";
-import DrinkGallery from "./DrinkGallery";
+import DrinkShowcase from "./DrinkShowcase";
 import { GUMON_MOTION } from "@/lib/motion-tokens";
 import { HOTPEPPER_URL } from "@/lib/site";
 
@@ -175,6 +175,9 @@ export default function MenuPaper({
 
       {/* 夜だけの見せ場（一卓を写した実写）。デスクトップでは全画面の紙芝居
           ステージ、モバイル/RM では静的な大判写真になる（TableStage 内で分岐） */}
+      {/* 飲み物だけの見出し（文字のない一列）。読む情報は下の紙面が担う */}
+      {isDrink && <DrinkShowcase />}
+
       {isDinner && (
         <TableStage
           src="/dinner-table.webp"
@@ -280,9 +283,6 @@ export default function MenuPaper({
           </div>
         </div>
       </div>
-
-      {/* 飲み物だけ: 棚の実写を「おすすめ」として紙面の下に添える */}
-      {isDrink && <DrinkGallery />}
 
       {/* 他カテゴリへの導線 */}
       <nav className="gm-paper-others" aria-label="ほかのお品書き">
