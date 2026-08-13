@@ -26,8 +26,27 @@ export function useMobileNavA11y(
     const panel = panelRef.current;
     if (!panel) return;
 
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    // 背面のスクロールを止める。body の overflow:hidden だけでは iOS Safari が
+    // 背面を慣性スクロール/ラバーバンドさせ、メニューが上下にブレて見える。
+    // スクロール位置を保ったまま body を position:fixed で固定し、閉じたら
+    // 同じ位置へ即時復元する(scroll-behavior:smooth は一時的に殺す)。
+    const { body } = document;
+    const html = document.documentElement;
+    const scrollY = window.scrollY;
+    const prev = {
+      position: body.style.position,
+      top: body.style.top,
+      left: body.style.left,
+      right: body.style.right,
+      width: body.style.width,
+      overflow: body.style.overflow,
+    };
+    body.style.position = "fixed";
+    body.style.top = `-${scrollY}px`;
+    body.style.left = "0";
+    body.style.right = "0";
+    body.style.width = "100%";
+    body.style.overflow = "hidden";
 
     const focusable = () =>
       Array.from(
@@ -61,7 +80,16 @@ export function useMobileNavA11y(
     document.addEventListener("keydown", onKeyDown);
     return () => {
       document.removeEventListener("keydown", onKeyDown);
-      document.body.style.overflow = prevOverflow;
+      body.style.position = prev.position;
+      body.style.top = prev.top;
+      body.style.left = prev.left;
+      body.style.right = prev.right;
+      body.style.width = prev.width;
+      body.style.overflow = prev.overflow;
+      const prevBehavior = html.style.scrollBehavior;
+      html.style.scrollBehavior = "auto";
+      window.scrollTo(0, scrollY);
+      html.style.scrollBehavior = prevBehavior;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);

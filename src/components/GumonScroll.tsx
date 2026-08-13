@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useRef, type CSSProperties } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
@@ -11,7 +11,7 @@ import { CATS, DRINK_GROUPS, FOOD_CATEGORIES } from "@/lib/menu";
 import { IS_RECRUITING } from "@/lib/recruit";
 import { GUMON_SCENE_MOTION } from "@/lib/motion-tokens";
 import { HOTPEPPER_URL } from "@/lib/site";
-import { useMobileNavA11y } from "@/lib/use-mobile-nav";
+import MobileNav, { type MobileNavLink } from "@/components/MobileNav";
 
 /* ---------------------------------- data ---------------------------------- */
 
@@ -39,19 +39,16 @@ const NAV_LINK_STYLE: CSSProperties = {
   padding: "10px 2px",
 };
 
-// 9 項目 + 予約が小型機(667px 高)にも収まるサイズ
-const MOBILE_LINK_STYLE: CSSProperties = {
-  background: "none",
-  border: "none",
-  cursor: "pointer",
-  textDecoration: "none",
-  fontFamily: SERIF,
-  fontWeight: 400,
-  fontSize: "clamp(22px,5.8vw,30px)",
-  letterSpacing: ".14em",
-  color: "#f2f0eb",
-  padding: "5px 0",
-};
+// モバイルメニューの中身。見た目と所作は MobileNav が持つ
+const MOBILE_LINKS: MobileNavLink[] = [
+  { href: "/about", label: "愚問とは" },
+  ...FOOD_CATEGORIES.map((c) => ({ href: `/menu/${c.slug}`, label: c.titleJp })),
+  { href: "/menu/drink", label: "飲み物" },
+  { href: "/access", label: "アクセス" },
+  { href: "/calendar", label: "営業カレンダー" },
+  { href: "/contact", label: "お問い合わせ" },
+  ...(IS_RECRUITING ? [{ href: "/recruit", label: "採用" }] : []),
+];
 
 /* -------------------------------- component ------------------------------- */
 
@@ -63,19 +60,14 @@ export default function GumonScroll() {
   const stageRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const lastYRef = useRef(0);
-  const burgerRef = useRef<HTMLButtonElement>(null);
-  const mobileMenuRef = useRef<HTMLDivElement>(null);
 
-  const [menuOpen, setMenuOpen] = useState(false);
+  // メニューの開閉は MobileNav が持つ。ここでは「開いている間はヘッダーを
+  // 引っ込めない」判定のためだけに状態を写し取る(再描画は不要なので ref)。
   const menuOpenRef = useRef(false);
-  menuOpenRef.current = menuOpen;
-  // Escape で閉じる・フォーカストラップ・閉じている間の body スクロールロック
-  useMobileNavA11y(
-    menuOpen,
-    () => setMenuOpen(false),
-    mobileMenuRef,
-    burgerRef,
-  );
+
+  // 予約ビートへのスクロール。メニューは body 直下へポータルされていて
+  // [data-go] の委譲リスナー(root 配下限定)が届かないため、関数で直接渡す。
+  const goToRef = useRef<(frac: number) => void>(() => {});
 
   useEffect(() => {
     const root = rootRef.current;
@@ -748,16 +740,20 @@ export default function GumonScroll() {
     onScroll();
 
     /* ---- nav -> Lenis smooth scroll to fraction ---- */
-    const navHandler = (e: Event) => {
-      const btn = (e.target as HTMLElement).closest<HTMLElement>("[data-go]");
-      if (!btn || !root.contains(btn)) return;
-      const frac = parseFloat(btn.getAttribute("data-go") || "0") || 0;
+    const goTo = (frac: number) => {
       const max = document.documentElement.scrollHeight - window.innerHeight;
-      if (menuOpenRef.current) setMenuOpen(false);
       lenis.scrollTo(max * frac, {
         duration: 1.4,
         easing: (t: number) => 1 - Math.pow(1 - t, 4),
       });
+    };
+    // モバイルメニューの予約ボタンからも呼べるようにする(ポータル先は root の外)
+    goToRef.current = goTo;
+
+    const navHandler = (e: Event) => {
+      const btn = (e.target as HTMLElement).closest<HTMLElement>("[data-go]");
+      if (!btn || !root.contains(btn)) return;
+      goTo(parseFloat(btn.getAttribute("data-go") || "0") || 0);
     };
     root.addEventListener("click", navHandler);
 
@@ -962,137 +958,17 @@ export default function GumonScroll() {
           </button>
         </nav>
 
-        {/* hamburger (mobile) */}
-        <button
-          ref={burgerRef}
-          onClick={() => setMenuOpen((o) => !o)}
-          aria-label="メニュー"
-          aria-expanded={menuOpen}
-          aria-controls="gm-mobile-menu"
-          className="gm-burger"
-          style={{
-            gridColumn: 3,
-            justifySelf: "end",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            gap: 6,
-            width: 44,
-            height: 44,
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            padding: 0,
+        {/* hamburger + 全画面メニュー(幕)。見た目と所作は MobileNav が持つ。
+            オーバーレイは body 直下へポータルされるので、ここに置いても
+            backdrop-filter を持つ header に閉じ込められない */}
+        <MobileNav
+          links={MOBILE_LINKS}
+          cta={{ label: "予約", onClick: () => goToRef.current(0.95) }}
+          onOpenChange={(o) => {
+            menuOpenRef.current = o;
           }}
-        >
-          <span
-            style={{
-              display: "block",
-              height: 1,
-              width: 24,
-              background: "#f2f0eb",
-              transform: menuOpen ? "translateY(7px) rotate(45deg)" : "none",
-              transition: "transform .5s cubic-bezier(0.16,1,0.3,1)",
-            }}
-          />
-          <span
-            style={{
-              display: "block",
-              height: 1,
-              width: 24,
-              background: "#f2f0eb",
-              opacity: menuOpen ? 0 : 1,
-              transition: "opacity .35s ease",
-            }}
-          />
-          <span
-            style={{
-              display: "block",
-              height: 1,
-              width: 24,
-              background: "#f2f0eb",
-              transform: menuOpen ? "translateY(-7px) rotate(-45deg)" : "none",
-              transition: "transform .5s cubic-bezier(0.16,1,0.3,1)",
-            }}
-          />
-        </button>
+        />
       </header>
-
-      {/* mobile menu overlay */}
-      <div
-        ref={mobileMenuRef}
-        id="gm-mobile-menu"
-        data-open={menuOpen}
-        role="dialog"
-        aria-modal="true"
-        aria-label="メニュー"
-        style={{
-          position: "fixed",
-          inset: 0,
-          zIndex: 290,
-          background: "rgba(24,23,21,.97)",
-          backdropFilter: "blur(8px)",
-          WebkitBackdropFilter: "blur(8px)",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: 18,
-          paddingTop: "max(88px, calc(env(safe-area-inset-top) + 72px))",
-          paddingBottom: "max(28px, env(safe-area-inset-bottom))",
-          overflowY: "auto",
-          opacity: menuOpen ? 1 : 0,
-          visibility: menuOpen ? "visible" : "hidden",
-          transition: "opacity .6s cubic-bezier(0.16,1,0.3,1),visibility .6s",
-        }}
-      >
-        {(
-          [
-            { href: "/about", label: "愚問とは" },
-            ...FOOD_CATEGORIES.map((c) => ({
-              href: `/menu/${c.slug}`,
-              label: c.titleJp,
-            })),
-            { href: "/menu/drink", label: "飲み物" },
-            { href: "/access", label: "アクセス" },
-            { href: "/calendar", label: "営業カレンダー" },
-            { href: "/contact", label: "お問い合わせ" },
-            ...(IS_RECRUITING ? [{ href: "/recruit", label: "採用" }] : []),
-          ] as { href: string; label: string }[]
-        ).map((l, i) => (
-          <Link
-            key={l.href}
-            href={l.href}
-            className="gm-mobile-link"
-            onClick={() => setMenuOpen(false)}
-            style={{ "--i": i, ...MOBILE_LINK_STYLE } as CSSProperties}
-          >
-            {l.label}
-          </Link>
-        ))}
-        <button
-          data-go="0.95"
-          className="gm-reserve-outline gm-mobile-link"
-          style={
-            {
-              "--i": FOOD_CATEGORIES.length + 5,
-              marginTop: 14,
-              cursor: "pointer",
-              background: "transparent",
-              border: "1px solid rgba(185,178,166,.5)",
-              borderRadius: 999,
-              color: "#f2f0eb",
-              fontFamily: SERIF,
-              fontSize: 17,
-              letterSpacing: ".2em",
-              textIndent: ".2em",
-              padding: "14px 44px",
-            } as CSSProperties
-          }
-        >
-          予約
-        </button>
-      </div>
 
       {/* one pinned, scrubbed timeline — 高さは .gm-scroll-root(globals.css)。
           デスクトップ 1440vh / モバイル 1095vh(タイムライン長 T と比例) */}
