@@ -11,7 +11,7 @@
 - 定休日: なし（無休）。臨時休業は営業カレンダーに掲載
 - アクセス: 南海本線・水間鉄道 貝塚駅 東出口より徒歩約10分
 - 商圏の目安: 貝塚市を中心に泉州エリア（岸和田市・泉佐野市・熊取町・泉南市・和泉市など）
-- 予算目安: 夜 3,000〜4,000円。宴会は飲み放題付きコースあり
+- 予算目安: 夜 3,000〜4,000円。コースは全10品の愚問コース(飲み放題付き)ほか、宴会も飲み放題付き
 - Instagram: https://www.instagram.com/gumon_kaizuka/
 - Web予約（ホットペッパーグルメ）: https://www.hotpepper.jp/strJ003850704/
 
@@ -20,7 +20,7 @@
 - [トップ](https://main.d3ufd59bktw31h.amplifyapp.com/): 店の世界観と主な料理
 - [昼のお品書き（ランチ）](https://main.d3ufd59bktw31h.amplifyapp.com/menu/lunch): ランチの品目と価格
 - [夜のお品書き（ディナー）](https://main.d3ufd59bktw31h.amplifyapp.com/menu/dinner): ディナーの品目と価格
-- [コース・宴会](https://main.d3ufd59bktw31h.amplifyapp.com/menu/course): 飲み放題付き宴会コースの相談
+- [コース・宴会](https://main.d3ufd59bktw31h.amplifyapp.com/menu/course): 全10品の愚問コース(飲み放題付き)と、人数・予算に応じた飲み放題付き宴会コース
 - [飲み物](https://main.d3ufd59bktw31h.amplifyapp.com/menu/drink): ビール・焼酎・チューハイ・お茶割り・ジン・紹興酒ほかの品目と価格
 - [愚問とは](https://main.d3ufd59bktw31h.amplifyapp.com/about): 店名の由来と台所の姿勢
 - [アクセス](https://main.d3ufd59bktw31h.amplifyapp.com/access): 地図・貝塚駅からの道順

@@ -3829,6 +3829,10 @@ html[data-gm-reduced] .gm-opening {
   font-size: clamp(15.5px, 1.8vw, 18px);
   font-weight: 600;
   letter-spacing: 0.08em;
+  /* 「季節の宴会コース(飲み放題付き)」のように長い品名を、
+     文節で・行の長さを揃えて折る（末尾に1〜2文字だけ残さない） */
+  text-wrap: balance;
+  word-break: auto-phrase;
 }
 .gm-paper-card-price {
   margin: 0 0 12px;
