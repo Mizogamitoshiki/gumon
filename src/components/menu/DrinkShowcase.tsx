@@ -12,10 +12,17 @@ import { gsap, useGSAP } from "@/lib/gsap-setup";
  * 偶数番だけ少し下げて一列が「並べられた」ものに見えるようにする。
  *
  * 演出（デスクトップ・motion 可）:
+ *   一列がひとつの見せ場なので、帯全体で 1 つのトリガーを持ち、
  *   下から上への clip-path 展開 → 1.06 倍から等倍へ → ブラー 10px から
- *   フォーカスへ。1 枚ずつ stagger で連鎖し、その後はスクロールに従属した
- *   ごく浅い視差（±3%・等速）が続く。移動量は CLAUDE.md の 8〜40px に収める。
- * モバイル(≤860px): blur と視差を省き、fade + y16 の骨格だけ残す。
+ *   フォーカスへ、を 1 枚ずつ stagger で連鎖させる。その後はスクロールに
+ *   従属した浅い視差（±3%・等速）。移動量は CLAUDE.md の 8〜40px に収める。
+ *
+ * モバイル(≤860px): 2 列 3 段に折り返り、下の段は初期表示の外に出る。
+ *   帯で 1 つのトリガーにすると、見えていない下の段まで一度に動き終わって
+ *   しまうので、**1 枚ずつ自前のトリガー**を持たせ、スクロールで現れる
+ *   たびに展開する。同じ段の右側だけ半拍遅らせて、2 枚が同時に立ち上がら
+ *   ないようにする。重い blur は省き（既存の lite 規約）、視差も浅く（±2%）。
+ *
  * reduced-motion: 何も仕込まない（SSR のまま静止画として並ぶ）。
  */
 export default function DrinkShowcase() {
@@ -38,15 +45,43 @@ export default function DrinkShowcase() {
           const frames = items.map((el) => el.querySelector(".gm-dshow-frame"));
           const imgs = items.map((el) => el.querySelector(".gm-dshow-img"));
 
-          // 骨格（軽量版）— 気配だけの fade-up
+          // モバイル — 1 枚ずつ、自分が画面に入ったときに展開する。
+          // トリガーは figure、動かすのは内側の枠と写真（トリガー要素自身を
+          // visibility:hidden にしない＝位置計算に影響を与えない）。
           if (lite) {
-            gsap.from(items, {
-              autoAlpha: 0,
-              y: 16,
-              duration: 1,
-              ease: "expo.out",
-              stagger: 0.08,
-              scrollTrigger: { trigger: root, start: "top 88%", once: true },
+            items.forEach((el, i) => {
+              // 同じ段の右側を半拍あとに立ち上げ、2 枚が同時に動かないようにする
+              const half = (i % 2) * 0.1;
+              gsap
+                .timeline({
+                  defaults: { ease: "expo.out" },
+                  scrollTrigger: { trigger: el, start: "top 92%", once: true },
+                })
+                .fromTo(
+                  frames[i],
+                  { autoAlpha: 0, y: 20, clipPath: "inset(100% 0% 0% 0%)" },
+                  { autoAlpha: 1, y: 0, clipPath: "inset(0% 0% 0% 0%)", duration: 1 },
+                  half,
+                )
+                // blur は省くが、寄って止まる動きは残す（ブラーの代わりの奥行き）
+                .fromTo(imgs[i], { scale: 1.05 }, { scale: 1, duration: 1.15 }, half);
+
+              // 展開後の呼吸。デスクトップより浅く（±2%）
+              const dir = i % 2 === 0 ? 1 : -1;
+              gsap.fromTo(
+                imgs[i],
+                { yPercent: -2 * dir },
+                {
+                  yPercent: 2 * dir,
+                  ease: "none",
+                  scrollTrigger: {
+                    trigger: el,
+                    start: "top bottom",
+                    end: "bottom top",
+                    scrub: true,
+                  },
+                },
+              );
             });
             return;
           }
