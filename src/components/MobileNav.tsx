@@ -4,48 +4,53 @@ import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { FOOD_CATEGORIES } from "@/lib/menu";
+import { IS_RECRUITING } from "@/lib/recruit";
+import { HOTPEPPER_URL, TEL_DISPLAY, TEL_LINK } from "@/lib/site";
+import InstagramLink from "@/components/InstagramLink";
 import { useMobileNavA11y } from "@/lib/use-mobile-nav";
 
 /**
- * モバイルの全画面メニュー（TOP・詳細ページ共通）。
+ * モバイルの全画面メニュー（TOP・詳細ページ共通の唯一の出典）。
  *
- * 以前は GumonScroll と DetailMobileNav に同じものが二重に書かれていて、
- * 演出を直すたびに二箇所へ同じ手を入れる必要があった。ここを唯一の出典にする。
+ * 設計: 「紙がめくれ、墨が落ちる」。
+ *   愚問の世界は紙のお品書きと墨の幕でできている。開くときは、まず紙色の帳が
+ *   上から流れ、その裏を追って墨(マットブラック)の幕が落ちる。二枚の縁の間に
+ *   一瞬だけ紙の帯が走る——お品書きを一枚めくる所作の翻訳。
  *
- * 所作（jf-reform-hp の SP メニューの段取りを、愚問の調子へ翻訳したもの）:
- *   1. トリガーの三本線が右へ抜ける（1 本ずつ 55ms の時間差）
- *   2. 入れ替わりに「幕」が上から降りる（clip-path・0.95s）
- *   3. 品書きが行マスクから 1 行ずつせり上がる（70ms の時間差）
- *      ＋ 各行の罫線が左から引かれる
- *   4. 閉じるときは逆再生（下の行から先に落ちて、幕が上がる）
+ * 段取り(開く):
+ *   三本線が右へ抜ける → 紙の帳(veil)が降りる → 墨の幕(panel)が追う
+ *   → 縦書きの「愚問」透かしが浮かぶ → ロゴ(中国料理 GUMON / 愚問 / 問いを
+ *   重ね、一皿に答える。)が行マスクでせり上がる → 品書きが番号・和名・英名の
+ *   行で1行ずつ現れ、罫線が左から引かれる → 予約の一角(朱の電話CTA・営業時間・
+ *   Instagram)が灯る。閉じるときは下から順に落ち、墨が上がり、紙が追う。
  *
- * 元ネタと変えたところ:
- *   - 斜めの帯 → 上から降りる「幕」。愚問は暖簾と紙の店なので、斜めに裂ける
- *     動きより、真上から落ちる幕のほうが世界観に合う
- *   - skew/scale の飛び込み → 行マスクのせり上げ（CLAUDE.md の見出しの作法）
- *   - 移動量は 8〜40px に収め、イージングはサイト共通の cubic-bezier(.16,1,.3,1)
+ * 参照: jf-reform-hp(二段の clip-path とロゴの見せ場)・okafuku-HP(ブランドの
+ * 頭書きと導線カード)。ともに骨組みだけ借り、所作は愚問の調子(ease
+ * cubic-bezier(.16,1,.3,1)・移動量 8〜40px・朱は電話予約のみ)へ翻訳した。
  *
- * オーバーレイは createPortal で body 直下に出す。ヘッダーには backdrop-filter が
- * 掛かることがあり、filter を持つ祖先は position:fixed の包含ブロックになるため、
- * ヘッダー内に置くと全画面のはずの幕がヘッダーの高さに閉じ込められる。
+ * オーバーレイは createPortal で body 直下へ。ヘッダーの backdrop-filter が
+ * position:fixed の包含ブロックを作り、幕がヘッダーの高さに閉じ込められるため。
  */
-export type MobileNavLink = { href: string; label: string };
+type NavLink = { href: string; label: string; en: string };
 
-export type MobileNavCta = {
-  label: string;
-  /** 詳細ページ: tel: へのリンク */
-  href?: string;
-  /** TOP: 予約ビートへのスクロール（クリック後にメニューを閉じる） */
-  onClick?: () => void;
-};
+const LINKS: NavLink[] = [
+  { href: "/about", label: "愚問とは", en: "ABOUT" },
+  ...FOOD_CATEGORIES.map((c) => ({
+    href: `/menu/${c.slug}`,
+    label: c.titleJp,
+    en: c.titleEn,
+  })),
+  { href: "/menu/drink", label: "飲み物", en: "DRINK" },
+  { href: "/access", label: "アクセス", en: "ACCESS" },
+  { href: "/calendar", label: "営業カレンダー", en: "CALENDAR" },
+  { href: "/contact", label: "お問い合わせ", en: "CONTACT" },
+  ...(IS_RECRUITING ? [{ href: "/recruit", label: "採用", en: "RECRUIT" }] : []),
+];
 
 export default function MobileNav({
-  links,
-  cta,
   onOpenChange,
 }: {
-  links: MobileNavLink[];
-  cta: MobileNavCta;
   /** TOP が「開いている間はヘッダーを引っ込めない」判定に使う */
   onOpenChange?: (open: boolean) => void;
 }) {
@@ -55,9 +60,6 @@ export default function MobileNav({
   const burgerRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
-  // 閉じ切ってから走らせたい処理(TOP の予約スクロール)を預かる
-  const pendingRef = useRef<(() => void) | null>(null);
-
   // 呼び出し側がインライン関数を渡しても effect が毎描画で走らないよう ref に逃がす
   const onOpenChangeRef = useRef(onOpenChange);
   onOpenChangeRef.current = onOpenChange;
@@ -66,86 +68,112 @@ export default function MobileNav({
   useEffect(() => onOpenChangeRef.current?.(open), [open]);
   useMobileNavA11y(open, () => setOpen(false), panelRef, burgerRef);
 
-  // 開いているあいだ body は position:fixed で固定されており、閉じるときに
-  // 元のスクロール位置へ window.scrollTo で戻す。CTA のスクロールを先に呼ぶと
-  // この復元に打ち消されるため、ロックが解けた後(= この effect)で走らせる。
-  // useMobileNavA11y より後に登録することで、後片付けの完了後に呼ばれる。
-  useEffect(() => {
-    if (open) return;
-    const run = pendingRef.current;
-    if (!run) return;
-    pendingRef.current = null;
-    run();
-  }, [open]);
-
   const close = () => setOpen(false);
-  // 品書き＋予約ボタンの総数。閉じるときの「下から順に落ちる」計算に使う
-  const total = links.length + 1;
+  // 時間差の総段数(ロゴ3段 + 品書き + 予約の一角2段)。閉じる際の逆順計算に使う
+  const total = LINKS.length + 5;
 
   const overlay = (
-    <div
-      ref={panelRef}
-      id="gm-mobile-menu"
-      className="gm-mnav"
-      data-open={open}
-      role="dialog"
-      aria-modal="true"
-      aria-label="メニュー"
-      style={{ "--n": total } as CSSProperties}
-    >
-      {/* 幕の裾。幕が降り切るまで、下端を 1 本の線が追いかける */}
-      <span className="gm-mnav-hem" aria-hidden="true" />
+    <>
+      {/* 紙の帳 — 墨の幕に一拍先行し、縁の間に紙色の帯が走る */}
+      <div className="gm-mnav-veil" data-open={open} aria-hidden="true" />
 
-      <div className="gm-mnav-inner">
-        <p className="gm-mnav-eyebrow" style={{ "--i": 0 } as CSSProperties}>
-          MENU
-        </p>
+      <div
+        ref={panelRef}
+        id="gm-mobile-menu"
+        className="gm-mnav"
+        data-open={open}
+        role="dialog"
+        aria-modal="true"
+        aria-label="メニュー"
+        tabIndex={-1}
+        style={{ "--n": total } as CSSProperties}
+      >
+        {/* 縦書きの透かし。問いの気配だけを漂わせる(読ませない) */}
+        <span className="gm-mnav-ghost" aria-hidden="true">
+          愚問
+        </span>
 
-        <nav className="gm-mnav-list" aria-label="サイト内メニュー">
-          {links.map((l, i) => (
-            <Link
-              key={l.href}
-              href={l.href}
-              className="gm-mnav-item"
-              aria-current={pathname === l.href ? "page" : undefined}
-              onClick={close}
-              style={{ "--i": i } as CSSProperties}
-            >
-              <span className="gm-mnav-num" aria-hidden="true">
-                {String(i + 1).padStart(2, "0")}
-              </span>
+        <div className="gm-mnav-inner">
+          {/* ブランドの頭書き */}
+          <header className="gm-mnav-brand">
+            <p className="gm-mnav-eyebrow" style={{ "--i": 0 } as CSSProperties}>
+              中国料理 ── GUMON
+            </p>
+            <p className="gm-mnav-logo" style={{ "--i": 1 } as CSSProperties}>
               <span className="gm-mnav-mask">
-                <span className="gm-mnav-label">{l.label}</span>
+                <span className="gm-mnav-rise">愚問</span>
               </span>
-              <span className="gm-mnav-rule" aria-hidden="true" />
-            </Link>
-          ))}
-        </nav>
+            </p>
+            <p className="gm-mnav-tagline" style={{ "--i": 2 } as CSSProperties}>
+              <span className="gm-mnav-mask">
+                <span className="gm-mnav-rise">問いを重ね、一皿に答える。</span>
+              </span>
+            </p>
+          </header>
 
-        {cta.href ? (
-          <a
-            href={cta.href}
-            className="gm-reserve-outline gm-mnav-cta"
-            onClick={close}
-            style={{ "--i": links.length } as CSSProperties}
-          >
-            {cta.label}
-          </a>
-        ) : (
-          <button
-            type="button"
-            className="gm-reserve-outline gm-mnav-cta"
-            onClick={() => {
-              pendingRef.current = cta.onClick ?? null;
-              close();
-            }}
-            style={{ "--i": links.length } as CSSProperties}
-          >
-            {cta.label}
-          </button>
-        )}
+          <nav className="gm-mnav-list" aria-label="サイト内メニュー">
+            {LINKS.map((l, i) => (
+              <Link
+                key={l.href}
+                href={l.href}
+                className="gm-mnav-item"
+                aria-current={pathname === l.href ? "page" : undefined}
+                onClick={close}
+                style={{ "--i": i + 3 } as CSSProperties}
+              >
+                <span className="gm-mnav-num" aria-hidden="true">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <span className="gm-mnav-mask">
+                  <span className="gm-mnav-rise gm-mnav-label">{l.label}</span>
+                </span>
+                <span className="gm-mnav-en" aria-hidden="true">
+                  {l.en}
+                </span>
+                <span className="gm-mnav-rule" aria-hidden="true" />
+              </Link>
+            ))}
+          </nav>
+
+          {/* 予約の一角 — 朱はここ(電話)だけ */}
+          <footer className="gm-mnav-foot">
+            <div
+              className="gm-mnav-reserve"
+              style={{ "--i": LINKS.length + 3 } as CSSProperties}
+            >
+              <a href={TEL_LINK} className="gm-tel-btn gm-mnav-telbtn" onClick={close}>
+                電話で予約する
+              </a>
+              <a href={TEL_LINK} className="gm-mnav-tel" onClick={close}>
+                {TEL_DISPLAY}
+              </a>
+            </div>
+            <div
+              className="gm-mnav-info"
+              style={{ "--i": LINKS.length + 4 } as CSSProperties}
+            >
+              <p className="gm-mnav-hours">
+                昼 11:30–15:00 ／ 夜 18:00–23:30 ・定休日なし
+              </p>
+              <div className="gm-mnav-links2">
+                <a
+                  href={HOTPEPPER_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="gm-mnav-web"
+                >
+                  Webで予約する
+                  <span className="gm-arrow" aria-hidden="true">
+                    →
+                  </span>
+                </a>
+                <InstagramLink />
+              </div>
+            </div>
+          </footer>
+        </div>
       </div>
-    </div>
+    </>
   );
 
   return (
@@ -160,13 +188,12 @@ export default function MobileNav({
         className="gm-burger"
         data-open={open}
       >
-        {/* 三本線（開くと右へ抜ける） */}
+        {/* 三本線(中段だけ短い)。開くと右へ抜け、×が交差して現れる */}
         <span className="gm-burger-bars" aria-hidden="true">
           <span style={{ "--i": 0 } as CSSProperties} />
           <span style={{ "--i": 1 } as CSSProperties} />
           <span style={{ "--i": 2 } as CSSProperties} />
         </span>
-        {/* 抜けたあとに交差して現れる × */}
         <span className="gm-burger-x" aria-hidden="true">
           <span />
           <span />

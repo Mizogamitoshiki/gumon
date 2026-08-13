@@ -7,11 +7,11 @@ import Lenis from "lenis";
 import Link from "next/link";
 import FoodNavDropdown from "./FoodNavDropdown";
 import InstagramLink from "./InstagramLink";
-import { CATS, DRINK_GROUPS, FOOD_CATEGORIES } from "@/lib/menu";
+import { CATS, DRINK_GROUPS } from "@/lib/menu";
 import { IS_RECRUITING } from "@/lib/recruit";
 import { GUMON_SCENE_MOTION } from "@/lib/motion-tokens";
 import { HOTPEPPER_URL } from "@/lib/site";
-import MobileNav, { type MobileNavLink } from "@/components/MobileNav";
+import MobileNav from "@/components/MobileNav";
 
 /* ---------------------------------- data ---------------------------------- */
 
@@ -39,17 +39,6 @@ const NAV_LINK_STYLE: CSSProperties = {
   padding: "10px 2px",
 };
 
-// モバイルメニューの中身。見た目と所作は MobileNav が持つ
-const MOBILE_LINKS: MobileNavLink[] = [
-  { href: "/about", label: "愚問とは" },
-  ...FOOD_CATEGORIES.map((c) => ({ href: `/menu/${c.slug}`, label: c.titleJp })),
-  { href: "/menu/drink", label: "飲み物" },
-  { href: "/access", label: "アクセス" },
-  { href: "/calendar", label: "営業カレンダー" },
-  { href: "/contact", label: "お問い合わせ" },
-  ...(IS_RECRUITING ? [{ href: "/recruit", label: "採用" }] : []),
-];
-
 /* -------------------------------- component ------------------------------- */
 
 export default function GumonScroll() {
@@ -64,10 +53,6 @@ export default function GumonScroll() {
   // メニューの開閉は MobileNav が持つ。ここでは「開いている間はヘッダーを
   // 引っ込めない」判定のためだけに状態を写し取る(再描画は不要なので ref)。
   const menuOpenRef = useRef(false);
-
-  // 予約ビートへのスクロール。メニューは body 直下へポータルされていて
-  // [data-go] の委譲リスナー(root 配下限定)が届かないため、関数で直接渡す。
-  const goToRef = useRef<(frac: number) => void>(() => {});
 
   useEffect(() => {
     const root = rootRef.current;
@@ -747,9 +732,6 @@ export default function GumonScroll() {
         easing: (t: number) => 1 - Math.pow(1 - t, 4),
       });
     };
-    // モバイルメニューの予約ボタンからも呼べるようにする(ポータル先は root の外)
-    goToRef.current = goTo;
-
     const navHandler = (e: Event) => {
       const btn = (e.target as HTMLElement).closest<HTMLElement>("[data-go]");
       if (!btn || !root.contains(btn)) return;
@@ -962,8 +944,6 @@ export default function GumonScroll() {
             オーバーレイは body 直下へポータルされるので、ここに置いても
             backdrop-filter を持つ header に閉じ込められない */}
         <MobileNav
-          links={MOBILE_LINKS}
-          cta={{ label: "予約", onClick: () => goToRef.current(0.95) }}
           onOpenChange={(o) => {
             menuOpenRef.current = o;
           }}

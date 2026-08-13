@@ -3,7 +3,7 @@ import { FOOD_CATEGORIES } from "@/lib/menu";
 import { IS_RECRUITING } from "@/lib/recruit";
 import { SmoothScroll } from "@/components/smooth-scroll";
 import DetailNav from "@/components/DetailNav";
-import DetailMobileNav from "@/components/DetailMobileNav";
+import MobileNav from "@/components/MobileNav";
 import ScrollProgress from "@/components/ScrollProgress";
 import InstagramLink from "@/components/InstagramLink";
 
@@ -46,7 +46,7 @@ export default function SiteChrome({
           <a href="tel:0724306038" className="gm-detail-reserve">
             予約
           </a>
-          <DetailMobileNav />
+          <MobileNav />
         </div>
       </header>
 

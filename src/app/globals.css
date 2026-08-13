@@ -182,18 +182,19 @@ body {
 }
 
 /* ============================================================
-   モバイルメニュー（MobileNav.tsx）
-   段取り: 三本線が右へ抜ける → 幕が上から降りる → 品書きが行マスクから
-   1 行ずつせり上がる。閉じるときは下の行から落ちて、幕が上がる。
-   イージングはサイト共通の cubic-bezier(.16,1,.3,1)、移動量は 8〜40px。
+   モバイルメニュー（MobileNav.tsx）—「紙がめくれ、墨が落ちる」
+   開く: 三本線が右へ抜ける → 紙の帳(veil)が降り、墨の幕(panel)が追う
+   （二枚の縁の間に紙色の帯が走る）→ 縦書きの透かし → ロゴの行マスク
+   → 品書き(番号・和名・英名・罫線) → 予約の一角(朱は電話だけ)。
+   閉じる: 下の段から落ち、墨が上がり、紙が追う。
+   イージングはサイト共通 cubic-bezier(.16,1,.3,1)・移動量 8〜40px。
    ============================================================ */
 :root {
   --gm-ease: cubic-bezier(0.16, 1, 0.3, 1);
-  /* 幕が降り切るまで。品書きの登場はこの途中から重ねる（境目を消す） */
-  --gm-curtain: 0.95s;
+  --gm-sheet: cubic-bezier(0.72, 0, 0.18, 1); /* 幕の落下(重さのある減速) */
 }
 
-/* ---- トリガー（三本線 ⇄ ×）---- */
+/* ---- トリガー（三本線 ⇄ ×）。中段だけ短い非対称 ---- */
 .gm-burger {
   position: relative;
   display: flex;
@@ -205,8 +206,7 @@ body {
   background: none;
   border: none;
   cursor: pointer;
-  /* TOP ヘッダー(3 列グリッド)では右端の列に置く。
-     詳細ヘッダーは flex なのでこの 2 行は効かない(無害) */
+  /* TOP ヘッダー(3 列グリッド)では右端の列。詳細ヘッダーは flex なので無害 */
   grid-column: 3;
   justify-self: end;
 }
@@ -220,25 +220,36 @@ body {
 }
 .gm-burger-bars {
   flex-direction: column;
-  gap: 6px;
+  gap: 7px;
+  align-items: flex-end;
+  padding-right: 10px;
 }
 .gm-burger-bars > span {
   display: block;
   width: 24px;
   height: 1px;
   background: #f2f0eb;
-  /* 開く: 手前の線から順に右へ抜ける / 閉じる: 逆順に戻る */
   transition:
     transform 0.42s var(--gm-ease) calc(var(--i) * 55ms),
-    opacity 0.3s ease calc(var(--i) * 55ms);
+    opacity 0.3s ease calc(var(--i) * 55ms),
+    width 0.3s var(--gm-ease);
+}
+.gm-burger-bars > span:nth-child(2) {
+  width: 16px;
+}
+/* 触れると中段が伸びる(開く前の小さな返事) */
+@media (hover: hover) {
+  .gm-burger:hover .gm-burger-bars > span:nth-child(2) {
+    width: 24px;
+  }
 }
 .gm-burger[data-open="true"] .gm-burger-bars > span {
   transform: translateX(30px);
   opacity: 0;
 }
-/* 閉じるときは幕が上がってから戻す（幕の裏で線が動くのを見せない） */
+/* 閉じるときは幕が上がってから線を戻す(幕の裏の動きを見せない) */
 .gm-burger[data-open="false"] .gm-burger-bars > span {
-  transition-delay: calc(260ms + (2 - var(--i)) * 55ms);
+  transition-delay: calc(300ms + (2 - var(--i)) * 55ms);
 }
 .gm-burger-x > span {
   position: absolute;
@@ -251,15 +262,14 @@ body {
     opacity 0.3s ease;
 }
 .gm-burger-x > span:first-child {
-  transform: rotate(45deg) scale(0.6);
+  transform: rotate(45deg) scale(0.55);
 }
 .gm-burger-x > span:last-child {
-  transform: rotate(-45deg) scale(0.6);
+  transform: rotate(-45deg) scale(0.55);
 }
-/* 線が抜け切ってから交差して現れる */
 .gm-burger[data-open="true"] .gm-burger-x > span {
   opacity: 1;
-  transition-delay: 240ms;
+  transition-delay: 230ms;
 }
 .gm-burger[data-open="true"] .gm-burger-x > span:first-child {
   transform: rotate(45deg) scale(1);
@@ -268,179 +278,309 @@ body {
   transform: rotate(-45deg) scale(1);
 }
 
-/* ---- 幕（全画面パネル）---- */
+/* ---- 紙の帳（先行するレイヤー）---- */
+.gm-mnav-veil {
+  position: fixed;
+  inset: 0;
+  z-index: 289;
+  background: #efece5; /* 紙のお品書きと同じ生成り */
+  clip-path: inset(0 0 100% 0);
+  visibility: hidden;
+  pointer-events: none;
+  /* 閉じ: 墨(0.1s 先発)を 0.14s 遅れで追い、最後に紙が消える */
+  transition:
+    clip-path 0.6s var(--gm-sheet) 0.24s,
+    visibility 0s 0.85s;
+}
+.gm-mnav-veil[data-open="true"] {
+  clip-path: inset(0 0 0 0);
+  visibility: visible;
+  /* 開き: 線の退場(≈0.16s)を受けて先に落ちる */
+  transition:
+    clip-path 0.78s var(--gm-sheet) 0.16s,
+    visibility 0s 0.16s;
+}
+
+/* ---- 墨の幕（本体）---- */
 .gm-mnav {
   position: fixed;
   inset: 0;
   z-index: 290;
-  background: rgba(24, 23, 21, 0.985);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: #181715;
   overflow-y: auto;
   overflow-x: hidden;
   overscroll-behavior: none;
-  /* 上から降りる幕。閉じるときは同じ道を上へ引き上げる */
+  outline: none;
   clip-path: inset(0 0 100% 0);
   visibility: hidden;
   transition:
-    clip-path 0.62s cubic-bezier(0.7, 0, 0.3, 1),
-    visibility 0.62s;
+    clip-path 0.6s var(--gm-sheet) 0.1s,
+    visibility 0s 0.85s;
 }
 .gm-mnav[data-open="true"] {
   clip-path: inset(0 0 0 0);
   visibility: visible;
+  /* 紙より 0.13s 遅れて落ちる = 縁の間に紙の帯が走る */
   transition:
-    clip-path var(--gm-curtain) var(--gm-ease),
-    visibility 0s;
+    clip-path 0.78s var(--gm-sheet) 0.29s,
+    visibility 0s 0.29s;
 }
-/* 幕の裾を追う 1 本の線（降りるあいだだけ見える） */
-.gm-mnav-hem {
+/* 幕の中の質感: 粒子と、ごく浅い灯(蝋燭)の気配 */
+.gm-mnav::before {
+  content: "";
   position: fixed;
-  left: 0;
-  right: 0;
-  top: 0;
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(185, 178, 166, 0.55),
-    transparent
-  );
-  transform: translateY(0);
-  opacity: 0;
-  transition:
-    transform 0.62s cubic-bezier(0.7, 0, 0.3, 1),
-    opacity 0.3s ease;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      90% 60% at 82% 96%,
+      rgba(178, 58, 46, 0.05),
+      transparent 60%
+    ),
+    radial-gradient(
+      120% 90% at 50% 30%,
+      transparent 50%,
+      rgba(0, 0, 0, 0.42) 100%
+    );
 }
-.gm-mnav[data-open="true"] .gm-mnav-hem {
-  transform: translateY(100vh);
+.gm-mnav::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.045;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+}
+
+/* ---- 縦書きの透かし ---- */
+.gm-mnav-ghost {
+  position: fixed;
+  top: 50%;
+  right: clamp(-14px, -2vw, 0px);
+  translate: 0 -50%;
+  writing-mode: vertical-rl;
+  font-family: var(--font-noto-serif-jp), "Noto Serif JP", serif;
+  font-size: clamp(120px, 34vh, 230px);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  line-height: 1;
+  color: rgba(242, 240, 235, 0.04);
+  pointer-events: none;
+  user-select: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.gm-mnav[data-open="true"] .gm-mnav-ghost {
   opacity: 1;
-  transition:
-    transform var(--gm-curtain) var(--gm-ease),
-    opacity 0.3s ease;
+  transition: opacity 1.2s ease 0.7s;
+  animation: gm-mnav-drift 26s ease-in-out infinite alternate;
+}
+@keyframes gm-mnav-drift {
+  from {
+    transform: translateY(-1.6%);
+  }
+  to {
+    transform: translateY(1.6%);
+  }
 }
 
 .gm-mnav-inner {
+  position: relative;
   min-height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: max(96px, calc(env(safe-area-inset-top) + 80px))
-    clamp(28px, 8vw, 56px) max(36px, env(safe-area-inset-bottom));
+  padding: max(92px, calc(env(safe-area-inset-top) + 76px))
+    clamp(28px, 8vw, 56px) max(30px, env(safe-area-inset-bottom));
 }
 
-/* ---- 中身の共通挙動（開: せり上げ / 閉: 下の行から落ちる）---- */
+/* ---- 段差表示の共通挙動 ----
+   開: 260ms + i*55ms で上から順に。閉: (n-i)*12ms で下から順に。 */
 .gm-mnav-eyebrow,
+.gm-mnav-logo,
+.gm-mnav-tagline,
 .gm-mnav-item,
-.gm-mnav-cta {
+.gm-mnav-reserve,
+.gm-mnav-info {
   opacity: 0;
   transform: translateY(14px);
-  /* 閉じるときは下の行から先に落とす（--n は総数） */
   transition:
-    opacity 0.26s ease calc((var(--n) - var(--i)) * 14ms),
-    transform 0.26s ease calc((var(--n) - var(--i)) * 14ms);
+    opacity 0.24s ease calc((var(--n) - var(--i)) * 12ms),
+    transform 0.24s ease calc((var(--n) - var(--i)) * 12ms);
 }
 .gm-mnav[data-open="true"] .gm-mnav-eyebrow,
+.gm-mnav[data-open="true"] .gm-mnav-logo,
+.gm-mnav[data-open="true"] .gm-mnav-tagline,
 .gm-mnav[data-open="true"] .gm-mnav-item,
-.gm-mnav[data-open="true"] .gm-mnav-cta {
+.gm-mnav[data-open="true"] .gm-mnav-reserve,
+.gm-mnav[data-open="true"] .gm-mnav-info {
   opacity: 1;
   transform: translateY(0);
   transition:
-    opacity 0.5s ease calc(260ms + var(--i) * 70ms),
-    transform 0.9s var(--gm-ease) calc(260ms + var(--i) * 70ms);
+    opacity 0.5s ease calc(260ms + var(--i) * 55ms),
+    transform 0.85s var(--gm-ease) calc(260ms + var(--i) * 55ms);
+}
+/* 行マスク(共通)。ロゴも品書きも同じ作法で下からせり上がる */
+.gm-mnav-mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.1em;
+}
+.gm-mnav-rise {
+  display: block;
+  transform: translateY(108%);
+  transition: transform 0.26s ease calc((var(--n) - var(--i)) * 12ms);
+}
+.gm-mnav[data-open="true"] .gm-mnav-rise {
+  transform: translateY(0);
+  transition: transform 0.95s var(--gm-ease) calc(300ms + var(--i) * 55ms);
 }
 
+/* ---- ブランドの頭書き ---- */
+.gm-mnav-brand {
+  margin-bottom: clamp(20px, 4vh, 36px);
+}
 .gm-mnav-eyebrow {
-  margin: 0 0 clamp(18px, 3.5vh, 30px);
-  font-size: 10.5px;
-  letter-spacing: 0.34em;
-  text-indent: 0.34em;
+  margin: 0 0 10px;
+  font-size: 10px;
+  letter-spacing: 0.32em;
   color: #b9b2a6;
 }
+.gm-mnav-logo {
+  margin: 0;
+  font-family: var(--font-noto-serif-jp), "Noto Serif JP", serif;
+  font-size: clamp(40px, 11vw, 56px);
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  line-height: 1.15;
+  color: #f2f0eb;
+}
+.gm-mnav-tagline {
+  margin: 8px 0 0;
+  font-size: clamp(11.5px, 3vw, 13px);
+  letter-spacing: 0.12em;
+  line-height: 1.9;
+  color: rgba(242, 240, 235, 0.6);
+}
 
+/* ---- 品書き ---- */
 .gm-mnav-list {
   display: flex;
   flex-direction: column;
 }
-
-/* ---- 1 行 ---- */
 .gm-mnav-item {
   position: relative;
   display: grid;
-  grid-template-columns: 34px 1fr;
+  grid-template-columns: 30px 1fr auto;
   align-items: baseline;
-  gap: 12px;
-  padding: clamp(13px, 2.1vh, 17px) 0;
+  gap: 10px;
+  padding: clamp(11px, 1.8vh, 15px) 0;
   text-decoration: none;
   color: #f2f0eb;
 }
 .gm-mnav-num {
   font-family: var(--font-noto-serif-jp), "Noto Serif JP", serif;
-  font-size: 11px;
-  letter-spacing: 0.14em;
-  color: rgba(185, 178, 166, 0.75);
-}
-/* 行マスク: 下から上へせり上げる（見出しの作法と同じ） */
-.gm-mnav-mask {
-  display: block;
-  overflow: hidden;
-  padding-bottom: 0.12em;
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  color: rgba(185, 178, 166, 0.6);
 }
 .gm-mnav-label {
-  display: block;
   font-family: var(--font-noto-serif-jp), "Noto Serif JP", serif;
-  font-size: clamp(21px, 5.4vw, 27px);
+  font-size: clamp(19px, 5vw, 24px);
   font-weight: 400;
   letter-spacing: 0.14em;
-  line-height: 1.25;
-  transform: translateY(105%);
-  transition: transform 0.28s ease calc((var(--n) - var(--i)) * 14ms);
+  line-height: 1.3;
+  transition-property: transform, color;
 }
-.gm-mnav[data-open="true"] .gm-mnav-label {
-  transform: translateY(0);
-  transition: transform 1s var(--gm-ease) calc(300ms + var(--i) * 70ms);
+.gm-mnav-en {
+  font-size: 9px;
+  letter-spacing: 0.26em;
+  color: rgba(185, 178, 166, 0.45);
 }
-/* 罫線が左から引かれる */
 .gm-mnav-rule {
   position: absolute;
   left: 0;
   right: 0;
   bottom: 0;
   height: 1px;
-  background: rgba(242, 240, 235, 0.12);
+  background: rgba(242, 240, 235, 0.1);
   transform: scaleX(0);
   transform-origin: left center;
   transition: transform 0.3s ease;
 }
 .gm-mnav[data-open="true"] .gm-mnav-rule {
   transform: scaleX(1);
-  transition: transform 0.9s var(--gm-ease) calc(320ms + var(--i) * 70ms);
+  transition: transform 0.9s var(--gm-ease) calc(330ms + var(--i) * 55ms);
 }
-/* 現在地は朱ではなくストーンで示す（朱は電話予約だけの色） */
+/* 押下の返事は即時(遅延付き transition の対象外プロパティで返す) */
+.gm-mnav-item:active .gm-mnav-label {
+  color: #b9b2a6;
+}
+/* 現在地: 朱ではなくストーン(朱は電話予約だけの色) */
 .gm-mnav-item[aria-current="page"] .gm-mnav-label {
   color: #b9b2a6;
 }
+.gm-mnav-item[aria-current="page"] .gm-mnav-num {
+  color: #b9b2a6;
+}
 .gm-mnav-item[aria-current="page"] .gm-mnav-rule {
-  background: rgba(185, 178, 166, 0.5);
+  background: rgba(185, 178, 166, 0.45);
 }
 
-/* 副ボタン（枠）。見た目は .gm-reserve-outline と対で、寸法はここが出典 */
-.gm-mnav-cta {
-  align-self: flex-start;
-  margin-top: clamp(22px, 4vh, 36px);
-  display: inline-block;
-  padding: 14px 44px;
-  background: transparent;
-  border: 1px solid rgba(185, 178, 166, 0.5);
-  border-radius: 999px;
-  color: #f2f0eb;
+/* ---- 予約の一角 ---- */
+.gm-mnav-foot {
+  margin-top: clamp(22px, 4.5vh, 40px);
+}
+.gm-mnav-reserve {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+.gm-mnav-telbtn {
+  /* 寸法は .gm-tel-btn(正準)のまま。小型機で横幅を食い過ぎないよう微調整 */
+  padding: 14px 34px;
+}
+.gm-mnav-tel {
   font-family: var(--font-noto-serif-jp), "Noto Serif JP", serif;
-  font-size: 16px;
-  line-height: 1.2;
-  letter-spacing: 0.2em;
-  text-indent: 0.2em;
+  font-size: clamp(17px, 4.6vw, 20px);
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+  color: #f2f0eb;
   text-decoration: none;
-  cursor: pointer;
+}
+.gm-mnav-info {
+  margin-top: 16px;
+}
+.gm-mnav-hours {
+  margin: 0 0 10px;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  line-height: 1.8;
+  color: rgba(242, 240, 235, 0.55);
+  font-variant-numeric: tabular-nums;
+}
+.gm-mnav-links2 {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+.gm-mnav-web {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: #b9b2a6;
+  text-decoration: none;
+}
+.gm-mnav-web .gm-arrow {
+  transition: transform 0.3s var(--gm-ease);
+}
+.gm-mnav-web:active .gm-arrow {
+  transform: translateX(4px);
 }
 /* 朱の電話ボタン: hover で炭火が灯るようなグロー(色は変えない=朱の純度を守る) */
 /* ---- 主 CTA(朱)と副ボタン(枠)の正準定義(2026-07-25) ----
@@ -937,35 +1077,46 @@ body {
   .gm-nav-link[aria-current="true"]::after {
     transform: scaleX(1);
   }
-  /* モバイルメニュー: 幕もせり上げも使わず、開いた瞬間に全文が出る */
+  /* モバイルメニュー: 幕もせり上げも透かしの漂いも使わず、開いた瞬間に全文が出る */
   .gm-mnav,
-  .gm-mnav-hem,
+  .gm-mnav-veil,
+  .gm-mnav-ghost,
   .gm-mnav-eyebrow,
+  .gm-mnav-logo,
+  .gm-mnav-tagline,
   .gm-mnav-item,
-  .gm-mnav-cta,
-  .gm-mnav-label,
+  .gm-mnav-reserve,
+  .gm-mnav-info,
+  .gm-mnav-rise,
   .gm-mnav-rule,
   .gm-burger-bars > span,
   .gm-burger-x > span {
     transition: none !important;
+    animation: none !important;
   }
   .gm-mnav {
     clip-path: none !important;
   }
-  .gm-mnav-hem {
+  .gm-mnav-veil {
     display: none;
   }
   .gm-mnav-eyebrow,
+  .gm-mnav-logo,
+  .gm-mnav-tagline,
   .gm-mnav-item,
-  .gm-mnav-cta {
+  .gm-mnav-reserve,
+  .gm-mnav-info {
     opacity: 1;
     transform: none;
   }
-  .gm-mnav-label {
+  .gm-mnav-rise {
     transform: none;
   }
   .gm-mnav-rule {
     transform: scaleX(1);
+  }
+  .gm-mnav[data-open="true"] .gm-mnav-ghost {
+    opacity: 1;
   }
 }
 
@@ -978,7 +1129,8 @@ body {
 .gm-reserve-outline:focus-visible,
 .gm-burger:focus-visible,
 .gm-mnav-item:focus-visible,
-.gm-mnav-cta:focus-visible,
+.gm-mnav-tel:focus-visible,
+.gm-mnav-web:focus-visible,
 .gm-tel-btn:focus-visible,
 .gm-back-btn:focus-visible,
 .gm-detail-reserve:focus-visible,

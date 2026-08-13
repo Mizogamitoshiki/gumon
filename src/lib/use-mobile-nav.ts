@@ -54,9 +54,11 @@ export function useMobileNavA11y(
           'a[href], button:not([disabled])',
         ),
       );
-    // 開いた瞬間、最初のリンクへフォーカスを送る(スクリーンリーダー利用者がヘッダーの
-    // 裏に取り残されないように)
-    focusable()[0]?.focus();
+    // 開いた瞬間はパネル自体(tabindex=-1)へフォーカスを送る。スクリーンリーダー
+    // 利用者をヘッダーの裏に取り残さないため。最初のリンクへ送らないのは、
+    // プログラム的フォーカスで :focus-visible が立ち、開いただけで先頭項目に
+    // リングの「枠」が描かれてしまうため(2026-08-14 デザイン指摘)。
+    panel.focus({ preventScroll: true });
 
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
