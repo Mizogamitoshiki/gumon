@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { SITE_URL, RESTAURANT_JSONLD } from "@/lib/site";
 import NoticeBar from "@/components/NoticeBar";
+import FloatingTel from "@/components/FloatingTel";
 import PageTransition from "@/components/PageTransition";
 import "./globals.css";
 
@@ -107,6 +108,8 @@ export default function RootLayout({
             検索でメニューページに直接来ても必ず目に入るように) */}
         <NoticeBar />
         {children}
+        {/* モバイルの浮かぶ電話ボタン(全ページ・861px未満のみ表示) */}
+        <FloatingTel />
         {/* schema.org Restaurant — ローカル検索(マップ・リッチリザルト)向け */}
         <script
           type="application/ld+json"

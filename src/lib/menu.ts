@@ -175,6 +175,12 @@ export const getDrinkGroups = (): { group: DrinkGroup; items: MenuItem[] }[] => 
   return grouped;
 };
 
+// TOP の料理ビートに出す品を選ぶ。CMS の「看板の品」(signature)を最優先し、
+// 足りない分は表示順(order)で補う。ディナーが安い順の小皿(ポテトフライ等)で
+// 埋まらないように、店が推したい品を CMS の印だけで差し替えられる仕組み。
+export const getBeatItems = (items: MenuItem[], n = 2): MenuItem[] =>
+  [...items.filter((i) => i.signature), ...items.filter((i) => !i.signature)].slice(0, n);
+
 // Back-compat shims so GumonScroll keeps the same JSX shapes.
 export const CATS = FOOD_CATEGORIES.map((c) => ({
   label: c.label,

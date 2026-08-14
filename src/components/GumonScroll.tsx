@@ -7,7 +7,7 @@ import Lenis from "lenis";
 import Link from "next/link";
 import FoodNavDropdown from "./FoodNavDropdown";
 import InstagramLink from "./InstagramLink";
-import { CATS, DRINK_GROUPS } from "@/lib/menu";
+import { CATS, DRINK_GROUPS, getBeatItems } from "@/lib/menu";
 import { IS_RECRUITING } from "@/lib/recruit";
 import { GUMON_SCENE_MOTION } from "@/lib/motion-tokens";
 import { HOTPEPPER_URL } from "@/lib/site";
@@ -1481,7 +1481,7 @@ export default function GumonScroll() {
                       </p>
                       <span data-cat-rule className="gm-menu-rule" aria-hidden="true" />
                     </div>
-                    {c.items.slice(0, 2).map((d) => (
+                    {getBeatItems(c.items).map((d) => (
                       <div key={d.name} data-cat-row className="gm-menu-row">
                         <div className="gm-menu-line">
                           {d.img && (

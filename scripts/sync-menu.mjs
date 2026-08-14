@@ -54,6 +54,9 @@ for (const item of contents) {
     continue;
   }
   const spicy = [1, 2, 3].includes(item.spicy) ? item.spicy : undefined;
+  // 画像は管理画面の入れ方で「URL文字列」と「{url, alt} オブジェクト」が混在する。
+  // サイト側は文字列(URL)の単一形に正規化する
+  const img = typeof item.img === "string" ? item.img : item.img?.url;
   grouped[item.category].push({
     order: typeof item.order === "number" ? item.order : 999,
     entry: {
@@ -65,7 +68,7 @@ for (const item of contents) {
       ...(item.signature ? { signature: true } : {}),
       ...(item.recommended ? { recommended: true } : {}),
       ...(spicy !== undefined ? { spicy } : {}),
-      ...(item.img ? { img: item.img } : {}),
+      ...(img ? { img } : {}),
     },
   });
 }

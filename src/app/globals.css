@@ -278,6 +278,71 @@ body {
   transform: rotate(-45deg) scale(1);
 }
 
+/* ---- 浮かぶ電話ボタン(モバイル・全ページ) ----
+   朱はサイトの規律どおり「電話予約 CTA」専用色。z はメニューの幕(290)より
+   下に置き、メニューを開いたら幕の中の電話CTAへ役目を譲る */
+.gm-float-tel {
+  position: fixed;
+  right: max(16px, env(safe-area-inset-right));
+  bottom: max(18px, calc(env(safe-area-inset-bottom) + 8px));
+  z-index: 280;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #b23a2e;
+  color: #f2f0eb;
+  box-shadow:
+    0 6px 22px -6px rgba(178, 58, 46, 0.55),
+    0 14px 40px -12px rgba(0, 0, 0, 0.6);
+}
+.gm-float-tel svg {
+  width: 23px;
+  height: 23px;
+}
+/* 炭火の呼吸 — 波紋を1本だけ、ゆっくり */
+.gm-float-tel-ring {
+  position: absolute;
+  inset: -1px;
+  border-radius: 50%;
+  border: 1px solid rgba(178, 58, 46, 0.65);
+  animation: gm-float-tel-breathe 3.4s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  pointer-events: none;
+}
+@keyframes gm-float-tel-breathe {
+  0% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  70%,
+  100% {
+    transform: scale(1.55);
+    opacity: 0;
+  }
+}
+.gm-float-tel:active {
+  transform: scale(0.94);
+}
+@media (max-width: 860px) {
+  .gm-float-tel {
+    display: flex;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gm-float-tel-ring {
+    animation: none;
+    opacity: 0;
+  }
+}
+.gm-float-tel:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px #1c1b19,
+    0 0 0 3px rgba(242, 240, 235, 0.7);
+}
+
 /* ---- 紙の帳（先行するレイヤー）---- */
 .gm-mnav-veil {
   position: fixed;
