@@ -65,14 +65,24 @@ export const metadata: Metadata = {
     title: "中国料理 愚問（GUMON）｜泉州・貝塚駅 徒歩10分の中華",
     description:
       "問いを重ね、一皿に答える。泉州・貝塚駅徒歩10分、ランチ・ディナー・宴会。中国料理 愚問（GUMON）。",
-    images: [{ url: "/dishes.webp", width: 1448, height: 1086, alt: "愚問の料理" }],
+    // OG は 1.91:1 の JPEG を渡す。WebP は LINE など一部のクローラが
+    // 展開できず「画像なしのリンク」になるため、共有用だけは JPEG に固定する
+    images: [
+      {
+        url: "/og.jpg",
+        width: 1200,
+        height: 630,
+        type: "image/jpeg",
+        alt: "中国料理 愚問の料理（麻婆豆腐・小籠包・点心）",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "中国料理 愚問（GUMON）｜泉州・貝塚駅 徒歩10分の中華",
     description:
       "問いを重ね、一皿に答える。泉州・貝塚駅徒歩10分、ランチ・ディナー・宴会。",
-    images: ["/dishes.webp"],
+    images: ["/og.jpg"],
   },
   robots: { index: true, follow: true },
   formatDetection: { telephone: true },

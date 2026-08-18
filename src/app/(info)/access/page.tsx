@@ -5,6 +5,7 @@ import InfoSection from "@/components/info/InfoSection";
 import TelCta from "@/components/info/TelCta";
 import BreadcrumbJsonLd from "@/components/BreadcrumbJsonLd";
 import BusinessCalendar from "@/components/BusinessCalendar";
+import { GOOGLE_MAPS_URL } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "アクセス — 貝塚駅 東出口より徒歩10分",
@@ -128,7 +129,7 @@ export default function Page() {
             <div className="gm-info-map gm-access-map" data-info-clip>
               <iframe
                 className="gm-map-dark"
-                src="https://maps.google.com/maps?q=%E5%A4%A7%E9%98%AA%E5%BA%9C%E8%B2%9D%E5%A1%9A%E5%B8%82%E5%8A%A0%E7%A5%9E1-4-26&output=embed&hl=ja&z=17"
+                src="https://maps.google.com/maps?q=%E4%B8%AD%E5%9B%BD%E6%96%99%E7%90%86+%E6%84%9A%E5%95%8F+%E5%A4%A7%E9%98%AA%E5%BA%9C%E8%B2%9D%E5%A1%9A%E5%B8%82%E5%8A%A0%E7%A5%9E1-4-26&output=embed&hl=ja&z=17"
                 title="中国料理 愚問 へのアクセス地図"
                 width="100%"
                 height="100%"
@@ -173,7 +174,7 @@ export default function Page() {
               </article>
               <div className="gm-info-links gm-access-maplink" data-info-row>
                 <a
-                  href="https://maps.google.com/?q=%E5%A4%A7%E9%98%AA%E5%BA%9C%E8%B2%9D%E5%A1%9A%E5%B8%82%E5%8A%A0%E7%A5%9E1-4-26"
+                  href={GOOGLE_MAPS_URL}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="gm-detail-link"
