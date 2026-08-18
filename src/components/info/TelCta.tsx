@@ -21,10 +21,10 @@ export default function TelCta({
     <div className="gm-detail-cta" data-info-row>
       <p className="gm-detail-cta-lead">{lead}</p>
       {/* 見た目は .gm-tel-btn(globals.css)が唯一の出典 — 全画面で同一寸法 */}
-      <a href="tel:0724306038" className="gm-tel-btn">
+      <a href="tel:0724306038" data-tel-from="page-cta" className="gm-tel-btn">
         {label}
       </a>
-      <a href="tel:0724306038" className="gm-detail-cta-tel">
+      <a href="tel:0724306038" data-tel-from="page-cta" className="gm-detail-cta-tel">
         072-430-6038
       </a>
       {showWebReserve && (

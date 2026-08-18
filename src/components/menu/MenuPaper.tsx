@@ -303,10 +303,10 @@ export default function MenuPaper({
       <div className="gm-detail-cta gm-paper-cta">
         <p className="gm-detail-cta-lead">ご予約を承っております。</p>
         {/* 見た目は .gm-tel-btn(globals.css) が唯一の出典 */}
-        <a href="tel:0724306038" className="gm-tel-btn">
+        <a href="tel:0724306038" data-tel-from="menu-cta" className="gm-tel-btn">
           電話で予約する
         </a>
-        <a href="tel:0724306038" className="gm-detail-cta-tel">
+        <a href="tel:0724306038" data-tel-from="menu-cta" className="gm-detail-cta-tel">
           072-430-6038
         </a>
         <div className="gm-cta-web">

@@ -4,6 +4,7 @@ import { SITE_URL, RESTAURANT_JSONLD } from "@/lib/site";
 import NoticeBar from "@/components/NoticeBar";
 import FloatingTel from "@/components/FloatingTel";
 import PageTransition from "@/components/PageTransition";
+import Analytics from "@/components/Analytics";
 import "./globals.css";
 
 // オープニング演出の出し分けを描画前に確定する(FOUC防止)。
@@ -120,6 +121,8 @@ export default function RootLayout({
         {children}
         {/* モバイルの浮かぶ電話ボタン(全ページ・861px未満のみ表示) */}
         <FloatingTel />
+        {/* GA4。NEXT_PUBLIC_GA_ID が無い環境では何も出力しない */}
+        <Analytics />
         {/* schema.org Restaurant — ローカル検索(マップ・リッチリザルト)向け */}
         <script
           type="application/ld+json"

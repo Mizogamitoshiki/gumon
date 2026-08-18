@@ -13,7 +13,7 @@ import { TEL_DISPLAY, TEL_LINK } from "@/lib/site";
 export default function FloatingTel() {
   return (
     <a
-      href={TEL_LINK}
+      href={TEL_LINK} data-tel-from="floating"
       className="gm-float-tel"
       aria-label={`電話で予約する ${TEL_DISPLAY}`}
     >

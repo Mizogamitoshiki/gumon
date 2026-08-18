@@ -112,7 +112,7 @@ export default function Page() {
                 <dt>{r.label}</dt>
                 <dd>
                   {"tel" in r && r.tel ? (
-                    <a href="tel:0724306038" className="gm-info-tel-link">
+                    <a href="tel:0724306038" data-tel-from="access" className="gm-info-tel-link">
                       {r.value}
                     </a>
                   ) : (

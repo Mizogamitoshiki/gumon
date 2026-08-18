@@ -1231,7 +1231,7 @@ export default function GumonScroll() {
                   {/* 見た目は .gm-tel-btn / .gm-back-btn(globals.css)が唯一の
                       出典。従来ここだけ 14px/13-36px の別寸法で、他画面の
                       15px/15-46px と揃っていなかった */}
-                  <a href="tel:0724306038" className="gm-tel-btn">
+                  <a href="tel:0724306038" data-tel-from="top" className="gm-tel-btn">
                     電話で予約する
                   </a>
                   <Link href="/menu/dinner" className="gm-back-btn">
@@ -1825,7 +1825,7 @@ export default function GumonScroll() {
               </p>
               <a
                 data-fade
-                href="tel:0724306038"
+                href="tel:0724306038" data-tel-from="top"
                 style={{
                   margin: "14px 0 0",
                   textDecoration: "none",
@@ -1849,7 +1849,7 @@ export default function GumonScroll() {
                 }}
               >
                 {/* 見た目は .gm-tel-btn / .gm-back-btn(globals.css)が唯一の出典 */}
-                <a href="tel:0724306038" className="gm-tel-btn">
+                <a href="tel:0724306038" data-tel-from="top" className="gm-tel-btn">
                   電話で予約する
                 </a>
                 <button

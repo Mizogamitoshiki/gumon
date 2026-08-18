@@ -136,7 +136,7 @@ export default function Page() {
         <InfoSection eyebrow="BY PHONE" title="お電話でのお問い合わせ">
           <div className="gm-tel-card gm-tel-card-hero" data-info-row>
             <p className="gm-tel-card-label">TEL</p>
-            <a href="tel:0724306038" className="gm-tel-card-number">
+            <a href="tel:0724306038" data-tel-from="contact" className="gm-tel-card-number">
               072-430-6038
             </a>
             <div className="gm-tel-hours">

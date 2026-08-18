@@ -43,7 +43,7 @@ export default function SiteChrome({
         <DetailNav />
 
         <div className="gm-detail-header-right">
-          <a href="tel:0724306038" className="gm-detail-reserve">
+          <a href="tel:0724306038" data-tel-from="header" className="gm-detail-reserve">
             予約
           </a>
           <MobileNav />
@@ -86,13 +86,13 @@ export default function SiteChrome({
             定休日なし
             <br />
             <a
-              href="tel:0724306038"
+              href="tel:0724306038" data-tel-from="header"
               style={{ color: "#f2f0eb", textDecoration: "none" }}
             >
               072-430-6038
             </a>
             <div className="gm-detail-footer-actions">
-              <a href="tel:0724306038" className="gm-detail-reserve">
+              <a href="tel:0724306038" data-tel-from="header" className="gm-detail-reserve">
                 電話で予約
               </a>
               <a

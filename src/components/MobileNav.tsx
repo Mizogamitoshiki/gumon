@@ -141,10 +141,10 @@ export default function MobileNav({
               className="gm-mnav-reserve"
               style={{ "--i": LINKS.length + 3 } as CSSProperties}
             >
-              <a href={TEL_LINK} className="gm-tel-btn gm-mnav-telbtn" onClick={close}>
+              <a href={TEL_LINK} data-tel-from="mobile-menu" className="gm-tel-btn gm-mnav-telbtn" onClick={close}>
                 電話で予約する
               </a>
-              <a href={TEL_LINK} className="gm-mnav-tel" onClick={close}>
+              <a href={TEL_LINK} data-tel-from="mobile-menu" className="gm-mnav-tel" onClick={close}>
                 {TEL_DISPLAY}
               </a>
             </div>
