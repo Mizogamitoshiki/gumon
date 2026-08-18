@@ -36,6 +36,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     page("/calendar", 0.7, BUILT_AT, "weekly"), // 臨時休業の更新があるため weekly
     page("/about", 0.6, EDITORIAL_UPDATED),
     page("/contact", 0.6, EDITORIAL_UPDATED),
+    page("/privacy", 0.2, EDITORIAL_UPDATED, "yearly"),
     ...(IS_RECRUITING ? [page("/recruit", 0.4, BUILT_AT)] : []),
   ];
 }

@@ -6,6 +6,7 @@ import DetailNav from "@/components/DetailNav";
 import MobileNav from "@/components/MobileNav";
 import ScrollProgress from "@/components/ScrollProgress";
 import InstagramLink from "@/components/InstagramLink";
+import { GOOGLE_MAPS_URL } from "@/lib/site";
 
 // 店舗案内系のページ(/about /access /contact /recruit)へのリンク。
 // ヘッダー(デスクトップ)とフッターの両方で使う。採用は募集中のときだけ載せる
@@ -86,17 +87,17 @@ export default function SiteChrome({
             定休日なし
             <br />
             <a
-              href="tel:0724306038" data-tel-from="header"
+              href="tel:0724306038" data-tel-from="footer"
               style={{ color: "#f2f0eb", textDecoration: "none" }}
             >
               072-430-6038
             </a>
             <div className="gm-detail-footer-actions">
-              <a href="tel:0724306038" data-tel-from="header" className="gm-detail-reserve">
+              <a href="tel:0724306038" data-tel-from="footer" className="gm-detail-reserve">
                 電話で予約
               </a>
               <a
-                href="https://maps.google.com/?q=%E5%A4%A7%E9%98%AA%E5%BA%9C%E8%B2%9D%E5%A1%9A%E5%B8%82%E5%8A%A0%E7%A5%9E1-4-26"
+                href={GOOGLE_MAPS_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="gm-detail-link"
@@ -109,7 +110,12 @@ export default function SiteChrome({
             </div>
           </div>
         </div>
-        <p className="gm-detail-copy">© GUMON — 中国料理 愚問</p>
+        <p className="gm-detail-copy">
+          © GUMON — 中国料理 愚問
+          <Link href="/privacy" className="gm-detail-copy-link">
+            プライバシーポリシー
+          </Link>
+        </p>
       </footer>
     </>
   );

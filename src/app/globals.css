@@ -1619,6 +1619,22 @@ body {
   color: rgba(242, 240, 235, 0.58);
 }
 
+/* 著作表示と同じ行に置く控えめなリンク(プライバシーポリシー)。
+   フッターの構成を増やさずに、全ページから辿れる状態を保つ */
+.gm-detail-copy-link {
+  margin-left: 1.4em;
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(242, 240, 235, 0.24);
+  padding-bottom: 1px;
+  transition: color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.gm-detail-copy-link:hover {
+  color: rgba(242, 240, 235, 0.92);
+  border-bottom-color: rgba(242, 240, 235, 0.6);
+}
+
 /* ---- detail on-load reveal (reduced-motion: shown immediately) ---- */
 .gm-detail-reveal {
   opacity: 1;

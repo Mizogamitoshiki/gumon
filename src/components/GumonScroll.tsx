@@ -1732,7 +1732,7 @@ export default function GumonScroll() {
                 >
                   <iframe
                     className="gm-map-dark"
-                    src="https://maps.google.com/maps?q=%E5%A4%A7%E9%98%AA%E5%BA%9C%E8%B2%9D%E5%A1%9A%E5%B8%82%E5%8A%A0%E7%A5%9E1-4-26&output=embed&hl=ja&z=17"
+                    src="https://maps.google.com/maps?q=%E4%B8%AD%E5%9B%BD%E6%96%99%E7%90%86+%E6%84%9A%E5%95%8F+%E5%A4%A7%E9%98%AA%E5%BA%9C%E8%B2%9D%E5%A1%9A%E5%B8%82%E5%8A%A0%E7%A5%9E1-4-26&output=embed&hl=ja&z=17"
                     title="中国料理 愚問 へのアクセス地図"
                     width="100%"
                     height="100%"
@@ -1924,6 +1924,12 @@ export default function GumonScroll() {
                 }}
               >
                 © GUMON
+                <Link
+                  href="/privacy"
+                  style={{ color: "inherit", textDecoration: "none", marginLeft: "1.4em" }}
+                >
+                  プライバシーポリシー
+                </Link>
               </p>
             </div>
           </div>
