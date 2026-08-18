@@ -4,10 +4,11 @@
 #  - `npm run build` の prebuild フックで scripts/sync-menu.mjs が Bloom-lCMS から
 #    メニューを取得して src/lib/menu.generated.ts を再生成する
 #  - そのため Amplify コンソールの環境変数に BLOOM_API_URL / BLOOM_API_KEY が
-#    必須(未設定だと prebuild が exit 1 でビルド失敗)。本番URL用に
-#    NEXT_PUBLIC_SITE_URL も設定する(未設定時は vercel.app にフォールバック)
-#  - CMS でメニューを更新したら再ビルドが必要(Amplify の Incoming Webhook を
-#    Bloom-lCMS の Webhook に登録して自動再ビルドにするのが望ましい)
+#    必須(未設定だと prebuild が exit 1 でビルド失敗)。正規URL用に
+#    NEXT_PUBLIC_SITE_URL=https://gumon0624.com も設定済み
+#    (未設定時は src/lib/site.ts のフォールバック=同値を使う)
+#  - CMS でメニューを更新したら再ビルドが必要(Bloom-lCMS の Webhook に
+#    Amplify の Incoming Webhook を登録済み。publish で自動再ビルドされる)
 version: 1
 frontend:
   phases:

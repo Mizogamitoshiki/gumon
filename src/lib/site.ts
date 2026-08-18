@@ -1,12 +1,14 @@
 // サイト共通の実在情報(SEO・構造化データ・sitemap が参照する単一の出典)。
 // 出典: gumon.owst.jp(公式・2026-07-03取得)
 
-// カスタムドメイン確定後は Amplify の環境変数 NEXT_PUBLIC_SITE_URL を設定すること。
-// 未設定の間、canonical / OG / sitemap の絶対 URL はこのフォールバックになる。
-// (旧フォールバック gumon-hp.vercel.app は本番と別ドメインを正規URLとして
-//  宣言してしまいインデックスを阻害していた — 2026-08-07 修正)
+// 正規URL(canonical / OG / sitemap の絶対 URL の基点)。
+// カスタムドメイン gumon0624.com を 2026-08-18 に接続(Amplify + Route 53)。
+// Amplify にも環境変数 NEXT_PUBLIC_SITE_URL を同値で設定済み。
+// www.gumon0624.com は Amplify の 301 で apex に寄せるため、ここは常に www なしの apex。
+// (フォールバックが本番と別ドメインだとインデックスを阻害するため、
+//  ドメイン移行時はこの値と public/llms.txt 内の URL を必ず揃える)
 export const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://main.d3ufd59bktw31h.amplifyapp.com";
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://gumon0624.com";
 
 export const SITE_NAME = "中国料理 愚問（GUMON）";
 export const TEL_DISPLAY = "072-430-6038";
