@@ -14,3 +14,4 @@ next-env.d.ts
 /src/lib/recruit.generated.ts
 /src/lib/notice.generated.ts
 /src/lib/calendar.generated.ts
+/public/menu-thumbs

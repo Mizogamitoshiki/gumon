@@ -5,7 +5,9 @@ import gsap from "gsap";
 
 /* TOP 初期表示のシネマティック・イントロ。
    - 初回訪問(セッション内で最初のオープニング): 約7秒の料理フィルム
-     (public/gumon-intro-desktop.mp4 / -mobile.mp4) → マットブラック収束 →
+     (public/gumon-intro-desktop.mp4 1600x900 / -mobile.mp4 720x1280。
+      2026-08-21 に H.264 crf25/26 で再エンコードし 2.4MB→1.3MB / 1.9MB→0.7MB)
+     → マットブラック収束 →
      ロゴ「愚問」をGSAPで合成 → ヒーローへクロスフェード
    - 同一セッション内の再訪問: 0.8〜1.2秒の短いロゴ表示のみ
    - prefers-reduced-motion: 動画なし。#1c1b19 の上に opacity のみでロゴ
@@ -22,6 +24,16 @@ const LOGO_CUE_TIME = 6.0;
 // 揺れないよう、判定はページロードにつき一度だけ行う(モジュール変数)
 let decidedMode: "full" | "short" | "rm" | "skip" | null = null;
 
+// 低速回線(2G/3G 相当)やデータセーバー有効時は、動画(0.7〜1.3MB)を
+// 待たせるより即ロゴへ。Network Information API 非対応ブラウザは従来通り
+function slowNetwork(): boolean {
+  const conn = (navigator as Navigator & {
+    connection?: { saveData?: boolean; effectiveType?: string };
+  }).connection;
+  if (!conn) return false;
+  return !!conn.saveData || /(^|-)2g$|^3g$/.test(conn.effectiveType ?? "");
+}
+
 function decideMode(): "full" | "short" | "rm" | "skip" {
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   let seen = false;
@@ -32,7 +44,8 @@ function decideMode(): "full" | "short" | "rm" | "skip" {
     /* プライベートモード等 — 毎回フルでよい */
   }
   if (reduce) return seen ? "skip" : "rm";
-  return seen ? "short" : "full";
+  if (seen) return "short";
+  return slowNetwork() ? "short" : "full";
 }
 
 export default function GumonIntro() {

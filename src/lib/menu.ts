@@ -17,6 +17,7 @@ export type MenuItem = {
   recommended?: boolean; // おすすめ(公式サイト掲載品=店が推す品。人気No.1等の実績主張はしない)
   spicy?: 1 | 2 | 3; // 辛さ(料理の性質としての事実表示。1=控えめ 2=中辛 3=辛口)
   img?: string;
+  thumb?: string; // ビルド時に生成した 128px WebP(public/menu-thumbs)。無ければ img を使う
 };
 
 // Shared shape driving the /menu/* detail page layout (Hero → gallery → list).

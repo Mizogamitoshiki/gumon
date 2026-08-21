@@ -68,8 +68,22 @@ export default function GumonScroll() {
     const qaIn = (el: Element | null, sel: string) =>
       el ? Array.from(el.querySelectorAll<HTMLElement>(sel)) : [];
 
+    /* ---- Google マップの遅延装填 ----
+       埋め込み地図は Maps の JS だけで約 500KB あり、初期表示では不要。
+       iframe は src を持たずに描画し(data-src)、飲み物の章に入った時点で
+       装填する(アクセスの 2unit ≒ 1.2〜1.6 画面手前。地図の開放演出までに
+       タイルは出揃う)。reduced-motion の静的並びは即装填 ---- */
+    const loadMap = () => {
+      const frame = root.querySelector<HTMLIFrameElement>("iframe[data-src]");
+      if (!frame) return;
+      const src = frame.getAttribute("data-src");
+      if (src) frame.src = src;
+      frame.removeAttribute("data-src");
+    };
+
     /* ---- reduced motion: flatten into a readable static stack ---- */
     if (reduce) {
+      loadMap();
       const sr = scrollRootRef.current;
       const stage = stageRef.current;
       if (sr) sr.style.height = "auto";
@@ -500,6 +514,9 @@ export default function GumonScroll() {
       );
       tl.to(access, { autoAlpha: 0, duration: 0.6, ease: "power2.in" }, T.accessOut);
     };
+    // 地図は飲み物の章に入った時点で装填(上の loadMap 参照)。スクラブで
+    // 往復しても一度だけ効く(二度目以降は data-src が無いので何もしない)
+    tl.call(loadMap, [], T.drink);
 
     // S9 答えは、席で。(reserve) — 円環の回収。letterSpacing アニメーションは
     // Block A で transform へ置換: 「散っていた問いが店名に収束する」余韻を
@@ -1484,11 +1501,11 @@ export default function GumonScroll() {
                     {getBeatItems(c.items).map((d) => (
                       <div key={d.name} data-cat-row className="gm-menu-row">
                         <div className="gm-menu-line">
-                          {d.img && (
+                          {(d.thumb || d.img) && (
                             <span
                               className="gm-menu-thumb"
                               aria-hidden="true"
-                              style={{ backgroundImage: `url(${d.img})` }}
+                              style={{ backgroundImage: `url(${d.thumb ?? d.img})` }}
                             />
                           )}
                           <span className="gm-menu-name">{d.name}</span>
@@ -1730,9 +1747,11 @@ export default function GumonScroll() {
                     border: "1px solid rgba(242,240,235,.08)",
                   }}
                 >
+                  {/* src は遅延装填(useEffect の loadMap)。初期 HTML では
+                      data-src のみを持ち、Maps の JS を初期表示から外す */}
                   <iframe
                     className="gm-map-dark"
-                    src="https://maps.google.com/maps?q=%E4%B8%AD%E5%9B%BD%E6%96%99%E7%90%86+%E6%84%9A%E5%95%8F+%E5%A4%A7%E9%98%AA%E5%BA%9C%E8%B2%9D%E5%A1%9A%E5%B8%82%E5%8A%A0%E7%A5%9E1-4-26&output=embed&hl=ja&z=17"
+                    data-src="https://maps.google.com/maps?q=%E4%B8%AD%E5%9B%BD%E6%96%99%E7%90%86+%E6%84%9A%E5%95%8F+%E5%A4%A7%E9%98%AA%E5%BA%9C%E8%B2%9D%E5%A1%9A%E5%B8%82%E5%8A%A0%E7%A5%9E1-4-26&output=embed&hl=ja&z=17"
                     title="中国料理 愚問 へのアクセス地図"
                     width="100%"
                     height="100%"

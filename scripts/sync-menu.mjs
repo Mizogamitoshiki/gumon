@@ -3,8 +3,9 @@
 // npm run dev / npm run build の pre フックとして自動実行される(npm run sync:menu で単独実行も可)。
 // 必要な環境変数: BLOOM_API_URL / BLOOM_API_KEY(.env.local または実行環境の環境変数)
 // 採用は「公開中の職種が0件=募集していない」と解釈し、サイト側が採用ページごと非表示にする。
-import { readFile, writeFile } from "node:fs/promises";
+import { readFile, writeFile, mkdir, access } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
+import { createHash } from "node:crypto";
 
 // Vercel等ではプラットフォームが直接 process.env に注入するため、
 // .env.local が存在する場合のみ、まだ未設定のキーを補う(既存の環境変数は上書きしない)
@@ -47,6 +48,48 @@ if (!res.ok) {
 }
 const { contents } = await res.json();
 
+// ---- サムネイル生成 ----
+// TOP の料理ビートは CMS の写真を 32〜46px の角丸サムネイルでしか使わないのに、
+// 原寸(300〜400KB の JPEG)をそのまま背景画像にしていた。ビルド時に 128px
+// (Retina で 2.8 倍)の WebP へ縮めて public/menu-thumbs/ に置き、
+// `thumb` として別フィールドで渡す(`img` は原寸 URL のまま残す)。
+// 取得・変換に失敗した品は thumb を持たず、サイト側が img へフォールバックする。
+const THUMB_DIR = new URL("../public/menu-thumbs/", import.meta.url);
+const THUMB_SIZE = 128;
+let sharp = null;
+try {
+  sharp = (await import("sharp")).default;
+} catch {
+  console.warn("[sync-menu] sharp が無いためサムネイル生成をスキップ(原寸 URL を使用)");
+}
+const makeThumb = async (url) => {
+  if (!sharp || !url) return undefined;
+  const name = createHash("sha1").update(url).digest("hex").slice(0, 16) + ".webp";
+  const file = new URL(name, THUMB_DIR);
+  const publicPath = `/menu-thumbs/${name}`;
+  try {
+    await access(file);
+    return publicPath; // 生成済み(URL が変われば名前も変わる)
+  } catch {
+    /* 未生成 */
+  }
+  try {
+    const r = await fetch(url);
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    const buf = Buffer.from(await r.arrayBuffer());
+    await mkdir(THUMB_DIR, { recursive: true });
+    await sharp(buf)
+      .rotate()
+      .resize(THUMB_SIZE, THUMB_SIZE, { fit: "cover", position: "centre" })
+      .webp({ quality: 74 })
+      .toFile(fileURLToPath(file));
+    return publicPath;
+  } catch (e) {
+    console.warn(`[sync-menu] サムネイル生成に失敗(原寸を使用): ${url} — ${e.message}`);
+    return undefined;
+  }
+};
+
 const grouped = Object.fromEntries(CATEGORIES.map((c) => [c, []]));
 for (const item of contents) {
   if (!CATEGORIES.includes(item.category)) {
@@ -57,6 +100,7 @@ for (const item of contents) {
   // 画像は管理画面の入れ方で「URL文字列」と「{url, alt} オブジェクト」が混在する。
   // サイト側は文字列(URL)の単一形に正規化する
   const img = typeof item.img === "string" ? item.img : item.img?.url;
+  const thumb = await makeThumb(img);
   grouped[item.category].push({
     order: typeof item.order === "number" ? item.order : 999,
     entry: {
@@ -69,6 +113,7 @@ for (const item of contents) {
       ...(item.recommended ? { recommended: true } : {}),
       ...(spicy !== undefined ? { spicy } : {}),
       ...(img ? { img } : {}),
+      ...(thumb ? { thumb } : {}),
     },
   });
 }
