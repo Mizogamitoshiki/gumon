@@ -5,13 +5,15 @@ import InfoSection from "@/components/info/InfoSection";
 import TelCta from "@/components/info/TelCta";
 import BreadcrumbJsonLd from "@/components/BreadcrumbJsonLd";
 import BusinessCalendar from "@/components/BusinessCalendar";
-import { GOOGLE_MAPS_URL } from "@/lib/site";
+import { GOOGLE_MAPS_URL, FACILITY, pageMetadata } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "アクセス — 貝塚駅 東出口より徒歩10分",
-  description:
-    "泉州・貝塚の中国料理 愚問へのアクセス。大阪府貝塚市加神1-4-26 貝塚セルシー。南海本線・水間鉄道 貝塚駅 東出口より徒歩約10分。営業は昼11:30–15:00／夜18:00–23:30、定休日なし。電話072-430-6038。",
-  alternates: { canonical: "/access" },
+  ...pageMetadata({
+    title: "アクセス — 貝塚駅 東出口より徒歩10分",
+    description:
+      "泉州・貝塚の中国料理 愚問へのアクセス。大阪府貝塚市加神1-4-26 貝塚セルシー。南海本線・水間鉄道 貝塚駅 東出口より徒歩約10分。営業は昼11:30–15:00／夜18:00–23:30、定休日なし。電話072-430-6038。",
+    path: "/access",
+  }),
 };
 
 const HERO = {
@@ -84,6 +86,12 @@ const INFO_ROWS = [
   },
   { icon: ICONS.calendar, label: "定休日", value: "なし(無休)" },
   { icon: ICONS.phone, label: "電話番号", value: "072-430-6038", tel: true },
+  // 席・駐車場は公式ページ(gumon.owst.jp)の店舗情報が出典(src/lib/site.ts FACILITY)
+  {
+    icon: ICONS.pin,
+    label: "席・駐車場",
+    value: `${FACILITY.seats}席(カウンターあり・個室なし)・${FACILITY.charter}・${FACILITY.parking}`,
+  },
 ] as const;
 
 export default function Page() {
@@ -156,8 +164,8 @@ export default function Page() {
                   お車でお越しの方
                 </h3>
                 <p className="gm-access-card-text">
-                  駐車場の有無・場所については、お手数ですがお電話にて
-                  ご確認ください。お酒を飲まれる方は、公共交通機関の
+                  専用駐車場はございません。お車の方は近隣の駐車場を
+                  ご利用ください。お酒を飲まれる方は、公共交通機関の
                   ご利用をおすすめします。
                 </p>
               </article>

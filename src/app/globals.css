@@ -4621,3 +4621,122 @@ html[data-gm-reduced] .gm-opening {
   opacity: 0;
   will-change: transform, opacity, filter;
 }
+
+/* ============================================================
+   TOP 末尾の店舗概要(SiteFooterInfo) — 画面固定ステージの後ろの通常フロー。
+   情報ページ(.gm-info-*)と同じ言語(細い罫・ストーン・明朝見出し)。
+   動きは付けない(読むための静かな面)
+   ============================================================ */
+.gm-sitefoot {
+  position: relative;
+  z-index: 2;
+  background: #1c1b19;
+  color: #f2f0eb;
+  border-top: 1px solid rgba(242, 240, 235, 0.08);
+}
+.gm-sitefoot-inner {
+  width: min(760px, 100%);
+  margin: 0 auto;
+  padding: clamp(64px, 10vh, 120px) clamp(20px, 5vw, 32px)
+    clamp(48px, 8vh, 96px);
+}
+.gm-sitefoot-en {
+  margin: 0;
+  font-family: var(--font-noto-serif-jp), serif;
+  font-size: 11px;
+  letter-spacing: 0.36em;
+  color: rgba(242, 240, 235, 0.5);
+}
+.gm-sitefoot-title {
+  margin: 12px 0 0;
+  font-family: var(--font-noto-serif-jp), serif;
+  font-size: clamp(22px, 3.4vw, 30px);
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: 0.1em;
+  color: #f2f0eb;
+}
+.gm-sitefoot-lead {
+  margin: clamp(22px, 3.5vh, 34px) 0 0;
+  font-family: var(--font-noto-sans-jp), sans-serif;
+  font-size: clamp(14px, 1.5vw, 15px);
+  font-weight: 300;
+  line-height: 2.2;
+  letter-spacing: 0.03em;
+  color: rgba(242, 240, 235, 0.78);
+  max-width: 46ch;
+}
+.gm-sitefoot-dl {
+  margin: clamp(30px, 5vh, 48px) 0 0;
+  border-top: 1px solid rgba(242, 240, 235, 0.1);
+}
+.gm-sitefoot-dl > div {
+  display: grid;
+  grid-template-columns: 7em 1fr;
+  gap: 0 18px;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(242, 240, 235, 0.08);
+}
+.gm-sitefoot-dl dt {
+  margin: 0;
+  font-family: var(--font-noto-sans-jp), sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  color: #b9b2a6;
+  line-height: 1.9;
+}
+.gm-sitefoot-dl dd {
+  margin: 0;
+  font-family: var(--font-noto-sans-jp), sans-serif;
+  font-size: clamp(13.5px, 1.45vw, 14.5px);
+  font-weight: 300;
+  line-height: 1.9;
+  letter-spacing: 0.02em;
+  color: rgba(242, 240, 235, 0.86);
+}
+.gm-sitefoot-dl dd a {
+  color: #f2f0eb;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(242, 240, 235, 0.35);
+}
+.gm-sitefoot-nav {
+  margin-top: clamp(30px, 5vh, 48px);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px 24px;
+}
+.gm-sitefoot-nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.gm-sitefoot-nav a {
+  font-family: var(--font-noto-sans-jp), sans-serif;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  color: rgba(242, 240, 235, 0.72);
+  text-decoration: none;
+  transition: color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.gm-sitefoot-nav a:hover {
+  color: #f2f0eb;
+}
+.gm-sitefoot-copy {
+  margin: clamp(36px, 6vh, 56px) 0 0;
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  color: rgba(242, 240, 235, 0.5);
+}
+@media (max-width: 640px) {
+  .gm-sitefoot-dl > div {
+    grid-template-columns: 1fr;
+    gap: 4px;
+    padding: 12px 0;
+  }
+  .gm-sitefoot-nav {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

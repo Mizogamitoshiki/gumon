@@ -4,13 +4,15 @@ import InfoSection from "@/components/info/InfoSection";
 import CalendarGrid from "@/components/info/CalendarGrid";
 import TelCta from "@/components/info/TelCta";
 import BreadcrumbJsonLd from "@/components/BreadcrumbJsonLd";
-import { HOURS } from "@/lib/site";
+import { HOURS, pageMetadata } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "営業カレンダー — 定休日なし・年中無休",
-  description:
-    "中国料理 愚問の営業カレンダー。定休日はありません(年中無休)。昼 11:30–15:00(L.O.14:30)／夜 18:00–23:30(L.O.23:00)。臨時休業・営業時間の変更はカレンダーでご確認いただけます。お問い合わせは072-430-6038。",
-  alternates: { canonical: "/calendar" },
+  ...pageMetadata({
+    title: "営業カレンダー — 定休日なし・年中無休",
+    description:
+      "中国料理 愚問の営業カレンダー。定休日はありません(年中無休)。昼 11:30–15:00(L.O.14:30)／夜 18:00–23:30(L.O.23:00)。臨時休業・営業時間の変更はカレンダーでご確認いただけます。お問い合わせは072-430-6038。",
+    path: "/calendar",
+  }),
 };
 
 const HERO = {

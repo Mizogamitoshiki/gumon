@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/site";
 import { notFound } from "next/navigation";
 import { IS_RECRUITING, RECRUIT_POSITIONS } from "@/lib/recruit";
 import MenuHero from "@/components/menu/MenuHero";
@@ -14,9 +15,11 @@ const ROLE_NAMES =
   RECRUIT_POSITIONS.map((p) => p.title.split(" ／ ")[0]).join("・") || "スタッフ";
 
 export const metadata: Metadata = {
-  title: `採用 — ${ROLE_NAMES}募集`,
-  description: `貝塚の中国料理 愚問の採用情報。${ROLE_NAMES}を募集しています。未経験のご相談も歓迎。応募は072-430-6038(採用の件、とお伝えください)。`,
-  alternates: { canonical: "/recruit" },
+  ...pageMetadata({
+    title: `採用 — ${ROLE_NAMES}募集`,
+    description: `貝塚の中国料理 愚問の採用情報。${ROLE_NAMES}を募集しています。未経験のご相談も歓迎。応募は072-430-6038(採用の件、とお伝えください)。`,
+    path: "/recruit",
+  }),
 };
 
 const HERO = {

@@ -46,6 +46,31 @@ export const GEO = { lat: 34.4418027, lng: 135.3554601 } as const;
 
 export const STATION = "南海本線・水間鉄道 貝塚駅 東出口より徒歩約10分";
 
+// 店の位置づけ(Instagram 公式プロフィールの自己紹介「呑める小皿中華」と、
+// 看板品「愚問小皿御膳」に基づく。検索・AI回答で「貝塚セルシー」「小皿中華」
+// と結び付けてもらうための一次情報)
+export const TAGLINE = "問いを重ね、一皿に答える。";
+export const POSITIONING = "貝塚セルシー内の、呑める小皿中華";
+export const BUILDING = "貝塚セルシー";
+
+// 設備・支払い。出典: 店が管理する公式ページ gumon.owst.jp の「店舗情報」
+// (2026-08-21 取得)。座席・駐車場・支払いは来店前の定番の質問で、
+// 「愚問 貝塚 駐車場」は Google の関連検索にも出るため明記する。
+// ※喫煙可否は公式ページ自身が「正しい情報はお店へ」と注記しているため載せない
+export const FACILITY = {
+  seats: 18,
+  counter: true,
+  privateRoom: false,
+  charter: "貸切可(最大18名)",
+  parking: "専用駐車場なし",
+  kids: "お子さま連れ歓迎",
+} as const;
+export const PAYMENT = {
+  cards: ["VISA", "Mastercard", "American Express", "Diners Club", "JCB", "Discover", "銀聯"],
+  eMoney: ["楽天Edy", "WAON", "Suica", "PASMO", "nanaco", "ICOCA", "iD", "QUICPay", "Apple Pay"],
+  qr: ["COIN+", "PayPay", "楽天ペイ", "d払い", "au PAY", "メルペイ", "FamiPay", "Alipay", "WeChat Pay"],
+} as const;
+
 export const HOURS = {
   lunch: { opens: "11:30", closes: "15:00", lo: "14:30" },
   dinner: { opens: "18:00", closes: "23:30", lo: "23:00" },
@@ -59,8 +84,11 @@ export const HOURS = {
 export const RESTAURANT_JSONLD = {
   "@context": "https://schema.org",
   "@type": "Restaurant",
+  // 全ページの Restaurant / WebSite / Menu が同一エンティティを指すための固定 ID
+  "@id": `${SITE_URL}/#restaurant`,
   name: SITE_NAME,
-  alternateName: ["愚問", "GUMON", "ぐもん"],
+  alternateName: ["愚問", "GUMON", "ぐもん", "中国料理 愚問 貝塚"],
+  slogan: TAGLINE,
   description:
     "問いを重ね、一皿に答える。大阪・泉州エリア(貝塚市)の中国料理店。麻婆豆腐や酢豚、点心をはじめ、ランチ・ディナー・飲み放題付き宴会コースを提供。南海本線・水間鉄道 貝塚駅 東出口より徒歩約10分。",
   url: SITE_URL,
@@ -74,9 +102,22 @@ export const RESTAURANT_JSONLD = {
   // リッチリザルト用に縦横比違いを複数渡す(Google 推奨: 16:9 / 4:3)
   image: [`${SITE_URL}/og.jpg`, `${SITE_URL}/dishes.webp`],
   telephone: "+81-72-430-6038",
-  servesCuisine: ["中華料理", "四川料理", "点心"],
+  servesCuisine: ["中華料理", "四川料理", "点心", "小皿中華"],
   priceRange: "¥1,000-¥4,000",
+  currenciesAccepted: "JPY",
+  paymentAccepted: ["現金", "クレジットカード", "電子マネー", "QRコード決済"].join(", "),
   acceptsReservations: "True",
+  // 席・貸切・駐車場(公式 gumon.owst.jp の店舗情報より)
+  maximumAttendeeCapacity: FACILITY.seats,
+  amenityFeature: [
+    { "@type": "LocationFeatureSpecification", name: "カウンター席", value: true },
+    { "@type": "LocationFeatureSpecification", name: "個室", value: false },
+    { "@type": "LocationFeatureSpecification", name: "貸切", value: true },
+    { "@type": "LocationFeatureSpecification", name: "専用駐車場", value: false },
+    { "@type": "LocationFeatureSpecification", name: "飲み放題", value: true },
+  ],
+  keywords: "貝塚 中華, 貝塚セルシー, 小皿中華, 貝塚駅 ランチ, 泉州 中華, 宴会 飲み放題",
+  containedInPlace: { "@type": "Place", name: BUILDING },
   // 商圏の目安(泉州エリア) — ローカル検索・AI回答の地域文脈用
   areaServed: [
     "貝塚市",
@@ -134,3 +175,59 @@ export const RESTAURANT_JSONLD = {
   ],
   hasMenu: `${SITE_URL}/menu/dinner`,
 } as const;
+
+// schema.org WebSite — 検索結果の「サイト名」を gumon0624.com ではなく
+// 「中国料理 愚問」と表示させるための構造化データ(Google のサイト名判定は
+// WebSite の name / alternateName と og:site_name を参照する)。トップのみ出力
+export const WEBSITE_JSONLD = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": `${SITE_URL}/#website`,
+  url: `${SITE_URL}/`,
+  name: SITE_NAME,
+  alternateName: ["愚問", "GUMON"],
+  inLanguage: "ja",
+  publisher: { "@id": `${SITE_URL}/#restaurant` },
+} as const;
+
+// 各ページの <title>/description/canonical/OG/Twitter を一箇所で組み立てる。
+// これまで OG は layout の既定値(トップの文言)が全ページに出ていたため、
+// メニューやアクセスを共有しても「トップのタイトル」が展開されていた。
+// title は layout の template(「%s ｜ 中国料理 愚問（貝塚）」)で接尾される
+export function pageMetadata(input: {
+  title: string;
+  description: string;
+  path: string; // "/" または "/menu/dinner" のような先頭スラッシュ付きパス
+  ogTitle?: string; // 省略時は title + 屋号
+}) {
+  const url = `${SITE_URL}${input.path}`;
+  const ogTitle = input.ogTitle ?? `${input.title} ｜ ${SITE_NAME}`;
+  return {
+    title: input.title,
+    description: input.description,
+    alternates: { canonical: url },
+    openGraph: {
+      type: "website" as const,
+      locale: "ja_JP",
+      siteName: SITE_NAME,
+      url,
+      title: ogTitle,
+      description: input.description,
+      images: [
+        {
+          url: "/og.jpg",
+          width: 1200,
+          height: 630,
+          type: "image/jpeg",
+          alt: "中国料理 愚問の料理（麻婆豆腐・小籠包・点心）",
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image" as const,
+      title: ogTitle,
+      description: input.description,
+      images: ["/og.jpg"],
+    },
+  };
+}

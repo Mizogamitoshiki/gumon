@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/site";
 import Link from "next/link";
 import MenuHero from "@/components/menu/MenuHero";
 import InfoSection from "@/components/info/InfoSection";
@@ -7,10 +8,12 @@ import TelCta from "@/components/info/TelCta";
 import BreadcrumbJsonLd from "@/components/BreadcrumbJsonLd";
 
 export const metadata: Metadata = {
-  title: "愚問とは — 店名の由来と台所の姿勢",
-  description:
-    "貝塚の中国料理 愚問について。「おいしいとは、なにか」という愚問を素材と火に問い続け、ひと皿の答えとしてお出しする店です。店名の由来、台所の姿勢、予算の目安と使い方のご案内。",
-  alternates: { canonical: "/about" },
+  ...pageMetadata({
+    title: "愚問とは — 店名の由来と台所の姿勢",
+    description:
+      "貝塚の中国料理 愚問について。「おいしいとは、なにか」という愚問を素材と火に問い続け、ひと皿の答えとしてお出しする店です。店名の由来、台所の姿勢、予算の目安と使い方のご案内。",
+    path: "/about",
+  }),
 };
 
 const HERO = {

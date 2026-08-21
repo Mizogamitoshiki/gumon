@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageMetadata, FACILITY, PAYMENT } from "@/lib/site";
 import Link from "next/link";
 import { IS_RECRUITING } from "@/lib/recruit";
 import MenuHero from "@/components/menu/MenuHero";
@@ -9,10 +10,12 @@ import TelCta from "@/components/info/TelCta";
 import BreadcrumbJsonLd from "@/components/BreadcrumbJsonLd";
 
 export const metadata: Metadata = {
-  title: "お問い合わせ・ご予約 — よくあるご質問",
-  description:
-    "貝塚の中国料理 愚問へのお問い合わせ。ご予約・宴会・貸切のご相談は072-430-6038まで。予算・服装・お子さま連れなど、よくあるご質問にもお答えしています。",
-  alternates: { canonical: "/contact" },
+  ...pageMetadata({
+    title: "お問い合わせ・ご予約 — よくあるご質問",
+    description:
+      "貝塚の中国料理 愚問へのお問い合わせ。ご予約・宴会・貸切のご相談は072-430-6038まで。予算・服装・お子さま連れなど、よくあるご質問にもお答えしています。",
+    path: "/contact",
+  }),
 };
 
 const HERO = {
@@ -80,8 +83,10 @@ const TOPICS = [
   },
 ] as const;
 
-// 来店前の不安(価格帯・格式・予約・席)に正面から答える。
-// 店舗確認が要るものは断定せず「お電話で」に倒す(実在性の原則)
+// 来店前の不安(価格帯・格式・予約・席・支払い・駐車場)に正面から答える。
+// 席・支払い・駐車場は店が管理する公式ページ(gumon.owst.jp)の店舗情報が出典
+// (src/lib/site.ts の FACILITY / PAYMENT)。それ以外で店舗確認が要るものは
+// 断定せず「お電話で」に倒す(実在性の原則)
 const FAQ: FaqItem[] = [
   {
     q: "予約は必要ですか？",
@@ -101,11 +106,19 @@ const FAQ: FaqItem[] = [
   },
   {
     q: "個室や席の詳細を知りたいのですが。",
-    a: "お席の構成・個室の有無は、お電話にてご確認ください。人数とご用途をお伝えいただければ、最適な形をご案内します。",
+    a: `全${FACILITY.seats}席で、カウンター席があります。個室はありません。${FACILITY.charter}ですので、ご宴会はお電話で人数とご用途をお伝えください。`,
   },
   {
     q: "支払い方法は何が使えますか？",
-    a: "ご利用いただける支払い方法は、お手数ですがお電話にてご確認ください。",
+    a: `現金のほか、クレジットカード（${PAYMENT.cards.join("・")}）、電子マネー（${PAYMENT.eMoney.join("・")}）、QRコード決済（${PAYMENT.qr.join("・")}）がご利用いただけます。`,
+  },
+  {
+    q: "駐車場はありますか？",
+    a: `専用の駐車場はございません。お車でお越しの際は近隣の駐車場をご利用ください。お酒を飲まれる方は公共交通機関（貝塚駅 東出口より徒歩約10分）をおすすめします。`,
+  },
+  {
+    q: "お店はどこにありますか？",
+    a: "大阪府貝塚市加神1-4-26、貝塚セルシーの中にあります。南海本線・水間鉄道 貝塚駅の東出口から徒歩約10分です。道順はアクセスページをご覧ください。",
   },
 ];
 

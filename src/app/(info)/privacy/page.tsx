@@ -2,13 +2,15 @@ import type { Metadata } from "next";
 import MenuHero from "@/components/menu/MenuHero";
 import InfoSection from "@/components/info/InfoSection";
 import BreadcrumbJsonLd from "@/components/BreadcrumbJsonLd";
-import { ADDRESS, SITE_NAME, TEL_DISPLAY } from "@/lib/site";
+import { ADDRESS, SITE_NAME, TEL_DISPLAY, pageMetadata } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "プライバシーポリシー",
-  description:
-    "中国料理 愚問（貝塚）のプライバシーポリシー。アクセス解析（Googleアナリティクス）と埋め込み地図による外部送信の内容、Cookieの取り扱い、ご予約でお預かりする情報の扱いについて。",
-  alternates: { canonical: "/privacy" },
+  ...pageMetadata({
+    title: "プライバシーポリシー",
+    description:
+      "中国料理 愚問（貝塚）のプライバシーポリシー。アクセス解析（Googleアナリティクス）と埋め込み地図による外部送信の内容、Cookieの取り扱い、ご予約でお預かりする情報の扱いについて。",
+    path: "/privacy",
+  }),
   // 集客ページではないので検索結果に積極的に出す必要はないが、
   // 「どんな情報を送っているか」を確かめに来る人が辿れることの方が大事
   robots: { index: true, follow: true },

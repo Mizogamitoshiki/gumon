@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
-import { SITE_URL, RESTAURANT_JSONLD } from "@/lib/site";
+import { SITE_URL, RESTAURANT_JSONLD, pageMetadata } from "@/lib/site";
 import NoticeBar from "@/components/NoticeBar";
 import FloatingTel from "@/components/FloatingTel";
 import PageTransition from "@/components/PageTransition";
@@ -32,17 +32,29 @@ const notoSerifJP = localFont({
   display: "swap",
 });
 
-// ローカルSEO: 「貝塚 中華」「貝塚駅 ランチ/ディナー」で見つかることを主目的に、
-// タイトル・説明へ地名と利用シーンを自然な形で含める(煽り語は使わない=CTA-4)
+// ローカルSEO: 「貝塚 中華」「貝塚駅 ランチ/ディナー」「貝塚セルシー」で
+// 見つかることを主目的に、タイトル・説明へ地名と利用シーンを自然な形で含める
+// (煽り語は使わない=CTA-4)。
+// タイトルは検索結果で切れない長さ(全角30字前後)に収める。以前の
+// 「…徒歩10分の中華 — ランチ・ディナー・宴会」は末尾が "..." に省略されていた
+const HOME_TITLE = "中国料理 愚問（GUMON）｜貝塚・泉州の小皿中華 ランチ・宴会";
+const HOME_DESCRIPTION =
+  "大阪・泉州エリア（貝塚市）の中国料理店「愚問（GUMON）」。貝塚セルシー内、貝塚駅 東出口より徒歩約10分。ランチは11:30–15:00、ディナーは18:00–23:30、定休日なし。麻婆豆腐・酢豚・小籠包の小皿中華と、飲み放題付き宴会コース。ご予約は072-430-6038。";
+
+const home = pageMetadata({
+  title: HOME_TITLE,
+  description: HOME_DESCRIPTION,
+  path: "/",
+  ogTitle: HOME_TITLE,
+});
+
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default:
-      "中国料理 愚問（GUMON）｜泉州・貝塚駅 徒歩10分の中華 — ランチ・ディナー・宴会",
+    default: HOME_TITLE,
     template: "%s ｜ 中国料理 愚問（貝塚）",
   },
-  description:
-    "大阪・泉州エリア（貝塚市）の中国料理店「愚問（GUMON）」。貝塚駅 東出口より徒歩約10分。ランチは11:30–15:00、ディナーは18:00–23:30、定休日なし。酢豚・小籠包・麻婆豆腐、飲み放題付き宴会コースも。ご予約は072-430-6038。",
+  description: HOME_DESCRIPTION,
   keywords: [
     "貝塚 中華",
     "貝塚 中華料理",
@@ -50,7 +62,9 @@ export const metadata: Metadata = {
     "貝塚駅 ランチ",
     "貝塚駅 ディナー",
     "貝塚 宴会",
+    "貝塚セルシー",
     "貝塚市 レストラン",
+    "小皿中華",
     "泉州 中華",
     "泉州 ランチ",
     "泉州 グルメ",
@@ -58,33 +72,11 @@ export const metadata: Metadata = {
     "中国料理 愚問",
     "GUMON",
   ],
-  alternates: { canonical: "/" },
-  openGraph: {
-    type: "website",
-    locale: "ja_JP",
-    siteName: "中国料理 愚問（GUMON）",
-    title: "中国料理 愚問（GUMON）｜泉州・貝塚駅 徒歩10分の中華",
-    description:
-      "問いを重ね、一皿に答える。泉州・貝塚駅徒歩10分、ランチ・ディナー・宴会。中国料理 愚問（GUMON）。",
-    // OG は 1.91:1 の JPEG を渡す。WebP は LINE など一部のクローラが
-    // 展開できず「画像なしのリンク」になるため、共有用だけは JPEG に固定する
-    images: [
-      {
-        url: "/og.jpg",
-        width: 1200,
-        height: 630,
-        type: "image/jpeg",
-        alt: "中国料理 愚問の料理（麻婆豆腐・小籠包・点心）",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "中国料理 愚問（GUMON）｜泉州・貝塚駅 徒歩10分の中華",
-    description:
-      "問いを重ね、一皿に答える。泉州・貝塚駅徒歩10分、ランチ・ディナー・宴会。",
-    images: ["/og.jpg"],
-  },
+  alternates: home.alternates,
+  // OG は 1.91:1 の JPEG を渡す。WebP は LINE など一部のクローラが
+  // 展開できず「画像なしのリンク」になるため、共有用だけは JPEG に固定する
+  openGraph: home.openGraph,
+  twitter: home.twitter,
   robots: { index: true, follow: true },
   formatDetection: { telephone: true },
 };
@@ -98,6 +90,10 @@ export default function RootLayout({
     <html lang="ja" className={`${notoSansJP.variable} ${notoSerifJP.variable}`}>
       <head>
         <script dangerouslySetInnerHTML={{ __html: openingInit }} />
+        {/* CMS 画像(サムネイル・料理写真)のオリジン。先に接続を張って
+            最初の画像要求の DNS/TLS 往復を省く */}
+        <link rel="preconnect" href="https://media.bloom-l.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://media.bloom-l.com" />
       </head>
       <body>
         {/* オープニング(初回のみ・石壁に屋号→暖簾が開いて本体へ)。
