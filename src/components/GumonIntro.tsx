@@ -4,9 +4,11 @@ import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 
 /* TOP 初期表示のシネマティック・イントロ。
-   - 初回訪問(セッション内で最初のオープニング): 約7秒の料理フィルム
+   - 初回訪問(セッション内で最初のオープニング): 約2.8秒の料理フィルム
      (public/gumon-intro-desktop.mp4 1600x900 / -mobile.mp4 720x1280。
-      2026-08-21 に H.264 crf25/26 で再エンコードし 2.4MB→1.3MB / 1.9MB→0.7MB)
+      2026-08-22 に 7 秒・5 ショットから看板の 3 ショット(海老と紹興酒→葡萄黒酢
+      酢豚→小皿御膳)へ再編集。0.6MB / 0.34MB。モバイルの Speed Index 8s の
+      主因がこの 7 秒だったため、オーナー了承のうえ短縮)
      → マットブラック収束 →
      ロゴ「愚問」をGSAPで合成 → ヒーローへクロスフェード
    - 同一セッション内の再訪問: 0.8〜1.2秒の短いロゴ表示のみ
@@ -17,8 +19,8 @@ import gsap from "gsap";
      (TOP では石壁を出さず、このコンポーネントがフラグを管理する) */
 
 const SESSION_KEY = "gm-opened";
-// 動画内でマットブラック収束が完了する時刻(build-intro.sh の設計値: 5.95s)
-const LOGO_CUE_TIME = 6.0;
+// 動画内でマットブラック収束が完了する時刻(再編集版: fade 2.1s+0.45s → 2.55s で全黒)
+const LOGO_CUE_TIME = 2.5;
 
 // StrictMode の二重マウントでも「初回フル/再訪ショート」の判定が
 // 揺れないよう、判定はページロードにつき一度だけ行う(モジュール変数)
@@ -93,7 +95,7 @@ export default function GumonIntro() {
       window.dispatchEvent(new Event("pointermove"));
       gsap.to(root, {
         opacity: 0,
-        duration: mode === "rm" ? 0.6 : 0.9,
+        duration: mode === "rm" ? 0.6 : 0.7,
         ease: "power2.inOut",
         onComplete: () => {
           if (!cancelled) setGone(true);
@@ -102,7 +104,7 @@ export default function GumonIntro() {
     };
 
     /* ---- ロゴ「愚問」の出現(Web側合成 — 映像内では文字を生成しない) ---- */
-    const logoIn = (duration = 1.2) => {
+    const logoIn = (duration = 1.0) => {
       if (logoStarted || cancelled) return;
       logoStarted = true;
       gsap.set(logo, { opacity: 1 });
@@ -127,7 +129,7 @@ export default function GumonIntro() {
           duration,
           ease: "power3.out",
           stagger: 0.12,
-          onComplete: () => later(finish, mode === "full" ? 500 : 250),
+          onComplete: () => later(finish, mode === "full" ? 400 : 250),
         }
       );
     };
@@ -182,15 +184,17 @@ export default function GumonIntro() {
         v.play().catch(() => {
           if (!cancelled) logoIn(0.9);
         });
-        // 停滞ウォッチドッグ: 2秒経っても再生が始まらなければロゴへ
+        // 停滞ウォッチドッグ: 1秒経っても再生が始まらなければロゴへ
+        // (低速回線で 0.34〜0.6MB を待たせない。+faststart なので通常の 4G/Wi-Fi
+        //  では数百 ms で始まる)
         later(() => {
           if (!logoStarted && v.currentTime < 0.05) logoIn(0.9);
-        }, 2000);
-        // 全体の安全上限(いかなる場合も8.5秒で終幕へ)
+        }, 1000);
+        // 全体の安全上限(いかなる場合も5秒で終幕へ)
         later(() => {
           logoIn(0.9);
-          later(finish, 1200);
-        }, 8500);
+          later(finish, 1000);
+        }, 5000);
       };
       // バックグラウンドタブで開かれた場合はタブが可視になるまで開始を待つ
       // (非表示タブでは動画再生が保留され、即フォールバックしてしまうため。
