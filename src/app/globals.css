@@ -4823,9 +4823,10 @@ html[data-gm-reduced] .gm-opening {
 }
 
 
-/* TOP ヘッダーの任意リンク(営業カレンダー): 右群がロゴに寄る 1280px 未満では隠す。
+/* TOP ヘッダーの任意リンク(営業カレンダー): 右群がロゴに寄る 1360px 未満では隠す
+   (1280px でロゴとの間隔 26px・1360px で約 66px。実測 2026-08-28)。
    詳細ページのナビ・モバイルメニュー・フッターには常に出ている */
-@media (max-width: 1279px) {
+@media (max-width: 1359px) {
   .gm-nav-wide {
     display: none !important;
   }
