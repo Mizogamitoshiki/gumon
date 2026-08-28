@@ -5,10 +5,12 @@ import { getDrinkGroups } from "@/lib/menu";
 // schema.org Menu — メニューページの品目・価格を検索エンジンとAIアシスタントに
 // 機械可読で渡す(AIO)。品目データは CMS 由来の単一出典(lib/menu)をそのまま使う。
 
-// "¥1,800" のような表記だけ数値化する。"価格は店舗へ" 等は offers を付けない
-const parsePrice = (p: string): number | null => {
-  const m = p.match(/^¥([\d,]+)$/);
-  return m ? Number(m[1].replace(/,/g, "")) : null;
+// "¥1,800" / "¥1,800 + tax" のような表記だけ数値化する。"価格は店舗へ" や
+// "¥500〜"(下限のみ)・"+¥350"(追加料金)は offers を付けない。
+// 店の価格表記は税抜(+ tax)なので、税込でないことを priceSpecification で明示する
+const parsePrice = (p: string): { price: number; taxIncluded: boolean } | null => {
+  const m = p.match(/^¥([\d,]+)( \+ tax)?$/);
+  return m ? { price: Number(m[1].replace(/,/g, "")), taxIncluded: !m[2] } : null;
 };
 
 export default function MenuJsonLd({
@@ -19,13 +21,25 @@ export default function MenuJsonLd({
   path: string;
 }) {
   const menuItem = (i: MenuItem) => {
-    const price = parsePrice(i.price);
+    const parsed = parsePrice(i.price);
     return {
       "@type": "MenuItem",
       name: i.name,
       ...(i.desc ? { description: i.desc } : {}),
-      ...(price !== null
-        ? { offers: { "@type": "Offer", price, priceCurrency: "JPY" } }
+      ...(parsed !== null
+        ? {
+            offers: {
+              "@type": "Offer",
+              price: parsed.price,
+              priceCurrency: "JPY",
+              priceSpecification: {
+                "@type": "PriceSpecification",
+                price: parsed.price,
+                priceCurrency: "JPY",
+                valueAddedTaxIncluded: parsed.taxIncluded,
+              },
+            },
+          }
         : {}),
     };
   };
