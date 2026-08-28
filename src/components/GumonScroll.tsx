@@ -935,8 +935,9 @@ export default function GumonScroll() {
             アクセス
           </Link>
           {/* 臨時休業・時間変更は CMS の営業カレンダーが出典。詳細ページのナビ
-              (SiteChrome / DetailNav)・モバイルメニュー・フッターと同じ並びで TOP にも出す */}
-          <Link href="/calendar" className="gm-nav-link" style={NAV_LINK_STYLE}>
+              (SiteChrome / DetailNav)・モバイルメニュー・フッターと同じ並びで TOP にも出す。
+              右群が長くなりロゴに寄るため 1280px 未満では隠す(.gm-nav-wide) */}
+          <Link href="/calendar" className="gm-nav-link gm-nav-wide" style={NAV_LINK_STYLE}>
             営業カレンダー
           </Link>
           <Link href="/contact" className="gm-nav-link" style={NAV_LINK_STYLE}>

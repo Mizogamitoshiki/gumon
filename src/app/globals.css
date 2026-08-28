@@ -4821,3 +4821,12 @@ html[data-gm-reduced] .gm-opening {
   letter-spacing: 0.1em;
   color: rgba(242, 240, 235, 0.72);
 }
+
+
+/* TOP ヘッダーの任意リンク(営業カレンダー): 右群がロゴに寄る 1280px 未満では隠す。
+   詳細ページのナビ・モバイルメニュー・フッターには常に出ている */
+@media (max-width: 1279px) {
+  .gm-nav-wide {
+    display: none !important;
+  }
+}
