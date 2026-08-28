@@ -4752,3 +4752,72 @@ html[data-gm-reduced] .gm-opening {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+/* ---- ネット予約(ホットペッパー 空席カレンダー) /contact ----
+   HPG のスクリプトが 268×529 の iframe を差し込む。高さを先に確保して CLS を出さない。
+   枠は店の配色(マットブラック+ストーン)で囲い、中身(HPG 側の黒背景・赤ボタン)は改変しない */
+.gm-hpg {
+  margin: clamp(16px, 2.4vh, 24px) 0 0;
+}
+.gm-hpg-frame {
+  position: relative;
+  width: 100%;
+  margin: 0 auto;
+  background: rgba(242, 240, 235, 0.03);
+  border: 1px solid rgba(185, 178, 166, 0.35);
+  box-sizing: content-box;
+}
+.gm-hpg-frame iframe {
+  display: block;
+  max-width: 100%;
+}
+.gm-hpg-frame form {
+  display: none !important; /* スクリプトが挿入する送信用フォーム(不可視) */
+}
+.gm-hpg-status {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  padding: 0 16px;
+  text-align: center;
+  font-family: var(--font-noto-sans-jp), sans-serif;
+  font-size: 12px;
+  font-weight: 300;
+  letter-spacing: 0.06em;
+  color: rgba(242, 240, 235, 0.55);
+  pointer-events: none;
+}
+.gm-hpg[data-state="ready"] .gm-hpg-status {
+  display: none;
+}
+.gm-hpg-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin: 12px 0 0;
+  font-family: var(--font-noto-sans-jp), sans-serif;
+  font-size: 11.5px;
+  font-weight: 300;
+  letter-spacing: 0.04em;
+  line-height: 1.8;
+  color: rgba(242, 240, 235, 0.6);
+}
+.gm-hpg-note {
+  margin: 6px 0 0;
+  font-family: var(--font-noto-sans-jp), sans-serif;
+  font-size: 11.5px;
+  font-weight: 300;
+  letter-spacing: 0.04em;
+  line-height: 1.9;
+  color: rgba(242, 240, 235, 0.6);
+}
+.gm-hpg-tel {
+  margin: clamp(14px, 2vh, 20px) 0 0;
+  font-family: var(--font-noto-serif-jp), serif;
+  font-size: 13px;
+  font-weight: 300;
+  letter-spacing: 0.1em;
+  color: rgba(242, 240, 235, 0.72);
+}

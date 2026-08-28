@@ -7,13 +7,14 @@ import InfoSection from "@/components/info/InfoSection";
 import FaqList, { type FaqItem } from "@/components/info/FaqList";
 import PullQuote from "@/components/info/PullQuote";
 import TelCta from "@/components/info/TelCta";
+import HotPepperReserveWidget from "@/components/HotPepperReserveWidget";
 import BreadcrumbJsonLd from "@/components/BreadcrumbJsonLd";
 
 export const metadata: Metadata = {
   ...pageMetadata({
     title: "お問い合わせ・ご予約 — よくあるご質問",
     description:
-      "貝塚の中国料理 愚問へのお問い合わせ。ご予約・宴会・貸切のご相談は072-430-6038まで。予算・服装・お子さま連れなど、よくあるご質問にもお答えしています。",
+      "貝塚の中国料理 愚問へのお問い合わせ・ご予約。お電話は072-430-6038、空席カレンダーからのネット予約にも対応。予算・服装・お子さま連れなど、よくあるご質問にもお答えしています。",
     path: "/contact",
   }),
 };
@@ -90,7 +91,7 @@ const TOPICS = [
 const FAQ: FaqItem[] = [
   {
     q: "予約は必要ですか？",
-    a: "ご予約なしでもご利用いただけますが、お席のご用意を確実にするにはお電話でのご予約をおすすめします。ご宴会・貸切は事前のご相談をお願いします。",
+    a: "ご予約なしでもご利用いただけますが、お席のご用意を確実にするにはお電話でのご予約をおすすめします。空席状況はこのページのネット予約カレンダーでもご確認・ご予約いただけます。ご宴会・貸切は事前のご相談をお願いします。",
   },
   {
     q: "服装に決まりはありますか？",
@@ -167,6 +168,19 @@ export default function Page() {
               受付は営業時間内 ── 定休日なし。どんな愚問にも、お答えします。
             </p>
           </div>
+        </InfoSection>
+
+        <InfoSection eyebrow="ONLINE" title="ネット予約（空席カレンダー）">
+          <div className="gm-info-prose">
+            <p data-info-row>
+              空席の状況を見ながら、その場でご予約いただけます。
+              お電話がつながりにくい時間帯や、営業時間外のご予約にどうぞ。
+            </p>
+          </div>
+          <HotPepperReserveWidget />
+          <p className="gm-hpg-tel" data-info-row>
+            お電話でのご予約が、店にはいちばんありがたい方法です。
+          </p>
         </InfoSection>
 
         <InfoSection eyebrow="TOPICS" title="承れるご相談">
