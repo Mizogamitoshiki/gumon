@@ -12,6 +12,7 @@ import { IS_RECRUITING } from "@/lib/recruit";
 import { GUMON_SCENE_MOTION } from "@/lib/motion-tokens";
 import { HOTPEPPER_URL } from "@/lib/site";
 import MobileNav from "@/components/MobileNav";
+import { weeklySummary } from "@/lib/calendar";
 
 /* ---------------------------------- data ---------------------------------- */
 
@@ -19,7 +20,8 @@ const ACCESS = [
   { k: "ADDRESS", v: "大阪府貝塚市加神1-4-26 貝塚セルシー" },
   { k: "STATION", v: "南海本線・水間鉄道 貝塚駅 東出口より徒歩約10分" },
   { k: "HOURS", v: "昼 11:30–15:00(L.O.14:30)/ 夜 18:00–23:30(L.O.23:00)" },
-  { k: "CLOSED", v: "なし(無休)" },
+  // 毎週の決まり(例: 毎週金曜はディナーのみ)は CMS 由来。無ければ「なし(無休)」だけ
+  { k: "CLOSED", v: `なし(無休)${weeklySummary() ? `／${weeklySummary()}` : ""}` },
 ];
 
 const SERIF = "var(--font-noto-serif-jp), serif";

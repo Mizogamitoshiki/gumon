@@ -1,3 +1,5 @@
+import { regularOpeningDays } from "./calendar";
+
 // サイト共通の実在情報(SEO・構造化データ・sitemap が参照する単一の出典)。
 // 出典: gumon.owst.jp(公式・2026-07-03取得)
 
@@ -77,6 +79,35 @@ export const HOURS = {
   closed: "なし(無休)",
 };
 
+// schema.org OpeningHoursSpecification。CMS の毎週の決まり(期限なし)で
+// 昼/夜を開ける曜日を絞り、時間指定の曜日はその時間で 1 件ずつ足す
+const OPENING_HOURS_SPEC = (() => {
+  const days = regularOpeningDays();
+  const spec: { "@type": "OpeningHoursSpecification"; dayOfWeek: string[]; opens: string; closes: string }[] = [];
+  if (days.lunch.length)
+    spec.push({
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: days.lunch,
+      opens: HOURS.lunch.opens,
+      closes: HOURS.lunch.closes,
+    });
+  if (days.dinner.length)
+    spec.push({
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: days.dinner,
+      opens: HOURS.dinner.opens,
+      closes: HOURS.dinner.closes,
+    });
+  for (const c of days.custom)
+    spec.push({
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: [c.day],
+      opens: c.opens,
+      closes: c.closes,
+    });
+  return spec;
+})();
+
 // schema.org Restaurant(ローカルSEOの中核)。
 // 載せるのは裏取りできた事実のみ(実在性の原則)。座標は Google マップ上の
 // 当店ピンで確認済み(2026-08-18)。Instagram は公式確認済み(2026-07-24)。
@@ -143,36 +174,9 @@ export const RESTAURANT_JSONLD = {
     addressLocality: ADDRESS.locality,
     streetAddress: ADDRESS.street,
   },
-  openingHoursSpecification: [
-    {
-      "@type": "OpeningHoursSpecification",
-      dayOfWeek: [
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
-        "Sunday",
-      ],
-      opens: HOURS.lunch.opens,
-      closes: HOURS.lunch.closes,
-    },
-    {
-      "@type": "OpeningHoursSpecification",
-      dayOfWeek: [
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
-        "Sunday",
-      ],
-      opens: HOURS.dinner.opens,
-      closes: HOURS.dinner.closes,
-    },
-  ],
+  // 曜日ごとの営業は CMS の「毎週の決まり」(例: 毎週金曜はディナーのみ)を反映する。
+  // 昼を開けない曜日は lunch の dayOfWeek から外れ、Google に正しい時間が伝わる
+  openingHoursSpecification: OPENING_HOURS_SPEC,
   hasMenu: `${SITE_URL}/menu/dinner`,
 } as const;
 

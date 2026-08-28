@@ -3485,6 +3485,18 @@ html {
   font-weight: 600;
 }
 
+/* 毎週の決まり(例: 毎週金曜はディナーのみ)。毎週ぶん並べず 1 行ずつ */
+.gm-bizcal-weekly {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 4px;
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: rgba(242, 240, 235, 0.85);
+}
+
 .gm-bizcal-list {
   margin: 12px 0 0;
   padding: 12px 0 0;

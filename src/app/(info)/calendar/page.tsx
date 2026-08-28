@@ -5,6 +5,7 @@ import CalendarGrid from "@/components/info/CalendarGrid";
 import TelCta from "@/components/info/TelCta";
 import BreadcrumbJsonLd from "@/components/BreadcrumbJsonLd";
 import { HOURS, pageMetadata } from "@/lib/site";
+import { WEEKLY_RULES, weeklyRuleLabel, weeklySummary } from "@/lib/calendar";
 
 export const metadata: Metadata = {
   ...pageMetadata({
@@ -23,6 +24,11 @@ const HERO = {
 };
 
 export default function Page() {
+  // 期限のない毎週の決まり(例: 毎週金曜はディナーのみ)。CMS から取り込んだ事実だけを書く
+  const standingRules = WEEKLY_RULES.filter((r) => !r.until).sort(
+    (a, b) => a.weekday - b.weekday,
+  );
+  const summary = weeklySummary();
   return (
     <main className="gm-detail-main">
       <BreadcrumbJsonLd trail={[{ name: "営業カレンダー", path: "/calendar" }]} />
@@ -32,6 +38,19 @@ export default function Page() {
         {/* 最重要の事実を先に断言する: このお店に定休日はない */}
         <p className="gm-cal-lead" data-info-row>
           愚問に<strong>定休日はありません（年中無休）</strong>。
+          {standingRules.length > 0 && (
+            <>
+              ただし、
+              {standingRules.map((r, i) => (
+                <span key={`${r.weekday}-${r.from}`}>
+                  {i > 0 && "、"}
+                  <strong>{weeklyRuleLabel(r)}</strong>
+                  {r.note && `（${r.note}）`}
+                </span>
+              ))}
+              です。
+            </>
+          )}
           お盆・年末年始などで臨時にお休みや時間の変更をいただく日だけ、
           下のカレンダーに記号でお示しします。
         </p>
@@ -55,7 +74,10 @@ export default function Page() {
           </div>
           <div>
             <dt>定休日</dt>
-            <dd>{HOURS.closed}</dd>
+            <dd>
+              {HOURS.closed}
+              {summary && `・${summary}`}
+            </dd>
           </div>
         </dl>
 

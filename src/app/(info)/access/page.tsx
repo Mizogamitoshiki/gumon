@@ -6,6 +6,10 @@ import TelCta from "@/components/info/TelCta";
 import BreadcrumbJsonLd from "@/components/BreadcrumbJsonLd";
 import BusinessCalendar from "@/components/BusinessCalendar";
 import { GOOGLE_MAPS_URL, FACILITY, pageMetadata } from "@/lib/site";
+import { weeklySummary } from "@/lib/calendar";
+
+// 毎週の決まり(例: 毎週金曜はディナーのみ)。CMS 由来なので、無ければ空文字
+const WEEKLY_NOTE = weeklySummary();
 
 export const metadata: Metadata = {
   ...pageMetadata({
@@ -84,7 +88,11 @@ const INFO_ROWS = [
     label: "営業時間",
     value: "昼 11:30–15:00(L.O.14:30)／ 夜 18:00–23:30(L.O.23:00)",
   },
-  { icon: ICONS.calendar, label: "定休日", value: "なし(無休)" },
+  {
+    icon: ICONS.calendar,
+    label: "定休日",
+    value: `なし(無休)${WEEKLY_NOTE ? `・${WEEKLY_NOTE}` : ""}`,
+  },
   { icon: ICONS.phone, label: "電話番号", value: "072-430-6038", tel: true },
   // 席・駐車場は公式ページ(gumon.owst.jp)の店舗情報が出典(src/lib/site.ts FACILITY)
   {

@@ -14,6 +14,10 @@ import {
   TEL_LINK,
 } from "@/lib/site";
 import { IS_RECRUITING } from "@/lib/recruit";
+import { weeklySummary } from "@/lib/calendar";
+
+// 毎週の決まり(例: 毎週金曜はディナーのみ)。CMS 由来なので、無ければ空文字
+const WEEKLY_NOTE = weeklySummary();
 
 /* TOP 末尾の店舗概要(静的フッター)。
    - 目的: TOP は演出中心で検索エンジン/AI が読める本文が 1,200 字しか無く、
@@ -78,7 +82,10 @@ export default function SiteFooterInfo() {
           </div>
           <div>
             <dt>定休日</dt>
-            <dd>{HOURS.closed}。臨時休業は営業カレンダーに掲載</dd>
+            <dd>
+              {HOURS.closed}
+              {WEEKLY_NOTE && `・${WEEKLY_NOTE}`}。臨時休業は営業カレンダーに掲載
+            </dd>
           </div>
           <div>
             <dt>電話</dt>

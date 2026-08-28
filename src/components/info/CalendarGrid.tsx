@@ -3,12 +3,16 @@
 import { useMemo, useState } from "react";
 import {
   CALENDAR_DAYS,
+  WEEKDAYS,
+  WEEKLY_RULES,
+  dateLabel,
+  exceptionFor,
   localDateStr,
+  ruleFor,
   stateLabel,
   type CalendarDay,
+  type WeeklyRule,
 } from "@/lib/calendar";
-
-const WEEKDAYS = ["日", "月", "火", "水", "木", "金", "土"] as const;
 
 /** 例外の種類ごとの短い記号(色だけに頼らないための文字表示) */
 const MARK: Record<CalendarDay["state"], string> = {
@@ -16,6 +20,8 @@ const MARK: Record<CalendarDay["state"], string> = {
   lunch: "昼",
   dinner: "夜",
   custom: "時",
+  // normal は「決まりを解除して通常営業」= 記号なしで描く(exceptionFor が undefined を返す)
+  normal: "",
 };
 
 type Cell =
@@ -27,6 +33,8 @@ type Cell =
  *
  * このお店は定休日なし(年中無休)のため、既定は「全日=通常営業」。
  * CMS(`calendar` API)に登録された "通常と違う日" だけを記号で示す。
+ * 「毎週金曜はディナーのみ」のような毎週の決まりは、その曜日すべてに展開して
+ * 同じ記号で描く(日付ごとの例外があればそちらが優先)。
  * 休みを勝手に作らない = 事実だけを描く。
  *
  * 表示月は **閲覧時にブラウザの時刻から** 決める。静的書き出しのサイトで
@@ -58,15 +66,22 @@ export default function CalendarGrid() {
         key: date,
         date,
         day: d,
-        exception: CALENDAR_DAYS.find((c) => c.date === date),
+        exception: exceptionFor(date),
       });
     }
-    // その月に登録されている例外(グリッド下の一覧に使う)
+    // その月に登録されている日付ごとの例外(グリッド下の一覧に使う)。
+    // 「通常営業」は毎週の決まりを解除する日だけ意味があるので、決まりの効く日に限る
     const prefix = `${year}-${String(month + 1).padStart(2, "0")}-`;
-    const exceptions = CALENDAR_DAYS.filter((c) => c.date.startsWith(prefix)).sort(
-      (a, b) => a.date.localeCompare(b.date),
-    );
-    return { year, month, cells, todayStr, exceptions };
+    const exceptions = CALENDAR_DAYS.filter(
+      (c) => c.date.startsWith(prefix) && (c.state !== "normal" || ruleFor(c.date)),
+    ).sort((a, b) => a.date.localeCompare(b.date));
+    // その月に(一部でも)かかっている毎週の決まり。毎週ぶん並べず 1 行にまとめる
+    const monthStart = `${prefix}01`;
+    const monthEnd = `${prefix}${String(daysInMonth).padStart(2, "0")}`;
+    const rules: WeeklyRule[] = WEEKLY_RULES.filter(
+      (r) => r.from <= monthEnd && (!r.until || r.until >= monthStart),
+    ).sort((a, b) => a.weekday - b.weekday || a.from.localeCompare(b.from));
+    return { year, month, cells, todayStr, exceptions, rules };
   }, [now, offset]);
 
   return (
@@ -119,7 +134,7 @@ export default function CalendarGrid() {
                     key={cell.key}
                     className={`gm-cal-cell${ex ? " has-ex" : ""}${
                       ex?.state === "closed" ? " is-closed" : ""
-                    }${isToday ? " is-today" : ""}`}
+                    }${ex?.weekly ? " is-weekly" : ""}${isToday ? " is-today" : ""}`}
                     aria-current={isToday ? "date" : undefined}
                   >
                     <span className="gm-cal-num">{cell.day}</span>
@@ -165,9 +180,20 @@ export default function CalendarGrid() {
         <li className="gm-cal-legend-plain">記号なし ＝ 通常営業</li>
       </ul>
 
-      {/* 記号だけでは理由が分からないため、その月の例外は文章でも並べる */}
-      {view.exceptions.length > 0 && (
+      {/* 記号だけでは理由が分からないため、その月の決まり・例外は文章でも並べる */}
+      {(view.rules.length > 0 || view.exceptions.length > 0) && (
         <ul className="gm-cal-notes">
+          {view.rules.map((r) => (
+            <li key={`rule-${r.weekday}-${r.from}`}>
+              <span className="gm-cal-notes-date">毎週{WEEKDAYS[r.weekday]}曜</span>
+              <span>
+                {stateLabel(r)}
+                {r.from > view.todayStr && `（${dateLabel(r.from)}から）`}
+                {r.until && `（${dateLabel(r.until)}まで）`}
+                {r.note && `（${r.note}）`}
+              </span>
+            </li>
+          ))}
           {view.exceptions.map((d) => {
             const day = Number(d.date.slice(-2));
             return (
