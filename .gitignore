@@ -15,3 +15,7 @@ next-env.d.ts
 /src/lib/notice.generated.ts
 /src/lib/calendar.generated.ts
 /public/menu-thumbs
+/promo/hp-cm/work
+/promo/hp-cm/tools/*.webm
+/promo/hp-cm/hf
+/promo/hp-cm/output/gumon-hp-cm.mp4

@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="ja" data-resolution="portrait" data-composition-variables='[
+  {"id":"studioName","type":"string","label":"制作会社名","default":"YOUR STUDIO"},
+  {"id":"handle","type":"string","label":"Instagramアカウント","default":"@your_account"},
+  {"id":"cta","type":"string","label":"CTA文言","default":"無料相談はDMから"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1080, height=1920" />
+<script src="assets/gsap.min.js"></script>
+<style>
+/*FONTFACES*/
+:root{--bg:#1c1b19;--deep:#121110;--ink:#f2f0eb;--stone:#b9b2a6;--shu:#b23a2e}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{margin:0;width:1080px;height:1920px;overflow:hidden;background:var(--deep)}
+#root{position:relative;width:100%;height:100%;overflow:hidden;background:var(--deep);font-family:'Noto Sans JP',sans-serif;color:var(--ink)}
+.scene{position:absolute;inset:0;opacity:0;overflow:hidden}
+.media{position:absolute;inset:0}
+.media video,.media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.shade-b{position:absolute;inset:0;background:linear-gradient(180deg,rgba(18,17,16,.55) 0%,rgba(18,17,16,0) 22%,rgba(18,17,16,0) 45%,rgba(18,17,16,.85) 78%,rgba(18,17,16,.92) 100%)}
+.shade-c{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 45%,rgba(18,17,16,.25) 0%,rgba(18,17,16,.78) 75%)}
+.copy{position:absolute;left:84px;right:84px;text-align:left}
+.eyebrow{display:block;font-family:'Noto Sans JP',sans-serif;font-weight:500;font-size:24px;letter-spacing:.42em;color:var(--stone);margin-bottom:34px}
+.eyebrow i{display:inline-block;width:46px;height:2px;background:var(--shu);vertical-align:middle;margin-right:20px;font-style:normal}
+.head{font-family:'Noto Serif JP',serif;font-weight:700;font-size:80px;line-height:1.32;letter-spacing:.04em;text-shadow:0 4px 30px rgba(0,0,0,.55)}
+.head.sm{font-size:64px}
+.line{display:block;overflow:hidden;padding:6px 0 18px;margin-bottom:-8px}
+.in{display:block}
+.note{display:block;margin-top:30px;font-size:26px;letter-spacing:.18em;color:var(--stone)}
+/* phone */
+#s3-bg img{filter:blur(28px) brightness(.38) saturate(.9)}
+#phone{position:absolute;left:244px;top:420px;width:592px;height:1246px;border-radius:84px;padding:16px;background:linear-gradient(145deg,#3a3835,#141312 60%,#2a2826);box-shadow:0 0 0 2px rgba(185,178,166,.35),0 60px 120px rgba(0,0,0,.7)}
+#phone .screen{position:relative;width:560px;height:1214px;border-radius:68px;overflow:hidden;background:#000}
+#phone .screen video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+#phone .island{position:absolute;left:50%;top:28px;width:150px;height:42px;margin-left:-75px;border-radius:21px;background:#000;z-index:2}
+.chip{position:absolute;display:flex;align-items:center;gap:18px;padding:22px 34px;border-radius:999px;background:rgba(28,27,25,.82);border:1px solid rgba(242,240,235,.22);font-weight:500;font-size:32px;letter-spacing:.06em;box-shadow:0 20px 50px rgba(0,0,0,.5);white-space:nowrap}
+.chip b{width:12px;height:12px;border-radius:50%;background:var(--shu);display:block}
+#c1{left:52px;top:780px}#c2{right:52px;top:1060px}#c3{left:52px;top:1340px}
+.top-title{position:absolute;left:0;right:0;top:250px;text-align:center}
+.top-title .eyebrow{margin-bottom:22px}
+.top-title .head{font-size:62px}
+/* desktop */
+#s5{background:radial-gradient(ellipse at 50% 38%,#2b2926 0%,var(--deep) 70%)}
+#browser{position:absolute;left:50px;top:540px;width:980px;border-radius:18px;overflow:hidden;background:#0d0c0b;box-shadow:0 0 0 1px rgba(185,178,166,.3),0 70px 140px rgba(0,0,0,.75)}
+#browser .bar{height:46px;display:flex;align-items:center;gap:10px;padding:0 18px;background:#2a2825}
+#browser .bar span{width:13px;height:13px;border-radius:50%;background:#56524c}
+#browser .url{margin-left:22px;flex:1;height:28px;border-radius:14px;background:#1c1b19;color:var(--stone);font-size:17px;letter-spacing:.06em;display:flex;align-items:center;padding-left:18px}
+#browser .vp{position:relative;width:980px;height:613px;overflow:hidden}
+#browser .vp video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+#feat{position:absolute;left:84px;right:84px;top:1270px;display:grid;grid-template-columns:1fr 1fr;column-gap:56px}
+.f{display:flex;align-items:baseline;gap:20px;padding:22px 0;border-top:1px solid rgba(185,178,166,.28);font-size:31px;font-weight:500;letter-spacing:.04em}
+.f em{font-style:normal;font-family:'Noto Serif JP',serif;font-size:22px;color:#cf6a5d;letter-spacing:.1em}
+/* end card */
+#s7{background:var(--bg)}
+#s7-bg img{opacity:.2;filter:saturate(.8)}
+#s7 .shade-c{background:radial-gradient(ellipse at 50% 42%,rgba(28,27,25,.35) 0%,rgba(28,27,25,.95) 72%)}
+#end{position:absolute;left:0;right:0;top:470px;text-align:center}
+#end .head{font-size:104px;line-height:1.3}
+#end .eyebrow{margin-bottom:40px}
+#rule{width:140px;height:3px;background:var(--shu);margin:56px auto 46px}
+#svc{font-size:42px;font-weight:500;letter-spacing:.14em;color:var(--ink)}
+#tags{display:flex;justify-content:center;gap:16px;margin-top:40px}
+#tags span{display:block;padding:12px 24px;border:1px solid rgba(185,178,166,.45);border-radius:999px;font-size:26px;color:var(--stone);letter-spacing:.06em}
+#cta{display:inline-flex;align-items:center;gap:22px;margin-top:96px;padding:38px 76px;border-radius:999px;background:var(--shu);font-size:50px;font-weight:700;letter-spacing:.08em;color:#fff;box-shadow:0 24px 60px rgba(178,58,46,.35)}
+#cta svg{width:40px;height:40px}
+#who{margin-top:46px;font-size:34px;letter-spacing:.08em;color:var(--ink)}
+#who small{display:block;margin-top:12px;font-size:24px;letter-spacing:.32em;color:var(--stone)}
+#flash{position:absolute;inset:0;background:#f2e6d6;opacity:0;pointer-events:none}
+#vignette{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 50%,rgba(0,0,0,0) 60%,rgba(0,0,0,.35) 100%)}
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="30" data-width="1080" data-height="1920">
+
+  <!-- S1: hook (Higgsfield: wok flame) -->
+  <div id="s1" class="scene">
+    <div class="media" id="s1-m"><video id="v-flame" class="clip" src="assets/hf/flame.mp4" muted playsinline data-start="0" data-duration="3.4" data-track-index="0"></video></div>
+    <div class="shade-b"></div>
+    <div class="copy" style="top:1110px">
+      <span class="eyebrow"><i></i>FOR RESTAURANTS</span>
+      <div class="head"><span class="line"><span class="in">その店の“熱”は、</span></span><span class="line"><span class="in">サイトで伝わって</span></span><span class="line"><span class="in">いますか。</span></span></div>
+    </div>
+  </div>
+
+  <!-- S2: case intro (Higgsfield: GUMON wall) -->
+  <div id="s2" class="scene">
+    <div class="media" id="s2-m"><video id="v-wall" class="clip" src="assets/hf/wall.mp4" muted playsinline data-start="3.0" data-duration="3.4" data-track-index="0"></video></div>
+    <div class="shade-b"></div>
+    <div class="copy" style="top:1150px">
+      <span class="eyebrow"><i></i>CASE STUDY ── 中国料理 愚問</span>
+      <div class="head"><span class="line"><span class="in">一皿の物語を、</span></span><span class="line"><span class="in">スクロールで語る。</span></span></div>
+    </div>
+  </div>
+
+  <!-- S3: smartphone (real site recording) -->
+  <div id="s3" class="scene">
+    <div class="media" id="s3-bg"><img src="assets/img/dishes.webp" alt="" /></div>
+    <div class="top-title">
+      <span class="eyebrow">SMARTPHONE</span>
+      <div class="head"><span class="line"><span class="in">スマホで、映画のように。</span></span></div>
+    </div>
+    <div id="phone"><div class="screen"><video id="v-mobile" class="clip" src="assets/site/mobile.mp4" muted playsinline data-start="6.1" data-duration="6.6" data-track-index="1"></video></div></div>
+    <div class="chip" id="c1"><b></b>シネマティック動画演出</div>
+    <div class="chip" id="c2"><b></b>スクロール連動アニメーション</div>
+    <div class="chip" id="c3"><b></b>スマホ完全最適化</div>
+  </div>
+
+  <!-- S4: AI motion (Higgsfield: mapo tofu from real photo) -->
+  <div id="s4" class="scene">
+    <div class="media" id="s4-m"><video id="v-mapo" class="clip" src="assets/hf/mapo.mp4" muted playsinline data-start="12.5" data-duration="3.4" data-track-index="0"></video></div>
+    <div class="shade-b"></div>
+    <div class="copy" style="top:1150px">
+      <span class="eyebrow"><i></i>AI MOTION</span>
+      <div class="head"><span class="line"><span class="in">料理写真が、</span></span><span class="line"><span class="in">“動く”映像に。</span></span></div>
+    </div>
+  </div>
+
+  <!-- S5: desktop (real site recording) -->
+  <div id="s5" class="scene">
+    <div class="top-title">
+      <span class="eyebrow">DESKTOP</span>
+      <div class="head"><span class="line"><span class="in">PCでも、圧倒的な没入感。</span></span></div>
+    </div>
+    <div id="browser"><div class="bar"><span></span><span></span><span></span><div class="url">gumon0624.com</div></div><div class="vp"><video id="v-desktop" class="clip" src="assets/site/desktop.mp4" muted playsinline data-start="15.6" data-duration="6.1" data-track-index="1"></video></div></div>
+    <div id="feat">
+      <div class="f"><em>01</em>慣性スクロール</div><div class="f"><em>02</em>スクロール連動演出</div>
+      <div class="f"><em>03</em>電話予約への導線</div><div class="f"><em>04</em>SEO・構造化データ</div>
+      <div class="f"><em>05</em>表示速度の最適化</div><div class="f"><em>06</em>CMSで自社更新</div>
+    </div>
+  </div>
+
+  <!-- S6: emotion (Higgsfield: table overhead) -->
+  <div id="s6" class="scene">
+    <div class="media" id="s6-m"><video id="v-table" class="clip" src="assets/hf/table.mp4" muted playsinline data-start="21.5" data-duration="3.4" data-track-index="0"></video></div>
+    <div class="shade-c"></div>
+    <div class="copy" style="top:760px;text-align:center">
+      <div class="head"><span class="line"><span class="in">“行ってみたい”を、</span></span><span class="line"><span class="in">デザインでつくる。</span></span></div>
+    </div>
+  </div>
+
+  <!-- S7: end card -->
+  <div id="s7" class="scene">
+    <div class="media" id="s7-bg"><img src="assets/img/dinner-table.webp" alt="" /></div>
+    <div class="shade-c"></div>
+    <div id="end">
+      <span class="eyebrow">WEB DESIGN FOR RESTAURANTS</span>
+      <div class="head"><span class="line"><span class="in">こんな豪華なHP、</span></span><span class="line"><span class="in">作りませんか？</span></span></div>
+      <div id="rule"></div>
+      <div id="svc">飲食店のブランドサイト制作</div>
+      <div id="tags"><span>シネマティック演出</span><span>AI映像</span><span>スマホ最適化</span></div>
+      <div id="cta"><span data-var-text="cta">無料相談はDMから</span><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      <div id="who"><span data-var-text="handle">@your_account</span><small data-var-text="studioName">YOUR STUDIO</small></div>
+    </div>
+  </div>
+
+  <div id="vignette"></div>
+  <div id="flash"></div>
+  <audio id="bgm" src="assets/bgm.wav" data-start="0" data-duration="30" data-track-index="3" data-volume="1"></audio>
+</div>
+<script>
+(function () {
+  const tl = gsap.timeline({ paused: true });
+  const E = "expo.out", S = "power2.out";
+  const lines = (sel, t, st) => tl.fromTo(sel + " .in", { yPercent: 108, opacity: 0, filter: "blur(10px)" },
+    { yPercent: 0, opacity: 1, filter: "blur(0px)", duration: 1.1, ease: E, stagger: st || 0.13 }, t);
+  const up = (sel, t, extra) => tl.fromTo(sel, Object.assign({ y: 26, opacity: 0, filter: "blur(8px)" }, extra && extra.from),
+    Object.assign({ y: 0, opacity: 1, filter: "blur(0px)", duration: 1.0, ease: E }, extra && extra.to), t);
+  const sceneIn = (id, t, d) => tl.to(id, { opacity: 1, duration: d || 0.35, ease: S }, t);
+  const sceneOut = (id, t, d) => tl.to(id, { opacity: 0, duration: d || 0.35, ease: S }, t);
+  const textOut = (sel, t) => tl.to(sel, { opacity: 0, y: -14, filter: "blur(6px)", duration: 0.45, ease: S }, t);
+
+  // S1 0–3.2
+  tl.set("#s1", { opacity: 1 }, 0);
+  tl.fromTo("#s1-m", { scale: 1.12 }, { scale: 1.0, duration: 3.4, ease: "sine.out" }, 0);
+  up("#s1 .eyebrow", 0.25);
+  lines("#s1", 0.4, 0.16);
+  textOut("#s1 .copy", 2.65);
+  tl.to("#flash", { opacity: 0.55, duration: 0.12, ease: S }, 2.92).to("#flash", { opacity: 0, duration: 0.5, ease: S }, 3.04);
+
+  // S2 3.0–6.2
+  sceneIn("#s2", 2.95, 0.2); sceneOut("#s1", 3.1, 0.2);
+  tl.fromTo("#s2-m", { scale: 1.06 }, { scale: 1.0, duration: 3.4, ease: "sine.out" }, 3.0);
+  up("#s2 .eyebrow", 3.35);
+  lines("#s2", 3.5);
+  textOut("#s2 .copy", 5.6);
+
+  // S3 6.0–12.7
+  sceneIn("#s3", 5.9, 0.45); sceneOut("#s2", 6.15, 0.3);
+  tl.fromTo("#s3-bg", { scale: 1.15 }, { scale: 1.02, duration: 6.8, ease: "sine.out" }, 5.9);
+  up("#s3 .eyebrow", 6.05);
+  lines("#s3 .top-title", 6.15);
+  tl.fromTo("#phone", { y: 40, opacity: 0, rotationX: 10, transformPerspective: 1800, filter: "blur(6px)" },
+    { y: 0, opacity: 1, rotationX: 0, filter: "blur(0px)", duration: 1.3, ease: E }, 6.05);
+  ["#c1", "#c2", "#c3"].forEach((c, i) => {
+    tl.fromTo(c, { x: i === 1 ? 32 : -32, opacity: 0, filter: "blur(8px)" }, { x: 0, opacity: 1, filter: "blur(0px)", duration: 1.0, ease: E }, 7.3 + i * 0.9);
+  });
+  tl.to("#phone", { y: -16, duration: 4.5, ease: "sine.inOut" }, 7.4);
+
+  // S4 12.5–15.7
+  sceneIn("#s4", 12.45, 0.35); sceneOut("#s3", 12.6, 0.3);
+  tl.fromTo("#s4-m", { scale: 1.08 }, { scale: 1.0, duration: 3.4, ease: "sine.out" }, 12.5);
+  up("#s4 .eyebrow", 12.85);
+  lines("#s4", 13.0);
+  textOut("#s4 .copy", 15.05);
+
+  // S5 15.5–21.7
+  sceneIn("#s5", 15.45, 0.4); sceneOut("#s4", 15.65, 0.3);
+  up("#s5 .eyebrow", 15.6);
+  lines("#s5 .top-title", 15.7);
+  tl.fromTo("#browser", { y: 50, opacity: 0, rotationY: -16, rotationX: 10, transformPerspective: 2200, filter: "blur(6px)" },
+    { y: 0, opacity: 1, rotationY: -5, rotationX: 4, filter: "blur(0px)", duration: 1.4, ease: E }, 15.65);
+  tl.to("#browser", { rotationY: 3, rotationX: 2, duration: 4.6, ease: "sine.inOut" }, 17.05);
+  tl.fromTo("#feat .f", { y: 22, opacity: 0, filter: "blur(6px)" }, { y: 0, opacity: 1, filter: "blur(0px)", duration: 0.9, ease: E, stagger: 0.18 }, 16.6);
+
+  // S6 21.5–24.7
+  sceneIn("#s6", 21.45, 0.4); sceneOut("#s5", 21.65, 0.3);
+  tl.fromTo("#s6-m", { scale: 1.06 }, { scale: 1.0, duration: 3.4, ease: "sine.out" }, 21.5);
+  lines("#s6", 21.9, 0.18);
+  textOut("#s6 .copy", 24.05);
+
+  // S7 24.5–30
+  sceneIn("#s7", 24.45, 0.45); sceneOut("#s6", 24.7, 0.3);
+  tl.to("#flash", { opacity: 0.35, duration: 0.1, ease: S }, 24.45).to("#flash", { opacity: 0, duration: 0.6, ease: S }, 24.55);
+  tl.fromTo("#s7-bg", { scale: 1.14 }, { scale: 1.02, duration: 5.6, ease: "sine.out" }, 24.45);
+  up("#end .eyebrow", 24.7);
+  lines("#end", 24.8, 0.2);
+  tl.fromTo("#rule", { scaleX: 0, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 1.1, ease: E }, 25.6);
+  up("#svc", 25.75);
+  tl.fromTo("#tags span", { y: 18, opacity: 0, filter: "blur(6px)" }, { y: 0, opacity: 1, filter: "blur(0px)", duration: 0.9, ease: E, stagger: 0.12 }, 26.0);
+  up("#cta", 26.45, { from: { scale: 0.96 }, to: { scale: 1 } });
+  up("#who", 26.9);
+  tl.to("#cta", { scale: 1.035, duration: 0.9, ease: "sine.inOut", yoyo: true, repeat: 2 }, 27.6);
+
+  window.__timelines["main"] = tl;
+})();
+</script>
+</body>
+</html>
